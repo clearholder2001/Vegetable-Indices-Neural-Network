@@ -55,7 +55,7 @@ def plot_multiimages(images1, images2, title, idx, num=16):
         ax.set_yticks([])
     plt.suptitle(title)
     plt.tight_layout()
-    # plt.show()
+    plt.show()
     plt.savefig('./fig/' + title + '.png')
     plt.close()
 
@@ -67,7 +67,7 @@ def show_train_history(train_history, train, validation):
     plt.ylabel(train)
     plt.xlabel('Epoch')
     plt.legend(['train', 'validation'], loc='upper left')
-    # plt.show()
+    plt.show()
     plt.savefig('./fig/Train History.png')
     plt.close()
 
@@ -103,7 +103,7 @@ if __name__ == "__main__":
     )
     """
 
-    Model = AEN_model_1()
+    Model = AE_model_2()
     adam = optimizers.Adam(lr=0.001)
     callbacks = [EarlyStoppingByLossVal(monitor='loss', value=1e-7, verbose=1)]
     Model.compile(optimizer=adam, loss='mean_squared_error')
