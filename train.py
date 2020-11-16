@@ -13,7 +13,6 @@ from keras.preprocessing.image import ImageDataGenerator
 from model import *
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '0'
-data_used_amount = 246
 
 
 # 設定迭代停止器
@@ -55,7 +54,7 @@ def plot_multiimages(images1, images2, title, idx, num=16):
         ax.set_yticks([])
     plt.suptitle(title)
     plt.tight_layout()
-    plt.show()
+    # plt.show()
     plt.savefig('./fig/' + title + '.png')
     plt.close()
 
@@ -67,14 +66,16 @@ def show_train_history(train_history, train, validation):
     plt.ylabel(train)
     plt.xlabel('Epoch')
     plt.legend(['train', 'validation'], loc='upper left')
-    plt.show()
+    # plt.show()
     plt.savefig('./fig/Train History.png')
     plt.close()
 
 
 def data_preprocessing():
-    rgb_path = os.path.join('..', 'Jim', 'dataset','20meter', 'train_20meter_RGB.npy')
-    ndvi_path = os.path.join('..', 'Jim', 'dataset','20meter', 'train_20meter_NDVI.npy')
+    rgb_path = os.path.join('..', 'Jim', 'dataset',
+                            '20meter', 'train_20meter_RGB.npy')
+    ndvi_path = os.path.join('..', 'Jim', 'dataset',
+                             '20meter', 'train_20meter_NDVI.npy')
     rgb_image_array = np.load(rgb_path, allow_pickle=True)
     ndvi_image_array = np.load(ndvi_path, allow_pickle=True)
     train_X = rgb_image_array.astype('float32') / 255.
@@ -109,10 +110,12 @@ if __name__ == "__main__":
     Model.compile(optimizer=adam, loss='mean_squared_error')
     Model.summary()
 
+    data_used_amount = train_X.shape[0]
+    
     train_history = Model.fit(train_X[:data_used_amount], train_Y[:data_used_amount], epochs=20, batch_size=1, callbacks=callbacks, validation_split=0.1)
 
     """
-    train_history = Model.fit_generator(datagen.flow(train_X[:], train_Y[:], batch_size=2, shuffle=True),
+    train_history = Model.fit_generator(datagen.flow(train_X[:data_used_amount], train_Y[:data_used_amount], batch_size=2, shuffle=True),
                                         epochs=80,
                                         samples_per_epoch=1000,
                                         verbose=2,
