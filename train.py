@@ -1,18 +1,24 @@
 import os
 import warnings
 
+''' TF_CPP_MIN_LOG_LEVEL
+0 = all messages are logged (default behavior)
+1 = INFO messages are not printed
+2 = INFO and WARNING messages are not printed
+3 = INFO, WARNING, and ERROR messages are not printed
+'''
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+
 import matplotlib.pyplot as plt
 import numpy as np
 import tensorflow as tf
-from keras import optimizers
-from keras.callbacks import Callback, EarlyStopping
-from keras.initializers import glorot_normal, he_normal
-from keras.models import Model, load_model
-from keras.preprocessing.image import ImageDataGenerator
+from tensorflow import keras
+from tensorflow.keras import optimizers
+from tensorflow.keras.callbacks import Callback, EarlyStopping
+from tensorflow.keras.models import Model, load_model
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
 from model import *
-
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '0'
 
 
 # 設定迭代停止器
@@ -92,35 +98,31 @@ if __name__ == "__main__":
 
     plot_multiimages(train_X, train_Y, 'RGB and NDVI Images', 72, 16)
 
-    """
     datagen = ImageDataGenerator(
         zca_whitening=False,
         horizontal_flip=True,
         vertical_flip=True,
-        #brightness_range=(0.1,0.5,1.0),
+        brightness_range=(0.1, 1.0),
         #rotation_range=180,
         #width_shift_range=0.3,
         #height_shift_range=0.3,
     )
-    """
 
     Model = AE_model_2()
     adam = optimizers.Adam(lr=0.001)
-    callbacks = [EarlyStoppingByLossVal(monitor='loss', value=1e-7, verbose=1)]
+    callbacks = [EarlyStoppingByLossVal(monitor='loss', value=1e-3, verbose=1)]
     Model.compile(optimizer=adam, loss='mean_squared_error')
     Model.summary()
 
     data_used_amount = train_X.shape[0]
     
-    train_history = Model.fit(train_X[:data_used_amount], train_Y[:data_used_amount], epochs=20, batch_size=1, callbacks=callbacks, validation_split=0.1)
-
-    """
-    train_history = Model.fit_generator(datagen.flow(train_X[:data_used_amount], train_Y[:data_used_amount], batch_size=2, shuffle=True),
-                                        epochs=80,
-                                        samples_per_epoch=1000,
+    # train_history = Model.fit(train_X[:data_used_amount], train_Y[:data_used_amount], epochs=20, batch_size=1, callbacks=callbacks, validation_split=0.1)
+ 
+    train_history = Model.fit(datagen.flow(train_X, train_Y, batch_size=1, shuffle=True),
+                                        epochs=100,
+                                        steps_per_epoch=1000,
                                         verbose=2,
                                         callbacks=callbacks)
-    """
-
+    
     Model.save_weights('./weights/trained_model.h5')
     show_train_history(train_history, 'loss', 'val_loss')

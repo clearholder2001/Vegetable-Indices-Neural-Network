@@ -1,6 +1,7 @@
-from keras.layers import (Activation, BatchNormalization,
-                          Conv2D, Dense, Input, Flatten, MaxPooling2D, UpSampling2D, regularizers)
-from keras.models import Model
+from tensorflow.keras.layers import (Activation, BatchNormalization,
+                                     Conv2D, Dense, Input, Flatten, MaxPooling2D, UpSampling2D)
+from tensorflow.keras import regularizers
+from tensorflow.keras.models import Model
 
 
 def NN_model_1():
