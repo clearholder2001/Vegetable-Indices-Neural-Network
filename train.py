@@ -18,7 +18,14 @@ from tensorflow.keras.callbacks import Callback, EarlyStopping
 from tensorflow.keras.models import Model, load_model
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
+from dataset import *
 from model import *
+
+
+rgb_path = os.path.join('..', 'Jim', 'dataset',
+                        '20meter', 'train_20meter_RGB.npy')
+ndvi_path = os.path.join('..', 'Jim', 'dataset',
+                         '20meter', 'train_20meter_NDVI.npy')
 
 
 # 設定迭代停止器
@@ -91,7 +98,14 @@ def data_preprocessing():
 
 
 if __name__ == "__main__":
-    train_X, train_Y = data_preprocessing()
+    train_X_obj = DataObject(rgb_path)
+    train_Y_obj = DataObject(ndvi_path)
+    train_X_obj.load_data(devided_by_255=True, expand_dims=False)
+    train_Y_obj.load_data(devided_by_255=True, expand_dims=True)
+    train_X_obj.crop()
+    train_Y_obj.crop()
+    train_X = train_X_obj.get_data()
+    train_Y = train_Y_obj.get_data()
 
     print('RGB  array shape: ', train_X.shape)
     print('NDVI array shape: ', train_Y.shape)
