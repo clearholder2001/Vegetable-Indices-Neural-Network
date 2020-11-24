@@ -7,8 +7,7 @@ from tensorflow.keras.models import Model
 def NN_model_1():
     X_input = Input((51, 51, 3))
     # stage 1
-    X = Conv2D(4, (3, 3), strides=(1, 1),
-               name="conv1", padding="same")(X_input)
+    X = Conv2D(4, (3, 3), strides=(1, 1), name="conv1", padding="same")(X_input)
     X = BatchNormalization()(X)
     X = Activation('relu')(X)
     X = Conv2D(4, (3, 3), strides=(1, 1), name="conv1_2", padding="same")(X)
@@ -103,7 +102,7 @@ def AE_model_2():
     x4 = Conv2D(128, (3, 3), padding='same', kernel_regularizer=regularizers.l2(0.01), kernel_initializer='he_normal', name='block4_conv3')(x4)
     x4 = BatchNormalization(name='block4_bn3')(x4)
     x4 = Activation('relu', name='block4_ac3')(x4)
-    x4 = MaxPooling2D((2, 2), strides=(2, 2), padding='same', name='block4_pool')(x4)    
+    x4 = MaxPooling2D((2, 2), strides=(2, 2), padding='same', name='block4_pool')(x4)
 
     # Block 5
     x5 = Conv2D(128, (3, 3), padding='same', kernel_regularizer=regularizers.l2(0.01), kernel_initializer='he_normal', name='block5_conv1')(x4)
@@ -115,7 +114,7 @@ def AE_model_2():
     x5 = Conv2D(128, (3, 3), padding='same', kernel_regularizer=regularizers.l2(0.01), kernel_initializer='he_normal', name='block5_conv3')(x5)
     x5 = BatchNormalization(name='block5_bn3')(x5)
     x5 = Activation('relu', name='block5_ac3')(x5)
-    x5 = MaxPooling2D((2, 2), strides=(2, 2), padding='same', name='block5_pool')(x5)       
+    x5 = MaxPooling2D((2, 2), strides=(2, 2), padding='same', name='block5_pool')(x5)
 
     encoded = x5
 

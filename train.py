@@ -22,10 +22,8 @@ from dataset import *
 from model import *
 
 
-rgb_path = os.path.join('..', 'Jim', 'dataset',
-                        '20meter', 'train_20meter_RGB.npy')
-ndvi_path = os.path.join('..', 'Jim', 'dataset',
-                         '20meter', 'train_20meter_NDVI.npy')
+rgb_path = os.path.join('..', 'Jim', 'dataset','20meter', 'train_20meter_RGB.npy')
+ndvi_path = os.path.join('..', 'Jim', 'dataset','20meter', 'train_20meter_NDVI.npy')
 
 
 # 設定迭代停止器
@@ -40,8 +38,7 @@ class EarlyStoppingByLossVal(Callback):
     def on_epoch_end(self, epoch, logs={}):
         current = logs.get(self.monitor)
         if current is None:
-            warnings.warn("Early stopping requires %s available!" %
-                          self.monitor, RuntimeWarning)
+            warnings.warn("Early stopping requires %s available!" % self.monitor, RuntimeWarning)
 
         if current < self.value:
             if self.verbose > 0:
@@ -85,10 +82,6 @@ def show_train_history(train_history, train, validation):
 
 
 def data_preprocessing():
-    rgb_path = os.path.join('..', 'Jim', 'dataset',
-                            '20meter', 'train_20meter_RGB.npy')
-    ndvi_path = os.path.join('..', 'Jim', 'dataset',
-                             '20meter', 'train_20meter_NDVI.npy')
     rgb_image_array = np.load(rgb_path, allow_pickle=True)
     ndvi_image_array = np.load(ndvi_path, allow_pickle=True)
     train_X = rgb_image_array.astype('float32') / 255.
@@ -129,14 +122,9 @@ if __name__ == "__main__":
     Model.summary()
 
     data_used_amount = train_X.shape[0]
-    
+
     # train_history = Model.fit(train_X[:data_used_amount], train_Y[:data_used_amount], epochs=20, batch_size=1, callbacks=callbacks, validation_split=0.1)
- 
-    train_history = Model.fit(datagen.flow(train_X, train_Y, batch_size=1, shuffle=True),
-                                        epochs=100,
-                                        steps_per_epoch=1000,
-                                        verbose=2,
-                                        callbacks=callbacks)
-    
+    train_history = Model.fit(datagen.flow(train_X, train_Y, batch_size=1, shuffle=True), epochs=100, steps_per_epoch=1000, verbose=2, callbacks=callbacks)
+
     Model.save_weights('./weights/trained_model.h5')
     show_train_history(train_history, 'loss', 'val_loss')
