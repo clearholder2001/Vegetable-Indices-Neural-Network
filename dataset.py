@@ -52,9 +52,8 @@ class DataObject():
                 if self.channel is 3:
                     matplotlib.image.imsave('fig/resample/rgb_{0}.jpg'.format(i), self.data_resample[i])
                 elif self.channel is 1:
-                    img = self.data_resample[i, :, :, 0]
-                    img = (((img - (-1)) / 2) * 255).astype(np.uint8)
-                    Image.fromarray(img).save('fig/resample/ndvi_{0}.jpg'.format(i))
+                    img = np.squeeze(self.data_resample[i])
+                    matplotlib.image.imsave('fig/resample/ndvi_{0}.jpg'.format(i), img, cmap=plt.get_cmap('jet'))
             print('Resample data shape: ', self.data_resample.shape)
         else:
             print('No data: load data first.')
