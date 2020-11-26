@@ -26,8 +26,12 @@ class DataObject():
             self.data_raw = np.expand_dims(self.data_raw, axis=3)
         self.num, self.height, self.width, self.channel = self.data_raw.shape
         # save image
-        # for i in range(self.num):
-        #    matplotlib.image.imsave('fig/raw/{0}.jpg'.format(i), self.data_raw[i])
+        #for i in range(self.num):
+        #    if self.channel is 3:
+        #        matplotlib.image.imsave('fig/resample/rgb_{0}.jpg'.format(i), self.data_raw[i])
+        #    elif self.channel is 1:
+        #        img = np.squeeze(self.data_raw[i])
+        #        matplotlib.image.imsave('fig/resample/ndvi_{0}.jpg'.format(i), img, cmap=plt.get_cmap('jet'))
         print('Data shape: ', self.data_raw.shape)
 
     def crop(self, top_width=0, down_width=52, left_width=23, right_width=23):
@@ -35,8 +39,12 @@ class DataObject():
             self.data_raw = self.data_raw[:, top_width:(self.height - down_width), left_width:(self.width - right_width), :]
             self.num, self.height, self.width, self.channel = self.data_raw.shape
             # save image
-            # for i in range(self.num):
-            #    matplotlib.image.imsave('fig/crop/{0}.jpg'.format(i), self.data_raw[i])
+            #for i in range(self.num):
+            #    if self.channel is 3:
+            #        matplotlib.image.imsave('fig/resample/rgb_{0}.jpg'.format(i), self.data_raw[i])
+            #    elif self.channel is 1:
+            #        img = np.squeeze(self.data_raw[i])
+            #        matplotlib.image.imsave('fig/resample/ndvi_{0}.jpg'.format(i), img, cmap=plt.get_cmap('jet'))
             print('Data shape after crop: ', self.data_raw.shape)
         else:
             print('No data: load data first.')
