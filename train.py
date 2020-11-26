@@ -1,5 +1,6 @@
 import os
 import warnings
+from time import time
 
 ''' TF_CPP_MIN_LOG_LEVEL
 0 = all messages are logged (default behavior)
@@ -7,7 +8,7 @@ import warnings
 2 = INFO and WARNING messages are not printed
 3 = INFO, WARNING, and ERROR messages are not printed
 '''
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -22,8 +23,8 @@ from dataset import *
 from model import *
 
 
-rgb_path = os.path.join('..', 'Jim', 'dataset','20meter', 'train_20meter_RGB.npy')
-ndvi_path = os.path.join('..', 'Jim', 'dataset','20meter', 'train_20meter_NDVI.npy')
+rgb_path = os.path.join('..', 'Jim', 'dataset', '20meter', 'train_20meter_RGB.npy')
+ndvi_path = os.path.join('..', 'Jim', 'dataset', '20meter', 'train_20meter_NDVI.npy')
 
 
 # 設定迭代停止器
@@ -94,11 +95,14 @@ if __name__ == "__main__":
     train_X_obj = DataObject(rgb_path)
     train_Y_obj = DataObject(ndvi_path)
     train_X_obj.load_data(devided_by_255=True, expand_dims=False)
-    train_Y_obj.load_data(devided_by_255=True, expand_dims=True)
+    train_Y_obj.load_data(devided_by_255=False, expand_dims=True)
     train_X_obj.crop()
     train_Y_obj.crop()
-    train_X = train_X_obj.get_data()
-    train_Y = train_Y_obj.get_data()
+    table = train_X_obj.generate_resample_table(multiple_factor=9)
+    train_X_obj.resample(table)
+    train_Y_obj.resample(table)
+    train_X = train_X_obj.get_data_resample()
+    train_Y = train_Y_obj.get_data_resample()
 
     print('RGB  array shape: ', train_X.shape)
     print('NDVI array shape: ', train_Y.shape)
@@ -106,13 +110,28 @@ if __name__ == "__main__":
     plot_multiimages(train_X, train_Y, 'RGB and NDVI Images', 72, 16)
 
     datagen = ImageDataGenerator(
-        zca_whitening=False,
         horizontal_flip=True,
         vertical_flip=True,
-        brightness_range=(0.1, 1.0),
-        #rotation_range=180,
-        #width_shift_range=0.3,
-        #height_shift_range=0.3,
+        rotation_range=20,
+        width_shift_range=0.1,
+        height_shift_range=0.1,
+        brightness_range=(0.5, 1.5),
+        shear_range=0.3,
+        zoom_range=0.3,
+        channel_shift_range=0.1,
+        rescale=None,
+        featurewise_center=False,
+        samplewise_center=False,
+        featurewise_std_normalization=False,
+        samplewise_std_normalization=False,
+        zca_whitening=False,
+        zca_epsilon=1e-06,
+        fill_mode='nearest',
+        cval=0.0,
+        preprocessing_function=None,
+        data_format=None,
+        validation_split=0.1,
+        dtype=None,
     )
 
     Model = AE_model_2()
@@ -123,8 +142,10 @@ if __name__ == "__main__":
 
     data_used_amount = train_X.shape[0]
 
-    # train_history = Model.fit(train_X[:data_used_amount], train_Y[:data_used_amount], epochs=20, batch_size=1, callbacks=callbacks, validation_split=0.1)
-    train_history = Model.fit(datagen.flow(train_X, train_Y, batch_size=1, shuffle=True), epochs=100, steps_per_epoch=1000, verbose=2, callbacks=callbacks)
+    # train_history = Model.fit(train_X[:data_used_amount], train_Y[:data_used_amount], epochs=10, batch_size=4, callbacks=callbacks, validation_split=0.1)
+    train_history = Model.fit(datagen.flow(train_X, train_Y, batch_size=4, shuffle=True, seed=int(time()),
+                                           save_to_dir='./fig/flow', save_prefix='data', save_format='jpg'
+                                           ), epochs=100, steps_per_epoch=(data_used_amount / 4),  validation_split=0.0, verbose=2, callbacks=callbacks)
 
     Model.save_weights('./weights/trained_model.h5')
     show_train_history(train_history, 'loss', 'val_loss')
