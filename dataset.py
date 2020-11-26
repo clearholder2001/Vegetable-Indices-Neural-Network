@@ -41,7 +41,7 @@ class DataObject():
         else:
             print('No data: load data first.')
 
-    def resample(self, table, target_size=(360, 480)):
+    def resample(self, table, target_size=(352, 480)):
         if self.data_raw is not None:
             self.data_resample = np.zeros((table.shape[0], target_size[0], target_size[1], self.channel), np.float32)
             for i in range(table.shape[0]):
@@ -59,7 +59,7 @@ class DataObject():
         else:
             print('No data: load data first.')
 
-    def generate_resample_table(self, target_size=(360, 480), multiple_factor=9):
+    def generate_resample_table(self, target_size=(352, 480), multiple_factor=9):
         np.random.seed(int(time()))
         array_len = self.num * multiple_factor
         index_array = np.repeat(np.arange(self.num, dtype=np.uint32), multiple_factor).reshape(-1, 1)

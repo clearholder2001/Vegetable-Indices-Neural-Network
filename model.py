@@ -59,7 +59,7 @@ def AE_model_1():
 
 
 def AE_model_2():
-    Input_img = Input(shape=(960, 1280, 3))
+    Input_img = Input(shape=(352, 480, 3))
 
     # Encoding Architecture
     # Block 1
