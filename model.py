@@ -173,7 +173,7 @@ def AE_model_2():
     x10 = BatchNormalization(name='block10_bn2')(x10)
     x10 = Activation('relu', name='block10_ac2')(x10)
 
-    decoded = Conv2D(1, (3, 3), activation='sigmoid', padding='same', name='block10_output')(x10)
+    decoded = Conv2D(1, (3, 3), activation='tanh', padding='same', name='block10_output')(x10)
 
     autoencoder = Model(Input_img, decoded)
     return autoencoder
