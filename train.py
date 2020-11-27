@@ -22,6 +22,8 @@ from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from dataset import *
 from model import *
 
+gpus = tf.config.list_physical_devices('GPU')
+tf.config.experimental.set_memory_growth(gpus[0], True)
 
 rgb_path = os.path.join('..', 'Jim', 'dataset', '20meter', 'train_20meter_RGB.npy')
 ndvi_path = os.path.join('..', 'Jim', 'dataset', '20meter', 'train_20meter_NDVI.npy')
@@ -146,61 +148,53 @@ if __name__ == "__main__":
     data_used_amount = train_X.shape[0]
     batch_size = 32
     seed = int(time())
-    data_aug_multiple_factor = 1
+    data_aug_multiple_factor = 16
     steps_per_epoch = data_used_amount * data_aug_multiple_factor / batch_size
 
-    train_image_generator = image_datagen.flow_from_directory(
-        './fig/resample/rgb',
-        target_size=(352, 480),
+    train_image_generator = image_datagen.flow(
+        train_X,
         batch_size=batch_size,
         shuffle=True,
         seed=seed,
         subset='training', # set as training data
-        class_mode=None,
         #save_to_dir='./fig/datagen/train/rgb',
         #save_prefix='train',
         #save_format='jpg'
     )
 
-    train_mask_generator = mask_datagen.flow_from_directory(
-        './fig/resample/ndvi',
-        target_size=(352, 480),
+    train_mask_generator = mask_datagen.flow(
+        train_Y,
         batch_size=batch_size,
         shuffle=True,
         seed=seed,
         subset='training', # set as training data
-        class_mode=None,
         #save_to_dir='./fig/datagen/train/ndvi',
         #save_prefix='train',
         #save_format='jpg'
-    ) 
+    )
 
-    validation_image_generator = image_datagen.flow_from_directory(
-        './fig/resample/rgb',
-        target_size=(352, 480),
+    validation_image_generator = image_datagen.flow(
+        train_X,
         batch_size=batch_size,
         shuffle=True,
         seed=seed,
         subset='validation', # set as validation data
-        class_mode=None,
         #save_to_dir='./fig/datagen/val/rgb',
         #save_prefix='val',
         #save_format='jpg'
     )
 
-    validation_mask_generator = mask_datagen.flow_from_directory(
-        './fig/resample/ndvi',
-        target_size=(352, 480),
+    validation_mask_generator = mask_datagen.flow(
+        train_Y,
         batch_size=batch_size,
         shuffle=True,
         seed=seed,
         subset='validation', # set as validation data
-        class_mode=None,
-        #save_to_dir='./fig/datagen/val/ndvi',
-        #save_prefix='val',
-        #save_format='jpg'
-    ) 
-
+        #ave_to_dir='./fig/datagen/val/ndvi',
+        #ave_prefix='val',
+        #ave_format='jpg'
+    )
+    
     train_generator = zip(train_image_generator, train_mask_generator)
     validation_generator = zip(validation_image_generator, validation_mask_generator)
 

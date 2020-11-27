@@ -55,7 +55,7 @@ class DataObject():
             for i in range(table.shape[0]):
                 index, top, down, left, right = table[i]
                 self.data_resample[i] = self.data_raw[index, top:down, left:right, :]
-                #continue
+                continue
                 # save image
                 if self.channel is 3:
                     matplotlib.image.imsave('fig/resample/rgb/0/{0}.jpg'.format(i), self.data_resample[i])
