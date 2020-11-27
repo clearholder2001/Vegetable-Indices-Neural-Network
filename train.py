@@ -60,7 +60,7 @@ def plot_multiimages(images1, images2, title, idx, num=16):
         ax.set_yticks([])
     for i in range(0, int(num/2)):
         ax = plt.subplot(4, 4, int(num/2)+1+i)
-        ax.imshow(images2[idx+i], vmin=-1, vmax=1)
+        ax.imshow(images2[idx+i], vmin=-1, vmax=1, cmap=plt.get_cmap('jet'))
         ax.set_xticks([])
         ax.set_yticks([])
     plt.suptitle(title)
@@ -109,7 +109,7 @@ if __name__ == "__main__":
 
     plot_multiimages(train_X, train_Y, 'RGB and NDVI Images', 72, 16)
 
-    datagen = ImageDataGenerator(
+    data_gen_args = dict(
         horizontal_flip=True,
         vertical_flip=True,
         rotation_range=20,
@@ -119,7 +119,7 @@ if __name__ == "__main__":
         shear_range=0.3,
         zoom_range=0.3,
         channel_shift_range=0.1,
-        rescale=None,
+        rescale=1/255.,
         featurewise_center=False,
         samplewise_center=False,
         featurewise_std_normalization=False,
@@ -134,6 +134,9 @@ if __name__ == "__main__":
         dtype=None,
     )
 
+    image_datagen = ImageDataGenerator(**data_gen_args)
+    mask_datagen = ImageDataGenerator(**data_gen_args)
+
     Model = AE_model_2()
     adam = optimizers.Adam(lr=0.001)
     callbacks = [EarlyStoppingByLossVal(monitor='loss', value=1e-3, verbose=1)]
@@ -141,11 +144,90 @@ if __name__ == "__main__":
     Model.summary()
 
     data_used_amount = train_X.shape[0]
+    batch_size = 32
+    seed = int(time())
+    data_aug_multiple_factor = 1
+    steps_per_epoch = data_used_amount * data_aug_multiple_factor / batch_size
 
-    # train_history = Model.fit(train_X[:data_used_amount], train_Y[:data_used_amount], epochs=10, batch_size=4, callbacks=callbacks, validation_split=0.1)
-    train_history = Model.fit(datagen.flow(train_X, train_Y, batch_size=4, shuffle=True, seed=int(time()),
-                                           save_to_dir='./fig/flow', save_prefix='data', save_format='jpg'
-                                           ), epochs=100, steps_per_epoch=(data_used_amount / 4),  validation_split=0.0, verbose=2, callbacks=callbacks)
+    train_image_generator = image_datagen.flow_from_directory(
+        './fig/resample/rgb',
+        target_size=(352, 480),
+        batch_size=batch_size,
+        shuffle=True,
+        seed=seed,
+        subset='training', # set as training data
+        class_mode=None,
+        #save_to_dir='./fig/datagen/train/rgb',
+        #save_prefix='train',
+        #save_format='jpg'
+    )
+
+    train_mask_generator = mask_datagen.flow_from_directory(
+        './fig/resample/ndvi',
+        target_size=(352, 480),
+        batch_size=batch_size,
+        shuffle=True,
+        seed=seed,
+        subset='training', # set as training data
+        class_mode=None,
+        #save_to_dir='./fig/datagen/train/ndvi',
+        #save_prefix='train',
+        #save_format='jpg'
+    ) 
+
+    validation_image_generator = image_datagen.flow_from_directory(
+        './fig/resample/rgb',
+        target_size=(352, 480),
+        batch_size=batch_size,
+        shuffle=True,
+        seed=seed,
+        subset='validation', # set as validation data
+        class_mode=None,
+        #save_to_dir='./fig/datagen/val/rgb',
+        #save_prefix='val',
+        #save_format='jpg'
+    )
+
+    validation_mask_generator = mask_datagen.flow_from_directory(
+        './fig/resample/ndvi',
+        target_size=(352, 480),
+        batch_size=batch_size,
+        shuffle=True,
+        seed=seed,
+        subset='validation', # set as validation data
+        class_mode=None,
+        #save_to_dir='./fig/datagen/val/ndvi',
+        #save_prefix='val',
+        #save_format='jpg'
+    ) 
+
+    train_generator = zip(train_image_generator, train_mask_generator)
+    validation_generator = zip(validation_image_generator, validation_mask_generator)
+
+    '''
+    train_history = Model.fit(
+        train_X[:data_used_amount],
+        train_Y[:data_used_amount],
+        epochs=20,
+        steps_per_epoch=None,
+        batch_size=batch_size,
+        shuffle=True,
+        validation_split=0.1,
+        callbacks=callbacks,
+        verbose=2
+    )
+    '''
+    
+    train_history = Model.fit(
+        train_generator,
+        epochs=100,
+        steps_per_epoch=steps_per_epoch,
+        batch_size=batch_size,
+        shuffle=True,
+        validation_data=validation_image_generator,
+        callbacks=callbacks,
+        verbose=2
+    )
 
     Model.save_weights('./weights/trained_model.h5')
     show_train_history(train_history, 'loss', 'val_loss')
