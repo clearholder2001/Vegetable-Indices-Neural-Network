@@ -31,7 +31,7 @@ class DataObject():
         #        matplotlib.image.imsave('fig/raw/rgb/rgb_{0}.jpg'.format(i), self.data_raw[i])
         #    elif self.channel is 1:
         #        img = np.squeeze(self.data_raw[i])
-        #        matplotlib.image.imsave('fig/raw/ndvi/ndvi_{0}.jpg'.format(i), img, cmap=plt.get_cmap('jet'))
+        #        matplotlib.image.imsave('fig/raw/ndvi/ndvi_{0}.jpg'.format(i), img, cmap=plt.get_cmap('gray'))
         print('Data shape: ', self.data_raw.shape)
 
     def crop(self, top_width=0, down_width=52, left_width=23, right_width=23):
@@ -44,7 +44,7 @@ class DataObject():
             #        matplotlib.image.imsave('fig/crop/rgb/rgb_{0}.jpg'.format(i), self.data_raw[i])
             #    elif self.channel is 1:
             #        img = np.squeeze(self.data_raw[i])
-            #        matplotlib.image.imsave('fig/crop/ndvi/ndvi_{0}.jpg'.format(i), img, cmap=plt.get_cmap('jet'))
+            #        matplotlib.image.imsave('fig/crop/ndvi/ndvi_{0}.jpg'.format(i), img, cmap=plt.get_cmap('gray'))
             print('Data shape after crop: ', self.data_raw.shape)
         else:
             print('No data: load data first.')
@@ -55,13 +55,13 @@ class DataObject():
             for i in range(table.shape[0]):
                 index, top, down, left, right = table[i]
                 self.data_resample[i] = self.data_raw[index, top:down, left:right, :]
-                continue
+                #continue
                 # save image
                 if self.channel is 3:
-                    matplotlib.image.imsave('fig/resample/rgb/rgb_{0}.jpg'.format(i), self.data_resample[i])
+                    matplotlib.image.imsave('fig/resample/rgb/0/{0}.jpg'.format(i), self.data_resample[i])
                 elif self.channel is 1:
                     img = np.squeeze(self.data_resample[i])
-                    matplotlib.image.imsave('fig/resample/ndvi/ndvi_{0}.jpg'.format(i), img, cmap=plt.get_cmap('jet'))
+                    matplotlib.image.imsave('fig/resample/ndvi/0/{0}.jpg'.format(i), img, cmap=plt.get_cmap('gray'))
             print('Resample data shape: ', self.data_resample.shape)
         else:
             print('No data: load data first.')
