@@ -28,10 +28,10 @@ class DataObject():
         # save image
         #for i in range(self.num):
         #    if self.channel is 3:
-        #        matplotlib.image.imsave('fig/raw/rgb_{0}.jpg'.format(i), self.data_raw[i])
+        #        matplotlib.image.imsave('fig/raw/rgb/rgb_{0}.jpg'.format(i), self.data_raw[i])
         #    elif self.channel is 1:
         #        img = np.squeeze(self.data_raw[i])
-        #        matplotlib.image.imsave('fig/raw/ndvi_{0}.jpg'.format(i), img, cmap=plt.get_cmap('jet'))
+        #        matplotlib.image.imsave('fig/raw/ndvi/ndvi_{0}.jpg'.format(i), img, cmap=plt.get_cmap('jet'))
         print('Data shape: ', self.data_raw.shape)
 
     def crop(self, top_width=0, down_width=52, left_width=23, right_width=23):
@@ -41,10 +41,10 @@ class DataObject():
             # save image
             #for i in range(self.num):
             #    if self.channel is 3:
-            #        matplotlib.image.imsave('fig/crop/rgb_{0}.jpg'.format(i), self.data_raw[i])
+            #        matplotlib.image.imsave('fig/crop/rgb/rgb_{0}.jpg'.format(i), self.data_raw[i])
             #    elif self.channel is 1:
             #        img = np.squeeze(self.data_raw[i])
-            #        matplotlib.image.imsave('fig/crop/ndvi_{0}.jpg'.format(i), img, cmap=plt.get_cmap('jet'))
+            #        matplotlib.image.imsave('fig/crop/ndvi/ndvi_{0}.jpg'.format(i), img, cmap=plt.get_cmap('jet'))
             print('Data shape after crop: ', self.data_raw.shape)
         else:
             print('No data: load data first.')
@@ -58,10 +58,10 @@ class DataObject():
                 continue
                 # save image
                 if self.channel is 3:
-                    matplotlib.image.imsave('fig/resample/rgb_{0}.jpg'.format(i), self.data_resample[i])
+                    matplotlib.image.imsave('fig/resample/rgb/rgb_{0}.jpg'.format(i), self.data_resample[i])
                 elif self.channel is 1:
                     img = np.squeeze(self.data_resample[i])
-                    matplotlib.image.imsave('fig/resample/ndvi_{0}.jpg'.format(i), img, cmap=plt.get_cmap('jet'))
+                    matplotlib.image.imsave('fig/resample/ndvi/ndvi_{0}.jpg'.format(i), img, cmap=plt.get_cmap('jet'))
             print('Resample data shape: ', self.data_resample.shape)
         else:
             print('No data: load data first.')
