@@ -12,6 +12,7 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
 import matplotlib.pyplot as plt
 import numpy as np
+from sklearn.utils import shuffle
 import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras import optimizers
@@ -105,7 +106,7 @@ if __name__ == "__main__":
     train_Y_obj.resample(table)
     train_X = train_X_obj.get_data_resample()
     train_Y = train_Y_obj.get_data_resample()
-
+    train_X, train_Y = shuffle(train_X, train_Y)
     print('RGB  array shape: ', train_X.shape)
     print('NDVI array shape: ', train_Y.shape)
 
@@ -190,9 +191,9 @@ if __name__ == "__main__":
         shuffle=True,
         seed=seed,
         subset='validation', # set as validation data
-        #ave_to_dir='./fig/datagen/val/ndvi',
-        #ave_prefix='val',
-        #ave_format='jpg'
+        #save_to_dir='./fig/datagen/val/ndvi',
+        #save_prefix='val',
+        #save_format='jpg'
     )
     
     train_generator = zip(train_image_generator, train_mask_generator)
@@ -218,7 +219,7 @@ if __name__ == "__main__":
         steps_per_epoch=steps_per_epoch,
         batch_size=batch_size,
         shuffle=True,
-        validation_data=validation_image_generator,
+        validation_data=validation_generator,
         callbacks=callbacks,
         verbose=2
     )
