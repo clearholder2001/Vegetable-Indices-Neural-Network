@@ -86,15 +86,6 @@ def show_train_history(train_history, train, validation):
     plt.close()
 
 
-def data_preprocessing():
-    rgb_image_array = np.load(rgb_path, allow_pickle=True)
-    ndvi_image_array = np.load(ndvi_path, allow_pickle=True)
-    train_X = rgb_image_array.astype('float32') / 255.
-    train_Y = ndvi_image_array.astype('float32')
-    train_Y = np.expand_dims(train_Y, axis=3)
-    return train_X, train_Y
-
-
 if __name__ == "__main__":
     train_X_obj = DataObject(cfgs.RGB_PATH)
     train_Y_obj = DataObject(cfgs.NDVI_PATH)
@@ -218,7 +209,6 @@ if __name__ == "__main__":
         train_generator,
         epochs=cfgs.EPOCHS,
         steps_per_epoch=steps_per_epoch,
-        batch_size=batch_size,
         shuffle=True,
         validation_data=validation_generator,
         callbacks=callbacks,
