@@ -1,7 +1,10 @@
-from tensorflow.keras.layers import (Activation, BatchNormalization,
-                                     Conv2D, Dense, Input, Flatten, MaxPooling2D, UpSampling2D)
 from tensorflow.keras import regularizers
+from tensorflow.keras.layers import (Activation, BatchNormalization, Conv2D,
+                                     Dense, Flatten, Input, MaxPooling2D,
+                                     UpSampling2D)
 from tensorflow.keras.models import Model
+
+from configs import cfgs
 
 
 def NN_model_1():
@@ -59,7 +62,7 @@ def AE_model_1():
 
 
 def AE_model_2():
-    Input_img = Input(shape=(352, 480, 3))
+    Input_img = Input(shape=(cfgs.INPUT_LAYER_DIM, 3))
 
     # Encoding Architecture
     # Block 1

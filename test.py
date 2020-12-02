@@ -3,9 +3,7 @@ import os
 import matplotlib.pyplot as plt
 
 from dataset import DataObject
-
-rgb_path = os.path.join('..', 'Jim', 'dataset', '20meter', 'train_20meter_RGB.npy')
-ndvi_path = os.path.join('..', 'Jim', 'dataset', '20meter', 'train_20meter_NDVI.npy')
+from configs import cfgs
 
 
 def plot_multiimages(images1, images2, title, idx, num=36):
@@ -29,15 +27,15 @@ def plot_multiimages(images1, images2, title, idx, num=36):
 
 
 if __name__ == "__main__":
-    rbg_obj = DataObject(rgb_path)
-    ndvi_obj = DataObject(ndvi_path)
+    rbg_obj = DataObject(cfgs.RGB_PATH)
+    ndvi_obj = DataObject(cfgs.NDVI_PATH)
     rbg_obj.get_data_raw()
     ndvi_obj.get_data_raw()
     rbg_obj.load_data(devided_by_255=True, expand_dims=False)
     ndvi_obj.load_data(devided_by_255=False, expand_dims=True)
     rbg_obj.crop()
     ndvi_obj.crop()
-    table = rbg_obj.generate_resample_table(multiple_factor=9)
+    table = rbg_obj.generate_resample_table(multiple_factor=cfgs.RESAMPLE_MULTIPLE_FACTOR)
     rbg_obj.resample(table)
     ndvi_obj.resample(table)
     rgb_array = rbg_obj.get_data_resample()

@@ -20,6 +20,7 @@ from tensorflow.keras.callbacks import Callback, EarlyStopping
 from tensorflow.keras.models import Model, load_model
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
+from configs import cfgs
 from dataset import *
 from model import *
 
@@ -95,13 +96,13 @@ def data_preprocessing():
 
 
 if __name__ == "__main__":
-    train_X_obj = DataObject(rgb_path)
-    train_Y_obj = DataObject(ndvi_path)
+    train_X_obj = DataObject(cfgs.RGB_PATH)
+    train_Y_obj = DataObject(cfgs.NDVI_PATH)
     train_X_obj.load_data(devided_by_255=True, expand_dims=False)
     train_Y_obj.load_data(devided_by_255=False, expand_dims=True)
     train_X_obj.crop()
     train_Y_obj.crop()
-    table = train_X_obj.generate_resample_table(multiple_factor=9)
+    table = train_X_obj.generate_resample_table(multiple_factor=cfgs.RESAMPLE_MULTIPLE_FACTOR)
     train_X_obj.resample(table)
     train_Y_obj.resample(table)
     train_X = train_X_obj.get_data_resample()
@@ -147,9 +148,9 @@ if __name__ == "__main__":
     Model.summary()
 
     data_used_amount = train_X.shape[0]
-    batch_size = 32
     seed = int(time())
-    data_aug_multiple_factor = 16
+    batch_size = cfgs.DATA_AUG_BATCH_SIZE
+    data_aug_multiple_factor = cfgs.DATA_AUG_MULTIPLE_FACTOR
     steps_per_epoch = data_used_amount * data_aug_multiple_factor / batch_size
 
     train_image_generator = image_datagen.flow(
@@ -157,7 +158,7 @@ if __name__ == "__main__":
         batch_size=batch_size,
         shuffle=True,
         seed=seed,
-        subset='training', # set as training data
+        subset='training',  # set as training data
         #save_to_dir='./fig/datagen/train/rgb',
         #save_prefix='train',
         #save_format='jpg'
@@ -168,7 +169,7 @@ if __name__ == "__main__":
         batch_size=batch_size,
         shuffle=True,
         seed=seed,
-        subset='training', # set as training data
+        subset='training',  # set as training data
         #save_to_dir='./fig/datagen/train/ndvi',
         #save_prefix='train',
         #save_format='jpg'
@@ -179,7 +180,7 @@ if __name__ == "__main__":
         batch_size=batch_size,
         shuffle=True,
         seed=seed,
-        subset='validation', # set as validation data
+        subset='validation',  # set as validation data
         #save_to_dir='./fig/datagen/val/rgb',
         #save_prefix='val',
         #save_format='jpg'
@@ -190,12 +191,12 @@ if __name__ == "__main__":
         batch_size=batch_size,
         shuffle=True,
         seed=seed,
-        subset='validation', # set as validation data
+        subset='validation',  # set as validation data
         #save_to_dir='./fig/datagen/val/ndvi',
         #save_prefix='val',
         #save_format='jpg'
     )
-    
+
     train_generator = zip(train_image_generator, train_mask_generator)
     validation_generator = zip(validation_image_generator, validation_mask_generator)
 
@@ -212,10 +213,10 @@ if __name__ == "__main__":
         verbose=2
     )
     '''
-    
+
     train_history = Model.fit(
         train_generator,
-        epochs=100,
+        epochs=cfgs.EPOCHS,
         steps_per_epoch=steps_per_epoch,
         batch_size=batch_size,
         shuffle=True,
