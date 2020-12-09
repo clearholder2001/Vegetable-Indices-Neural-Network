@@ -12,6 +12,7 @@ RESAMPLE_MULTIPLE_FACTOR = 9
 # Model
 # ------------------------------------------------
 INPUT_LAYER_DIM = (352, 480, 3)
+LEARNING_RATE = 0.0002
 
 
 # Data Augmentation
