@@ -1,5 +1,7 @@
 *.pyc
 *.ipynb
+*.npy
+*.npz
 __pycache__
 __init__.py
 .env
