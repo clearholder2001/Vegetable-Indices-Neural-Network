@@ -187,30 +187,29 @@ if __name__ == "__main__":
 
     train_generator = zip(train_image_generator, train_mask_generator)
     validation_generator = zip(validation_image_generator, validation_mask_generator)
-    
-    '''
-    train_history = Model.fit(
-        train_X[:data_used_amount],
-        train_Y[:data_used_amount],
-        epochs=20,
-        steps_per_epoch=None,
-        batch_size=batch_size,
-        shuffle=True,
-        validation_split=0.1,
-        callbacks=callbacks,
-        verbose=2
-    )
-    '''
 
-    train_history = Model.fit(
-        train_generator,
-        epochs=cfgs.EPOCHS,
-        steps_per_epoch=steps_per_epoch,
-        shuffle=True,
-        validation_data=validation_generator,
-        callbacks=callbacks,
-        verbose=2
-    )
+    if cfgs.ENABLE_DATA_AUG:
+        train_history = Model.fit(
+            train_generator,
+            epochs=cfgs.EPOCHS,
+            steps_per_epoch=steps_per_epoch,
+            shuffle=True,
+            validation_data=validation_generator,
+            callbacks=callbacks,
+            verbose=2
+        )
+    else:
+        train_history = Model.fit(
+            train_X[:data_used_amount],
+            train_Y[:data_used_amount],
+            epochs=cfgs.EPOCHS,
+            steps_per_epoch=None,
+            batch_size=cfgs.TRAIN_BATCH_SIZE,
+            shuffle=True,
+            validation_split=0.1,
+            callbacks=callbacks,
+            verbose=2
+        )
 
     Model.save_weights('./weights/trained_model.h5')
     show_train_history(train_history, 'loss', 'val_loss')

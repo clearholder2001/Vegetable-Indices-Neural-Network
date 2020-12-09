@@ -17,6 +17,7 @@ LEARNING_RATE = 0.0002
 
 # Data Augmentation
 # ------------------------------------------------
+ENABLE_DATA_AUG = False
 DATA_AUG_MULTIPLE_FACTOR = 16
 DATA_AUG_BATCH_SIZE = 32
 
@@ -24,3 +25,4 @@ DATA_AUG_BATCH_SIZE = 32
 # Train
 # ------------------------------------------------
 EPOCHS = 100
+TRAIN_BATCH_SIZE = 32
