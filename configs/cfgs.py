@@ -11,7 +11,7 @@ RESAMPLE_MULTIPLE_FACTOR = 9
 
 # Model
 # ------------------------------------------------
-INPUT_LAYER_DIM = (352, 480)
+INPUT_LAYER_DIM = (352, 480, 3)
 
 
 # Data Augmentation

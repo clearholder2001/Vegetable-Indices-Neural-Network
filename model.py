@@ -62,7 +62,7 @@ def AE_model_1():
 
 
 def AE_model_2():
-    Input_img = Input(shape=(cfgs.INPUT_LAYER_DIM, 3))
+    Input_img = Input(shape=cfgs.INPUT_LAYER_DIM)
 
     # Encoding Architecture
     # Block 1
