@@ -17,7 +17,7 @@ import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras import optimizers
 from tensorflow.keras.callbacks import Callback, EarlyStopping
-from tensorflow.keras.models import Model, load_model
+from tensorflow.keras.models import Model
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
 from configs import cfgs
@@ -84,8 +84,8 @@ def show_train_history(train_history, train, validation):
 
 
 if __name__ == "__main__":
-    train_X_obj = DataObject(cfgs.RGB_PATH)
-    train_Y_obj = DataObject(cfgs.NDVI_PATH)
+    train_X_obj = DataObject(cfgs.TRAIN_RGB_PATH)
+    train_Y_obj = DataObject(cfgs.TRAIN_NDVI_PATH)
     train_X_obj.load_data(devided_by_255=True, expand_dims=False)
     train_Y_obj.load_data(devided_by_255=False, expand_dims=True)
     train_X_obj.crop()
@@ -122,7 +122,7 @@ if __name__ == "__main__":
         #cval=0.0,
         #preprocessing_function=None,
         #data_format=None,
-        #validation_split=0.1,
+        validation_split=cfgs.VAL_SPLIT,
         #dtype=None,
     )
 
@@ -206,7 +206,7 @@ if __name__ == "__main__":
             steps_per_epoch=None,
             batch_size=cfgs.TRAIN_BATCH_SIZE,
             shuffle=True,
-            validation_split=0.1,
+            validation_split=cfgs.VAL_SPLIT,
             callbacks=callbacks,
             verbose=2
         )
