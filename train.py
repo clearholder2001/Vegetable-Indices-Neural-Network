@@ -196,7 +196,7 @@ if __name__ == "__main__":
             shuffle=True,
             validation_data=validation_generator,
             callbacks=callbacks,
-            verbose=2
+            verbose=1
         )
     else:
         train_history = Model.fit(
@@ -208,7 +208,7 @@ if __name__ == "__main__":
             shuffle=True,
             validation_split=cfgs.VAL_SPLIT,
             callbacks=callbacks,
-            verbose=2
+            verbose=1
         )
 
     Model.save_weights('./weights/trained_model.h5')
