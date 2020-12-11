@@ -63,8 +63,8 @@ def plot_single_result(images1, images2, images3, title, idx):
 if __name__ == "__main__":
     cfgs.RESAMPLE_MULTIPLE_FACTOR = 1
 
-    test_X_obj = DataObject(cfgs.TEST_RGB_PATH)
-    test_Y_obj = DataObject(cfgs.TEST_NDVI_PATH)
+    test_X_obj = DataObject('RGB ', cfgs.TEST_RGB_PATH)
+    test_Y_obj = DataObject('NDVI', cfgs.TEST_NDVI_PATH)
     test_X_obj.load_data(devided_by_255=True, expand_dims=False)
     test_Y_obj.load_data(devided_by_255=False, expand_dims=True)
     test_X_obj.crop()

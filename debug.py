@@ -27,8 +27,8 @@ def plot_multiimages(images1, images2, title, idx, num=36):
 
 
 if __name__ == "__main__":
-    rbg_obj = DataObject(cfgs.RGB_PATH)
-    ndvi_obj = DataObject(cfgs.NDVI_PATH)
+    rbg_obj = DataObject('RGB ', cfgs.RGB_PATH)
+    ndvi_obj = DataObject('NDVI', cfgs.NDVI_PATH)
     rbg_obj.get_data_raw()
     ndvi_obj.get_data_raw()
     rbg_obj.load_data(devided_by_255=True, expand_dims=False)

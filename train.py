@@ -84,8 +84,8 @@ def show_train_history(train_history, train, validation):
 
 
 if __name__ == "__main__":
-    train_X_obj = DataObject(cfgs.TRAIN_RGB_PATH)
-    train_Y_obj = DataObject(cfgs.TRAIN_NDVI_PATH)
+    train_X_obj = DataObject('RGB ', cfgs.TRAIN_RGB_PATH)
+    train_Y_obj = DataObject('NDVI', cfgs.TRAIN_NDVI_PATH)
     train_X_obj.load_data(devided_by_255=True, expand_dims=False)
     train_Y_obj.load_data(devided_by_255=False, expand_dims=True)
     train_X_obj.crop()
@@ -96,8 +96,6 @@ if __name__ == "__main__":
     train_X = train_X_obj.get_data_resample()
     train_Y = train_Y_obj.get_data_resample()
     train_X, train_Y = shuffle(train_X, train_Y)
-    print('RGB  array shape: ', train_X.shape)
-    print('NDVI array shape: ', train_Y.shape)
 
     plot_multiimages(train_X, train_Y, 'RGB and NDVI Images', 0, 16)
 
