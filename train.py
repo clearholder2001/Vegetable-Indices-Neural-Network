@@ -99,7 +99,7 @@ if __name__ == "__main__":
 
     plot_multiimages(train_X, train_Y, 'RGB and NDVI Images', 0, 16)
 
-    Model = AE_model_2()
+    Model = AE_model_2(cfgs.MODEL_NAME)
     adam = optimizers.Adam(cfgs.LEARNING_RATE)
     callbacks = [EarlyStoppingByLossVal(monitor='loss', value=1e-3, verbose=1)]
     Model.compile(optimizer=adam, loss='mean_squared_error')
