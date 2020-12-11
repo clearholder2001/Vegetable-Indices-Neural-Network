@@ -12,8 +12,9 @@ class DataObject():
     data object for NN model
     """
 
-    def __init__(self, path_name):
+    def __init__(self, obj_name, path_name):
         self.path_name = path_name
+        self.obj_name = obj_name
         self.data_raw = None
         self.data_resample = None
         self.num = self.width = self.height = self.channel = None
@@ -32,7 +33,7 @@ class DataObject():
         #    elif self.channel is 1:
         #        img = np.squeeze(self.data_raw[i])
         #        matplotlib.image.imsave('fig/raw/ndvi/ndvi_{0}.jpg'.format(i), img, cmap=plt.get_cmap('gray'))
-        print('Data shape: ', self.data_raw.shape)
+        print('Data {0} shape: {1}'.format(self.obj_name, self.data_raw.shape))
 
     def crop(self, top_width=0, down_width=52, left_width=23, right_width=23):
         if self.data_raw is not None:
@@ -45,7 +46,7 @@ class DataObject():
             #    elif self.channel is 1:
             #        img = np.squeeze(self.data_raw[i])
             #        matplotlib.image.imsave('fig/crop/ndvi/ndvi_{0}.jpg'.format(i), img, cmap=plt.get_cmap('gray'))
-            print('Data shape after crop: ', self.data_raw.shape)
+            print('Data {0} shape after crop: {1}'.format(self.obj_name, self.data_raw.shape))
         else:
             print('No data: load data first.')
 
@@ -62,7 +63,7 @@ class DataObject():
                 elif self.channel is 1:
                     img = np.squeeze(self.data_resample[i])
                     matplotlib.image.imsave('fig/resample/ndvi/0/{0}.jpg'.format(i), img, cmap=plt.get_cmap('gray'))
-            print('Resample data shape: ', self.data_resample.shape)
+            print('Resample data {0} shape: {1}'.format(self.obj_name, self.data_resample.shape))
         else:
             print('No data: load data first.')
 
@@ -75,7 +76,7 @@ class DataObject():
         left_array = np.rint(np.random.rand(array_len) * (self.width-target_size[1])).astype(np.uint32).reshape(-1, 1)
         right_array = left_array + target_size[1]
         table = np.concatenate((index_array, top_array, down_array, left_array, right_array), axis=1)
-        print('Table is ready')
+        print('Table is generated')
         return table
 
     def get_data_raw(self):
