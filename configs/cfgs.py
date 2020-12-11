@@ -20,7 +20,6 @@ LEARNING_RATE = 0.0002
 # Data Augmentation
 # ------------------------------------------------
 ENABLE_DATA_AUG = True
-DATA_AUG_MULTIPLE_FACTOR = 16
 DATA_AUG_BATCH_SIZE = 32
 
 
