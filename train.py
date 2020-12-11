@@ -101,34 +101,6 @@ if __name__ == "__main__":
 
     plot_multiimages(train_X, train_Y, 'RGB and NDVI Images', 0, 16)
 
-    data_gen_args = dict(
-        horizontal_flip=True,
-        vertical_flip=True,
-        #rotation_range=20,
-        #width_shift_range=0.1,
-        #height_shift_range=0.1,
-        #brightness_range=(0.5, 1.5),
-        #shear_range=0.3,
-        #zoom_range=0.3,
-        #channel_shift_range=0.1,
-        #rescale=1/255.,
-        #featurewise_center=False,
-        #samplewise_center=False,
-        #featurewise_std_normalization=False,
-        #samplewise_std_normalization=False,
-        #zca_whitening=False,
-        #zca_epsilon=1e-06,
-        #fill_mode='nearest',
-        #cval=0.0,
-        #preprocessing_function=None,
-        #data_format=None,
-        validation_split=cfgs.VAL_SPLIT,
-        #dtype=None,
-    )
-
-    image_datagen = ImageDataGenerator(**data_gen_args)
-    mask_datagen = ImageDataGenerator(**data_gen_args)
-
     Model = AE_model_2()
     adam = optimizers.Adam(cfgs.LEARNING_RATE)
     callbacks = [EarlyStoppingByLossVal(monitor='loss', value=1e-3, verbose=1)]
@@ -140,6 +112,9 @@ if __name__ == "__main__":
     batch_size = cfgs.DATA_AUG_BATCH_SIZE
     steps_per_epoch = int(np.ceil((data_used_amount / batch_size) * (1 - cfgs.VAL_SPLIT)))
     validation_steps = int(np.ceil((data_used_amount / batch_size) * cfgs.VAL_SPLIT))
+
+    image_datagen = ImageDataGenerator(**cfgs.DATAGEN_ARGS)
+    mask_datagen = ImageDataGenerator(**cfgs.DATAGEN_ARGS)
 
     train_image_generator = image_datagen.flow(
         train_X,
