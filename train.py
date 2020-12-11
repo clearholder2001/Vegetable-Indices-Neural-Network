@@ -99,7 +99,7 @@ if __name__ == "__main__":
     print('RGB  array shape: ', train_X.shape)
     print('NDVI array shape: ', train_Y.shape)
 
-    plot_multiimages(train_X, train_Y, 'RGB and NDVI Images', 72, 16)
+    plot_multiimages(train_X, train_Y, 'RGB and NDVI Images', 0, 16)
 
     data_gen_args = dict(
         horizontal_flip=True,
@@ -138,8 +138,8 @@ if __name__ == "__main__":
     data_used_amount = train_X.shape[0]
     seed = int(time())
     batch_size = cfgs.DATA_AUG_BATCH_SIZE
-    data_aug_multiple_factor = cfgs.DATA_AUG_MULTIPLE_FACTOR
-    steps_per_epoch = data_used_amount * data_aug_multiple_factor / batch_size
+    steps_per_epoch = int(np.ceil((data_used_amount / batch_size) * (1 - cfgs.VAL_SPLIT)))
+    validation_steps = int(np.ceil((data_used_amount / batch_size) * cfgs.VAL_SPLIT))
 
     train_image_generator = image_datagen.flow(
         train_X,
@@ -193,8 +193,8 @@ if __name__ == "__main__":
             train_generator,
             epochs=cfgs.EPOCHS,
             steps_per_epoch=steps_per_epoch,
-            shuffle=True,
             validation_data=validation_generator,
+            validation_steps=validation_steps,
             callbacks=callbacks,
             verbose=1
         )
