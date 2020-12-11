@@ -61,7 +61,7 @@ def AE_model_1():
     return autoencoder
 
 
-def AE_model_2():
+def AE_model_2(model_name):
     Input_img = Input(shape=cfgs.INPUT_LAYER_DIM)
 
     # Encoding Architecture
@@ -178,5 +178,5 @@ def AE_model_2():
 
     decoded = Conv2D(1, (3, 3), activation='tanh', padding='same', name='block10_output')(x10)
 
-    autoencoder = Model(Input_img, decoded)
+    autoencoder = Model(inputs=Input_img, outputs=decoded, name=model_name)
     return autoencoder
