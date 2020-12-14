@@ -13,7 +13,7 @@ RESAMPLE_MULTIPLE_FACTOR = 9
 
 # Model
 # ------------------------------------------------
-MODEL_NAME = 'AE_v0.1'
+MODEL_NAME = 'AE_v0.2'
 INPUT_LAYER_DIM = (352, 480, 3)
 L2_REGULAR = 0.001
 INIT_LEARNING_RATE = 0.01
