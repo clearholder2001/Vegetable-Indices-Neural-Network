@@ -115,10 +115,10 @@ if __name__ == "__main__":
         decay_rate=0.96,
         staircase=True)
 
-    Model = AE_model_2(cfgs.MODEL_NAME)
+    Model = AE_model_3(cfgs.MODEL_NAME)
     adam = optimizers.Adam(learning_rate=lr_schedule)
     callbacks = [EarlyStoppingByLossVal(monitor='loss', value=1e-3, verbose=1)]
-    Model.compile(optimizer=adam, loss='mean_squared_error')
+    Model.compile(optimizer=adam, loss='mean_absolute_error')
     Model.summary()
 
     data_used_amount = train_X.shape[0]
