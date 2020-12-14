@@ -109,8 +109,14 @@ if __name__ == "__main__":
 
     plot_multiimages(train_X, train_Y, 'RGB and NDVI Images', 0, 16)
 
+    lr_schedule = tf.keras.optimizers.schedules.ExponentialDecay(
+        cfgs.INIT_LEARNING_RATE,
+        decay_steps=500,
+        decay_rate=0.96,
+        staircase=True)
+
     Model = AE_model_2(cfgs.MODEL_NAME)
-    adam = optimizers.Adam(cfgs.LEARNING_RATE)
+    adam = optimizers.Adam(learning_rate=lr_schedule)
     callbacks = [EarlyStoppingByLossVal(monitor='loss', value=1e-3, verbose=1)]
     Model.compile(optimizer=adam, loss='mean_squared_error')
     Model.summary()
