@@ -83,6 +83,16 @@ def show_train_history(train_history, train, validation):
     plt.close()
 
 
+'''
+def image_preprocessing(image):
+    assert image.ndim==3, 'image ndim != 3'
+    if image.shape[-1] == (3 or 4):
+        # process for color image
+        pass
+    return image
+'''
+
+
 if __name__ == "__main__":
     train_X_obj = DataObject('RGB ', cfgs.TRAIN_RGB_PATH)
     train_Y_obj = DataObject('NDVI', cfgs.TRAIN_NDVI_PATH)
@@ -113,6 +123,7 @@ if __name__ == "__main__":
 
     image_datagen = ImageDataGenerator(**cfgs.DATAGEN_ARGS)
     mask_datagen = ImageDataGenerator(**cfgs.DATAGEN_ARGS)
+    #image_datagen.preprocessing_function = image_preprocessing
 
     train_image_generator = image_datagen.flow(
         train_X,
