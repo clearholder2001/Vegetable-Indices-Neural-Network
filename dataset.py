@@ -19,50 +19,49 @@ class DataObject():
         self.data_resample = None
         self.num = self.width = self.height = self.channel = None
 
-    def load_data(self, devided_by_255=True, expand_dims=False):
+    def load_data(self, devided_by_255=True, expand_dims=False, save_image=False):
         self.data_raw = np.load(self.path_name, allow_pickle=True)
         if devided_by_255:
             self.data_raw = self.data_raw.astype('float32') / 255.
         if expand_dims:
             self.data_raw = np.expand_dims(self.data_raw, axis=3)
         self.num, self.height, self.width, self.channel = self.data_raw.shape
-        # save image
-        #for i in range(self.num):
-        #    if self.channel is 3:
-        #        matplotlib.image.imsave('fig/raw/rgb/rgb_{0}.jpg'.format(i), self.data_raw[i])
-        #    elif self.channel is 1:
-        #        img = np.squeeze(self.data_raw[i])
-        #        matplotlib.image.imsave('fig/raw/ndvi/ndvi_{0}.jpg'.format(i), img, cmap=plt.get_cmap('gray'))
+        if save_image:
+            for i in range(self.num):
+                if self.channel is 3:
+                    matplotlib.image.imsave('fig/raw/rgb/rgb_{0}.jpg'.format(i), self.data_raw[i])
+                elif self.channel is 1:
+                    img = np.squeeze(self.data_raw[i])
+                    matplotlib.image.imsave('fig/raw/ndvi/ndvi_{0}.jpg'.format(i), img, cmap=plt.get_cmap('gray'))
         print('Data {0} shape: {1}'.format(self.obj_name, self.data_raw.shape))
 
-    def crop(self, top_width=0, down_width=52, left_width=23, right_width=23):
+    def crop(self, top_width=0, down_width=52, left_width=23, right_width=23, save_image=False):
         if self.data_raw is not None:
             self.data_raw = self.data_raw[:, top_width:(self.height - down_width), left_width:(self.width - right_width), :]
             self.num, self.height, self.width, self.channel = self.data_raw.shape
-            # save image
-            #for i in range(self.num):
-            #    if self.channel is 3:
-            #        matplotlib.image.imsave('fig/crop/rgb/rgb_{0}.jpg'.format(i), self.data_raw[i])
-            #    elif self.channel is 1:
-            #        img = np.squeeze(self.data_raw[i])
-            #        matplotlib.image.imsave('fig/crop/ndvi/ndvi_{0}.jpg'.format(i), img, cmap=plt.get_cmap('gray'))
+            if save_image:
+                for i in range(self.num):
+                    if self.channel is 3:
+                        matplotlib.image.imsave('fig/crop/rgb/rgb_{0}.jpg'.format(i), self.data_raw[i])
+                    elif self.channel is 1:
+                        img = np.squeeze(self.data_raw[i])
+                        matplotlib.image.imsave('fig/crop/ndvi/ndvi_{0}.jpg'.format(i), img, cmap=plt.get_cmap('gray'))
             print('Data {0} shape after crop: {1}'.format(self.obj_name, self.data_raw.shape))
         else:
             print('No data: load data first.')
 
-    def resample(self, table, target_size=(352, 480)):
+    def resample(self, table, target_size=(352, 480), save_image=False):
         if self.data_raw is not None:
             self.data_resample = np.zeros((table.shape[0], target_size[0], target_size[1], self.channel), np.float32)
             for i in range(table.shape[0]):
                 index, top, down, left, right = table[i]
                 self.data_resample[i] = self.data_raw[index, top:down, left:right, :]
-                continue
-                # save image
-                if self.channel is 3:
-                    matplotlib.image.imsave('fig/resample/rgb/0/{0}.jpg'.format(i), self.data_resample[i])
-                elif self.channel is 1:
-                    img = np.squeeze(self.data_resample[i])
-                    matplotlib.image.imsave('fig/resample/ndvi/0/{0}.jpg'.format(i), img, cmap=plt.get_cmap('gray'))
+                if save_image:
+                    if self.channel is 3:
+                        matplotlib.image.imsave('fig/resample/rgb/0/{0}.jpg'.format(i), self.data_resample[i])
+                    elif self.channel is 1:
+                        img = np.squeeze(self.data_resample[i])
+                        matplotlib.image.imsave('fig/resample/ndvi/0/{0}.jpg'.format(i), img, cmap=plt.get_cmap('gray'))
             print('Resample data {0} shape: {1}'.format(self.obj_name, self.data_resample.shape))
         else:
             print('No data: load data first.')
