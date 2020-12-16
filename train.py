@@ -72,6 +72,7 @@ def plot_multiimages(images1, images2, title, idx, num=16):
 
 
 def show_train_history(train_history, train, validation):
+    plt.gcf().set_size_inches(8, 6)
     plt.plot(train_history.history[train])
     plt.plot(train_history.history[validation])
     plt.title = "Train History"
@@ -111,9 +112,10 @@ if __name__ == "__main__":
 
     lr_schedule = tf.keras.optimizers.schedules.ExponentialDecay(
         cfgs.INIT_LEARNING_RATE,
-        decay_steps=500,
+        decay_steps=100,
         decay_rate=0.96,
-        staircase=True)
+        staircase=False
+    )
 
     Model = AE_model_3(cfgs.MODEL_NAME)
     adam = optimizers.Adam(learning_rate=lr_schedule)
@@ -186,7 +188,7 @@ if __name__ == "__main__":
             validation_data=validation_generator,
             validation_steps=validation_steps,
             callbacks=callbacks,
-            verbose=1
+            verbose=2
         )
     else:
         train_history = Model.fit(
