@@ -2,6 +2,7 @@
 *.ipynb
 *.npy
 *.npz
+*.log
 __pycache__
 __init__.py
 .env
@@ -10,3 +11,4 @@ __init__.py
 
 fig
 weights
+log
