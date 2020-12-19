@@ -44,16 +44,16 @@ def plot_multiimages(images1, images2, title, idx, num=16):
     plt.close()
 
 
-def plot_single_result(images1, images2, images3, title, idx):
-    plt.gcf().set_size_inches(9, 4)
-    ax1 = plt.subplot(1, 3, 1)
-    ax1.imshow(images1[idx], vmin=0, vmax=1)
-    ax2 = plt.subplot(1, 3, 2)
-    ax2.imshow(images2[idx], vmin=-1, vmax=1, cmap=plt.get_cmap('jet'))
-    ax3 = plt.subplot(1, 3, 3)
-    ax3.imshow(images3[idx], vmin=-1, vmax=1, cmap=plt.get_cmap('jet'))
+def plot_multi_result(images1, images2, images3, title, idx):
+    plt.gcf().set_size_inches(12, 13)
+    for i in range(0, 4):
+        ax = plt.subplot(4, 3, i*3+1)
+        ax.imshow(images1[idx+i], vmin=0, vmax=1)
+        ax = plt.subplot(4, 3, i*3+2)
+        ax.imshow(images2[idx+i], vmin=-1, vmax=1, cmap=plt.get_cmap('jet'))
+        ax = plt.subplot(4, 3, i*3+3)
+        ax.imshow(images3[idx+i], vmin=-1, vmax=1, cmap=plt.get_cmap('jet'))
     plt.suptitle(title)
-    plt.axis('off')
     plt.tight_layout()
     # plt.show()
     plt.savefig('./fig/' + title + '.png')
@@ -81,14 +81,15 @@ if __name__ == "__main__":
 
     # cfgs.INPUT_LAYER_DIM = (test_X.shape[1], test_X.shape[2], test_X.shape[3])
 
-    Model = AE_model_2(cfgs.MODEL_NAME)
+    Model = AE_model_3(cfgs.MODEL_NAME)
     adam = optimizers.Adam(cfgs.INIT_LEARNING_RATE)
-    Model.compile(optimizer=adam, loss='mean_squared_error')
+    Model.compile(optimizer=adam, loss='mean_absolute_error')
     weight = os.path.join('.', 'weights', 'trained_model.h5')
     Model.load_weights(weight)
 
-    predict = Model.predict(test_X)
-    lossfunc = Model.evaluate(test_X, test_Y)
+    batch_size = cfgs.TRAIN_BATCH_SIZE
+    predict = Model.predict(test_X, batch_size=batch_size, verbose=1)
+    lossfunc = Model.evaluate(test_X, test_Y, batch_size=batch_size, verbose=1)
     assert predict.shape == test_Y.shape, 'Prediction維度和NDVI不同'
     
     rmse = math.sqrt(np.mean(np.square(test_Y - predict)))
@@ -100,5 +101,5 @@ if __name__ == "__main__":
     print("Final Loss: ", lossfunc)
 
     #np.save('predict', predict, allow_pickle=True)
-    plot_single_result(test_X, test_Y, predict, 'Test - Result', 140)
+    plot_multi_result(test_X, test_Y, predict, 'Test - Result', 140)
 
