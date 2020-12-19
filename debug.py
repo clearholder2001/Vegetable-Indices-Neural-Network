@@ -27,8 +27,8 @@ def plot_multiimages(images1, images2, title, idx, num=36):
 
 
 if __name__ == "__main__":
-    rbg_obj = DataObject('RGB ', cfgs.RGB_PATH)
-    ndvi_obj = DataObject('NDVI', cfgs.NDVI_PATH)
+    rbg_obj = DataObject('RGB ', cfgs.TRAIN_RGB_PATH)
+    ndvi_obj = DataObject('NDVI', cfgs.TRAIN_NDVI_PATH)
     rbg_obj.get_data_raw()
     ndvi_obj.get_data_raw()
     rbg_obj.load_data(devided_by_255=True, expand_dims=False)
@@ -40,4 +40,4 @@ if __name__ == "__main__":
     ndvi_obj.resample(table)
     rgb_array = rbg_obj.get_data_resample()
     ndvi_array = ndvi_obj.get_data_resample()
-    plot_multiimages(rgb_array, ndvi_array, 'dataset_test', 0*9)
+    plot_multiimages(rgb_array, ndvi_array, 'dataset_test', 0)
