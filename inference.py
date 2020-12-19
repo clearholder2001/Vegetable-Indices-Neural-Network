@@ -22,6 +22,9 @@ from configs import cfgs
 from dataset import *
 from model import *
 
+gpus = tf.config.list_physical_devices('GPU')
+tf.config.experimental.set_memory_growth(gpus[0], True)
+
 
 def plot_multiimages(images1, images2, title, idx, num=16):
     plt.gcf().set_size_inches(8, 6)
@@ -88,8 +91,8 @@ if __name__ == "__main__":
     Model.load_weights(weight)
 
     batch_size = cfgs.TRAIN_BATCH_SIZE
-    predict = Model.predict(test_X, batch_size=batch_size, verbose=1)
-    lossfunc = Model.evaluate(test_X, test_Y, batch_size=batch_size, verbose=1)
+    predict = Model.predict(test_X, batch_size=batch_size, verbose=2)
+    lossfunc = Model.evaluate(test_X, test_Y, batch_size=batch_size, verbose=2)
     assert predict.shape == test_Y.shape, 'Prediction維度和NDVI不同'
     
     rmse = math.sqrt(np.mean(np.square(test_Y - predict)))
