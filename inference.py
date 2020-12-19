@@ -96,11 +96,16 @@ if __name__ == "__main__":
     assert predict.shape == test_Y.shape, 'Prediction維度和NDVI不同'
     
     rmse = math.sqrt(np.mean(np.square(test_Y - predict)))
-    # r2 = r2_score(test_Y, predict)
-    #correlation = state.pearsonr(test_Y, predict)
+    test_Y = np.reshape(test_Y, (num, -1))
+    predict = np.reshape(predict, (num, -1))
+    r2 = np.zeros(num)
+    correlation = np.zeros((num, 2))
+    for i in range(num):
+        r2[i] = r2_score(test_Y[i], predict[i])
+        correlation[i] = stats.pearsonr(test_Y[i], predict[i])
     print('Final RMSE: ', rmse)
-    # print('Final R Square: ', r2)
-    #print('Final Correlation: ', correlation[0])
+    print('Final R Square: ', np.mean(r2))
+    print('Final Correlation: ', np.mean(correlation[:, 0]))
     print("Final Loss: ", lossfunc)
 
     #np.save('predict', predict, allow_pickle=True)
