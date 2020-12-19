@@ -1,3 +1,5 @@
 $PSDefaultParameterValues['Out-File:Encoding'] = 'utf8'
-python train.py > .\log\train_log.txt
-python inference.py > .\log\inference_log.txt
+$time = Get-Date -UFormat "%Y%m%d_%H%M%S"
+python train.py > $(".\log\train_" + $time + ".log")
+python inference.py > (".\log\inference_" + $time + ".log")
+Rename-Item -Path ".\weights\trained_model.h5" -NewName ("trained_model_" + $time + ".h5")
