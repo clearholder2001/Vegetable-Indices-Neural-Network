@@ -9,10 +9,11 @@ import os
 '''
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
+import matplotlib.image
 import matplotlib.pyplot as plt
 import numpy as np
-import scipy.stats as state
 import tensorflow as tf
+from scipy import stats
 from sklearn.metrics import r2_score
 from tensorflow import keras
 from tensorflow.keras import optimizers
@@ -63,6 +64,15 @@ def plot_multi_result(images1, images2, images3, title, idx):
     plt.close()
 
 
+def save_result_image(test_X, test_Y, predict):
+    assert test_X.shape[0] == test_Y.shape[0] == predict.shape[0], 'test_X, test_Y, preditc長度不一致'
+    path = './fig/inference/'
+    for i in range(test_X.shape[0]):
+        matplotlib.image.imsave(path + 'rgb/rgb_{0}.jpg'.format(i), test_X[i])
+        matplotlib.image.imsave(path + 'ndvi/ndvi_{0}.jpg'.format(i), np.squeeze(test_Y[i]), cmap=plt.get_cmap('jet'))
+        matplotlib.image.imsave(path + 'predict/predict_{0}.jpg'.format(i), np.squeeze(predict[i]), cmap=plt.get_cmap('jet'))
+
+
 if __name__ == "__main__":
     cfgs.RESAMPLE_MULTIPLE_FACTOR = 1
 
@@ -94,7 +104,12 @@ if __name__ == "__main__":
     predict = Model.predict(test_X, batch_size=batch_size, verbose=2)
     lossfunc = Model.evaluate(test_X, test_Y, batch_size=batch_size, verbose=2)
     assert predict.shape == test_Y.shape, 'Prediction維度和NDVI不同'
-    
+
+    #np.save('predict', predict, allow_pickle=True)
+    plot_multi_result(test_X, test_Y, predict, 'Test - Result', 0)
+    save_result_image(test_X, test_Y, predict)
+
+    num = test_Y.shape[0]
     rmse = math.sqrt(np.mean(np.square(test_Y - predict)))
     test_Y = np.reshape(test_Y, (num, -1))
     predict = np.reshape(predict, (num, -1))
@@ -107,7 +122,3 @@ if __name__ == "__main__":
     print('Final R Square: ', np.mean(r2))
     print('Final Correlation: ', np.mean(correlation[:, 0]))
     print("Final Loss: ", lossfunc)
-
-    #np.save('predict', predict, allow_pickle=True)
-    plot_multi_result(test_X, test_Y, predict, 'Test - Result', 140)
-
