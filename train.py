@@ -111,10 +111,10 @@ if __name__ == "__main__":
     plot_multiimages(train_X, train_Y, 'RGB and NDVI Images', 0, 16)
 
     lr_schedule = tf.keras.optimizers.schedules.ExponentialDecay(
-        cfgs.INIT_LEARNING_RATE,
-        decay_steps=100,
-        decay_rate=0.96,
-        staircase=False
+        initial_learning_rate=cfgs.INIT_LEARNING_RATE,
+        decay_steps=cfgs.DECAY_STEPS,
+        decay_rate=cfgs.DECAY_RATE,
+        staircase=cfgs.STAIRCASE
     )
 
     Model = AE_model_3(cfgs.MODEL_NAME)
