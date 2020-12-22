@@ -75,6 +75,7 @@ def save_result_image(test_X, test_Y, predict):
 
 if __name__ == "__main__":
     cfgs.RESAMPLE_MULTIPLE_FACTOR = 1
+    weight_name = 'trained_model.h5'
 
     test_X_obj = DataObject('RGB ', cfgs.TEST_RGB_PATH)
     test_Y_obj = DataObject('NDVI', cfgs.TEST_NDVI_PATH)
@@ -97,7 +98,7 @@ if __name__ == "__main__":
     Model = AE_model_3(cfgs.MODEL_NAME)
     adam = optimizers.Adam(cfgs.INIT_LEARNING_RATE)
     Model.compile(optimizer=adam, loss='mean_absolute_error')
-    weight = os.path.join('.', 'weights', 'trained_model.h5')
+    weight = os.path.join('.', 'weights', weight_name)
     Model.load_weights(weight)
 
     batch_size = cfgs.TRAIN_BATCH_SIZE
