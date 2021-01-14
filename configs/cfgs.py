@@ -15,8 +15,8 @@ RESAMPLE_MULTIPLE_FACTOR = 9
 # ------------------------------------------------
 MODEL_NAME = 'AE_v0.2'
 INPUT_LAYER_DIM = (352, 480, 3)
-RANDOMCONTRAST_FACTOR = 0.0
-L2_REGULAR = 0.0
+RANDOMCONTRAST_FACTOR = 0.2
+L2_REGULAR = 0.001
 
 
 # Data Augmentation
