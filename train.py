@@ -16,7 +16,7 @@ import tensorflow as tf
 from sklearn.utils import shuffle
 from tensorflow import keras
 from tensorflow.keras import optimizers
-from tensorflow.keras.callbacks import Callback, EarlyStopping
+from tensorflow.keras.callbacks import Callback, TensorBoard
 from tensorflow.keras.models import Model
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
@@ -97,9 +97,21 @@ if __name__ == "__main__":
 
     Model = AE_model_3(cfgs.MODEL_NAME)
     adam = optimizers.Adam(learning_rate=lr_schedule)
-    callbacks = [EarlyStoppingByLossVal(monitor='loss', value=1e-3, verbose=1)]
     Model.compile(optimizer=adam, loss='mean_absolute_error')
     Model.summary()
+
+    early_stop_callback = EarlyStoppingByLossVal(monitor='loss', value=1e-3, verbose=1)
+    tensorboard_callback = TensorBoard(
+        log_dir='tb_log',
+        histogram_freq=1,
+        write_graph=True,
+        write_images=True,
+        update_freq='epoch',
+        profile_batch=2,
+        embeddings_freq=1,
+        embeddings_metadata=None
+    )
+    callbacks = [early_stop_callback, tensorboard_callback]
 
     data_used_amount = train_X.shape[0]
     seed = int(time())

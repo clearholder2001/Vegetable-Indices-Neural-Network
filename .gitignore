@@ -12,3 +12,4 @@ __init__.py
 fig
 weights
 log
+tb_log
