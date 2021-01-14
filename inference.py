@@ -27,53 +27,44 @@ gpus = tf.config.list_physical_devices('GPU')
 tf.config.experimental.set_memory_growth(gpus[0], True)
 
 
-def plot_multiimages(images1, images2, title, idx, num=16):
-    plt.gcf().set_size_inches(8, 6)
-    if num > 16:
-        num = 16
-    for i in range(0, int(num/2)):
-        ax = plt.subplot(4, 4, 1+i)
-        ax.imshow(images1[idx+i], vmin=0, vmax=1)
-        ax.set_xticks([])
-        ax.set_yticks([])
-    for i in range(0, int(num/2)):
-        ax = plt.subplot(4, 4, int(num/2)+1+i)
-        ax.imshow(images2[idx+i], vmin=-1, vmax=1, cmap=plt.get_cmap('jet'))
-        ax.set_xticks([])
-        ax.set_yticks([])
-    plt.suptitle(title)
-    plt.tight_layout()
-    # plt.show()
-    plt.savefig('./fig/' + title + '.png')
-    plt.close()
+def plot_multiimages(images1, images2, title, idx):
+    fig, axs = plt.subplots(4, 4)
+    fig.set_size_inches(8, 6)
+    plt.setp(axs, xticks=[], yticks=[])
+    for i in range(4):
+        axs[i, 0].imshow(images1[idx+i], vmin=0, vmax=1)
+        axs[i, 1].imshow(images2[idx+i], vmin=-1, vmax=1, cmap=plt.get_cmap('jet'))
+        axs[i, 2].imshow(images1[idx+4+i], vmin=0, vmax=1)
+        axs[i, 3].imshow(images2[idx+4+i], vmin=-1, vmax=1, cmap=plt.get_cmap('jet'))
+    fig.suptitle(title, fontsize=24)
+    fig.tight_layout()
+    fig.savefig('./fig/' + title + '.png')
+    plt.close(fig)
 
 
 def plot_multi_result(images1, images2, images3, title, idx):
-    plt.gcf().set_size_inches(12, 13)
-    for i in range(0, 4):
-        ax = plt.subplot(4, 3, i*3+1)
-        ax.imshow(images1[idx+i], vmin=0, vmax=1)
-        ax = plt.subplot(4, 3, i*3+2)
-        ax.imshow(images2[idx+i], vmin=-1, vmax=1, cmap=plt.get_cmap('jet'))
-        ax = plt.subplot(4, 3, i*3+3)
-        ax.imshow(images3[idx+i], vmin=-1, vmax=1, cmap=plt.get_cmap('jet'))
-    plt.suptitle(title)
-    plt.tight_layout()
-    # plt.show()
-    plt.savefig('./fig/' + title + '.png')
-    plt.close()
+    fig, axs = plt.subplots(4, 3)
+    fig.set_size_inches(12, 13)
+    plt.setp(axs, xticks=[], yticks=[])
+    for i in range(4):
+        axs[i, 0].imshow(images1[idx+i], vmin=0, vmax=1)
+        axs[i, 1].imshow(images2[idx+i], vmin=-1, vmax=1, cmap=plt.get_cmap('jet'))
+        axs[i, 2].imshow(images3[idx+i], vmin=-1, vmax=1, cmap=plt.get_cmap('jet'))
+    fig.suptitle(title, fontsize=24)
+    fig.tight_layout()
+    fig.savefig('./fig/' + title + '.png')
+    plt.close(fig)
 
 
 def save_result_image(test_X, test_Y, predict, output_compare=True):
-    assert test_X.shape[0] == test_Y.shape[0] == predict.shape[0], 'test_X, test_Y, preditc長度不一致'
+    assert test_X.shape[0] == test_Y.shape[0] == predict.shape[0], 'Length inconsistent: test_X, test_Y, preditc'
     path = './fig/inference/'
+    print("Saving result...", end='')
 
     if output_compare:
         fig, axs = plt.subplots(1, 3)
         fig.set_size_inches(12, 4)
-        for ax in axs:
-            ax.set_xticks([])
-            ax.set_yticks([])
+        plt.setp(axs, xticks=[], yticks=[])
         axs[0].set_title("RGB")
         img1 = axs[0].imshow(test_X[0], vmin=0, vmax=1)
         axs[1].set_title("NDVI")
@@ -93,6 +84,7 @@ def save_result_image(test_X, test_Y, predict, output_compare=True):
             fig.tight_layout()
             fig.savefig(path + 'compare/compare_{0}.jpg'.format(i))
     plt.close()
+    print("Done")
 
 
 if __name__ == "__main__":
@@ -113,7 +105,7 @@ if __name__ == "__main__":
     print('RGB  array shape: ', test_X.shape)
     print('NDVI array shape: ', test_Y.shape)
 
-    plot_multiimages(test_X, test_Y, 'Test - RGB and NDVI Images', 140, 16)
+    plot_multiimages(test_X, test_Y, 'Inference - RGB, NDVI', 140)
 
     # cfgs.INPUT_LAYER_DIM = (test_X.shape[1], test_X.shape[2], test_X.shape[3])
 
@@ -126,10 +118,10 @@ if __name__ == "__main__":
     batch_size = cfgs.TRAIN_BATCH_SIZE
     predict = Model.predict(test_X, batch_size=batch_size, verbose=2)
     lossfunc = Model.evaluate(test_X, test_Y, batch_size=batch_size, verbose=2)
-    assert predict.shape == test_Y.shape, 'Prediction維度和NDVI不同'
+    assert predict.shape == test_Y.shape, 'Dimension inconsistent: test_Y, predict'
 
     #np.save('predict', predict, allow_pickle=True)
-    plot_multi_result(test_X, test_Y, predict, 'Test - Result', 0)
+    plot_multi_result(test_X, test_Y, predict, 'Inference - RGB, NDVI, Predict', 0)
     save_result_image(test_X, test_Y, predict, output_compare=True)
 
     num = test_Y.shape[0]
