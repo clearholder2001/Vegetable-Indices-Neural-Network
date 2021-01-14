@@ -27,35 +27,6 @@ gpus = tf.config.list_physical_devices('GPU')
 tf.config.experimental.set_memory_growth(gpus[0], True)
 
 
-def plot_multiimages(images1, images2, title, idx):
-    fig, axs = plt.subplots(4, 4)
-    fig.set_size_inches(8, 6)
-    plt.setp(axs, xticks=[], yticks=[])
-    for i in range(4):
-        axs[i, 0].imshow(images1[idx+i], vmin=0, vmax=1)
-        axs[i, 1].imshow(images2[idx+i], vmin=-1, vmax=1, cmap=plt.get_cmap('jet'))
-        axs[i, 2].imshow(images1[idx+4+i], vmin=0, vmax=1)
-        axs[i, 3].imshow(images2[idx+4+i], vmin=-1, vmax=1, cmap=plt.get_cmap('jet'))
-    fig.suptitle(title, fontsize=24)
-    fig.tight_layout()
-    fig.savefig('./fig/' + title + '.png')
-    plt.close(fig)
-
-
-def plot_multi_result(images1, images2, images3, title, idx):
-    fig, axs = plt.subplots(4, 3)
-    fig.set_size_inches(12, 13)
-    plt.setp(axs, xticks=[], yticks=[])
-    for i in range(4):
-        axs[i, 0].imshow(images1[idx+i], vmin=0, vmax=1)
-        axs[i, 1].imshow(images2[idx+i], vmin=-1, vmax=1, cmap=plt.get_cmap('jet'))
-        axs[i, 2].imshow(images3[idx+i], vmin=-1, vmax=1, cmap=plt.get_cmap('jet'))
-    fig.suptitle(title, fontsize=24)
-    fig.tight_layout()
-    fig.savefig('./fig/' + title + '.png')
-    plt.close(fig)
-
-
 def save_result_image(test_X, test_Y, predict, output_compare=True):
     assert test_X.shape[0] == test_Y.shape[0] == predict.shape[0], 'Length inconsistent: test_X, test_Y, preditc'
     path = './fig/inference/'
@@ -105,7 +76,7 @@ if __name__ == "__main__":
     print('RGB  array shape: ', test_X.shape)
     print('NDVI array shape: ', test_Y.shape)
 
-    plot_multiimages(test_X, test_Y, 'Inference - RGB, NDVI', 140)
+    plot_two_images_array(test_X, test_Y, 'Inference - RGB, NDVI', 140)
 
     # cfgs.INPUT_LAYER_DIM = (test_X.shape[1], test_X.shape[2], test_X.shape[3])
 
@@ -121,7 +92,7 @@ if __name__ == "__main__":
     assert predict.shape == test_Y.shape, 'Dimension inconsistent: test_Y, predict'
 
     #np.save('predict', predict, allow_pickle=True)
-    plot_multi_result(test_X, test_Y, predict, 'Inference - RGB, NDVI, Predict', 0)
+    plot_three_images_array(test_X, test_Y, predict, 'Inference - RGB, NDVI, Predict', 0)
     save_result_image(test_X, test_Y, predict, output_compare=True)
 
     num = test_Y.shape[0]
