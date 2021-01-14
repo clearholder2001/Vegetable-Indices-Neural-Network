@@ -12,8 +12,8 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
 import matplotlib.pyplot as plt
 import numpy as np
-from sklearn.utils import shuffle
 import tensorflow as tf
+from sklearn.utils import shuffle
 from tensorflow import keras
 from tensorflow.keras import optimizers
 from tensorflow.keras.callbacks import Callback, EarlyStopping
@@ -50,38 +50,16 @@ class EarlyStoppingByLossVal(Callback):
         self.model.save_weights("./weights/VGG_%d.h5" % epoch)
 
 
-def plot_multiimages(images1, images2, title, idx, num=16):
-    plt.gcf().set_size_inches(8, 6)
-    if num > 16:
-        num = 16
-    for i in range(0, int(num/2)):
-        ax = plt.subplot(4, 4, 1+i)
-        ax.imshow(images1[idx+i], vmin=0, vmax=1)
-        ax.set_xticks([])
-        ax.set_yticks([])
-    for i in range(0, int(num/2)):
-        ax = plt.subplot(4, 4, int(num/2)+1+i)
-        ax.imshow(images2[idx+i], vmin=-1, vmax=1, cmap=plt.get_cmap('jet'))
-        ax.set_xticks([])
-        ax.set_yticks([])
-    plt.suptitle(title)
-    plt.tight_layout()
-    # plt.show()
-    plt.savefig('./fig/' + title + '.png')
-    plt.close()
-
-
 def show_train_history(train_history, train, validation):
-    plt.gcf().set_size_inches(8, 6)
+    fig = plt.figure(figsize=(8, 6))
     plt.plot(train_history.history[train])
     plt.plot(train_history.history[validation])
     plt.title = "Train History"
     plt.ylabel(train)
     plt.xlabel('Epoch')
     plt.legend(['train', 'validation'], loc='upper left')
-    # plt.show()
     plt.savefig('./fig/Train History.png')
-    plt.close()
+    plt.close(fig)
 
 
 '''
@@ -108,7 +86,7 @@ if __name__ == "__main__":
     train_Y = train_Y_obj.get_data_resample()
     train_X, train_Y = shuffle(train_X, train_Y)
 
-    plot_multiimages(train_X, train_Y, 'RGB and NDVI Images', 0, 16)
+    plot_two_images_array(train_X, train_Y, 'Train - RGB, NDVI', 0)
 
     lr_schedule = tf.keras.optimizers.schedules.ExponentialDecay(
         initial_learning_rate=cfgs.INIT_LEARNING_RATE,
