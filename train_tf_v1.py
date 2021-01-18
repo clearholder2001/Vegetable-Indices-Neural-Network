@@ -192,10 +192,10 @@ if __name__ == "__main__":
     validation_image_generator_ds = tf.data.Dataset.from_generator(lambda: validation_image_generator, output_types=tf.float32, output_shapes=[batch_size].extend(cfgs.INPUT_LAYER_DIM))
     validation_mask_generator_ds = tf.data.Dataset.from_generator(lambda: validation_mask_generator, output_types=tf.float32, output_shapes=[batch_size].extend(cfgs.INPUT_LAYER_DIM))
 
-    train_image_generator_ds = train_image_generator_ds.cache().prefetch(buffer_size=AUTOTUNE)
-    train_mask_generator_ds = train_mask_generator_ds.cache().prefetch(buffer_size=AUTOTUNE)
-    validation_image_generator_ds = validation_image_generator_ds.cache().prefetch(buffer_size=AUTOTUNE)
-    validation_mask_generator_ds = validation_mask_generator_ds.cache().prefetch(buffer_size=AUTOTUNE)
+    train_image_generator_ds = train_image_generator_ds.prefetch(buffer_size=AUTOTUNE)
+    train_mask_generator_ds = train_mask_generator_ds.prefetch(buffer_size=AUTOTUNE)
+    validation_image_generator_ds = validation_image_generator_ds.prefetch(buffer_size=AUTOTUNE)
+    validation_mask_generator_ds = validation_mask_generator_ds.prefetch(buffer_size=AUTOTUNE)
 
     train_generator = tf.data.Dataset.zip((train_image_generator_ds, train_mask_generator_ds))
     validation_generator = tf.data.Dataset.zip((validation_image_generator_ds, validation_mask_generator_ds))
@@ -226,4 +226,4 @@ if __name__ == "__main__":
     Model.save_weights('./weights/trained_model.h5')
     show_train_history(train_history, 'loss', 'val_loss')
 
-    print("Training time of each epoch: " + timing_callback.times)
+    print("Average epoch time: {0}s".format(str(np.mean(timing_callback.times))))
