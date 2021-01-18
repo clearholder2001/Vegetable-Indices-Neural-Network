@@ -1,3 +1,9 @@
+'''
+tf.data version #1
+-----------------------------------------------------
+ImageDataGenerator + tf.data.Dataset.from_generator
+'''
+
 import os
 import warnings
 from time import time
@@ -27,6 +33,8 @@ from model import *
 gpus = tf.config.list_physical_devices('GPU')
 tf.config.experimental.set_memory_growth(gpus[0], True)
 
+AUTOTUNE = tf.data.AUTOTUNE
+
 
 # 設定迭代停止器
 # 當loss function 低於某個值時，迭代自動停止
@@ -55,10 +63,10 @@ class TimingCallback(Callback):
         self.times = []
 
     def on_epoch_begin(self, batch, logs={}):
-        self.epoch_time_start = time.time()
+        self.epoch_time_start = time()
 
     def on_epoch_end(self, batch, logs={}):
-        self.times.append(time.time() - self.epoch_time_start)
+        self.times.append(time() - self.epoch_time_start)
 
 
 def show_train_history(train_history, train, validation):
@@ -179,13 +187,18 @@ if __name__ == "__main__":
         #save_format='jpg'
     )
 
-    train_image_generator_tfdataset = tf.data.Dataset.from_generator(lambda: train_image_generator, output_types=tf.float32, output_shapes=[batch_size].extend(cfgs.INPUT_LAYER_DIM))
-    train_mask_generator_tfdataset = tf.data.Dataset.from_generator(lambda: train_mask_generator, output_types=tf.float32, output_shapes=[batch_size].extend(cfgs.INPUT_LAYER_DIM))
-    validation_image_generator_tfdataset = tf.data.Dataset.from_generator(lambda: validation_image_generator, output_types=tf.float32, output_shapes=[batch_size].extend(cfgs.INPUT_LAYER_DIM))
-    validation_mask_generator_tfdataset = tf.data.Dataset.from_generator(lambda: validation_mask_generator, output_types=tf.float32, output_shapes=[batch_size].extend(cfgs.INPUT_LAYER_DIM))
+    train_image_generator_ds = tf.data.Dataset.from_generator(lambda: train_image_generator, output_types=tf.float32, output_shapes=[batch_size].extend(cfgs.INPUT_LAYER_DIM))
+    train_mask_generator_ds = tf.data.Dataset.from_generator(lambda: train_mask_generator, output_types=tf.float32, output_shapes=[batch_size].extend(cfgs.INPUT_LAYER_DIM))
+    validation_image_generator_ds = tf.data.Dataset.from_generator(lambda: validation_image_generator, output_types=tf.float32, output_shapes=[batch_size].extend(cfgs.INPUT_LAYER_DIM))
+    validation_mask_generator_ds = tf.data.Dataset.from_generator(lambda: validation_mask_generator, output_types=tf.float32, output_shapes=[batch_size].extend(cfgs.INPUT_LAYER_DIM))
 
-    train_generator = zip(train_image_generator_tfdataset, train_mask_generator_tfdataset)
-    validation_generator = zip(validation_image_generator_tfdataset, validation_mask_generator_tfdataset)
+    train_image_generator_ds = train_image_generator_ds.cache().prefetch(buffer_size=AUTOTUNE)
+    train_mask_generator_ds = train_mask_generator_ds.cache().prefetch(buffer_size=AUTOTUNE)
+    validation_image_generator_ds = validation_image_generator_ds.cache().prefetch(buffer_size=AUTOTUNE)
+    validation_mask_generator_ds = validation_mask_generator_ds.cache().prefetch(buffer_size=AUTOTUNE)
+
+    train_generator = tf.data.Dataset.zip((train_image_generator_ds, train_mask_generator_ds))
+    validation_generator = tf.data.Dataset.zip((validation_image_generator_ds, validation_mask_generator_ds))
 
     if cfgs.ENABLE_DATA_AUG:
         train_history = Model.fit(
