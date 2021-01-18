@@ -50,6 +50,17 @@ class EarlyStoppingByLossVal(Callback):
         self.model.save_weights("./weights/VGG_%d.h5" % epoch)
 
 
+class TimingCallback(Callback):
+    def on_train_begin(self, logs={}):
+        self.times = []
+
+    def on_epoch_begin(self, batch, logs={}):
+        self.epoch_time_start = time.time()
+
+    def on_epoch_end(self, batch, logs={}):
+        self.times.append(time.time() - self.epoch_time_start)
+
+
 def show_train_history(train_history, train, validation):
     fig = plt.figure(figsize=(8, 6))
     plt.plot(train_history.history[train])
@@ -101,6 +112,7 @@ if __name__ == "__main__":
     Model.summary()
 
     early_stop_callback = EarlyStoppingByLossVal(monitor='loss', value=1e-3, verbose=1)
+    timing_callback = TimingCallback()
     tensorboard_callback = TensorBoard(
         log_dir='tb_log',
         histogram_freq=1,
@@ -111,7 +123,7 @@ if __name__ == "__main__":
         embeddings_freq=1,
         embeddings_metadata=None
     )
-    callbacks = [early_stop_callback, tensorboard_callback]
+    callbacks = [early_stop_callback, timing_callback, tensorboard_callback]
 
     data_used_amount = train_X.shape[0]
     seed = int(time())
@@ -200,3 +212,5 @@ if __name__ == "__main__":
 
     Model.save_weights('./weights/trained_model.h5')
     show_train_history(train_history, 'loss', 'val_loss')
+
+    print("Training time of each epoch: " + timing_callback.times)
