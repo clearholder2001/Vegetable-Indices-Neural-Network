@@ -83,7 +83,7 @@ def show_train_history(train_history, train, validation):
 
 
 def prepare(ds, batch_size, data_augmentation_image, data_augmentation_mask):
-    ds = ds.repeat().batch(batch_size)
+    ds = ds.batch(batch_size)
     ds = ds.map(lambda x, y: (data_augmentation_image(x, training=True), data_augmentation_mask(y, training=True)), num_parallel_calls=AUTOTUNE)
     return ds.prefetch(buffer_size=AUTOTUNE)
 
@@ -191,4 +191,4 @@ if __name__ == "__main__":
     Model.save_weights('./weights/trained_model.h5')
     show_train_history(train_history, 'loss', 'val_loss')
 
-    print("Training time of each epoch: " + timing_callback.times)
+    print("Average epoch time: {0}s".format(str(np.mean(timing_callback.times))))
