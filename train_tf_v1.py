@@ -114,7 +114,7 @@ if __name__ == "__main__":
         staircase=cfgs.STAIRCASE
     )
 
-    Model = AE_model_3(cfgs.MODEL_NAME)
+    Model = AE_model_4(cfgs.MODEL_NAME)
     adam = optimizers.Adam(learning_rate=lr_schedule)
     Model.compile(optimizer=adam, loss='mean_absolute_error')
     Model.summary()
