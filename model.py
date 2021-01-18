@@ -187,14 +187,10 @@ def AE_model_2(model_name):
 
 def AE_model_3(model_name):
     Input_img = Input(shape=cfgs.INPUT_LAYER_DIM)
-    seed = int(time())
-
-    # PreProcessing
-    x_preprocessing = RandomContrast(cfgs.RANDOMCONTRAST_FACTOR, seed=seed, name='preprocessing_rc')(Input_img)
 
     # Encoding Architecture
     # Block 1
-    x1 = Conv2D(16, (3, 3), padding='same', kernel_regularizer=regularizers.l2(cfgs.L2_REGULAR), kernel_initializer='he_normal', name='block1_conv1')(x_preprocessing)
+    x1 = Conv2D(16, (3, 3), padding='same', kernel_regularizer=regularizers.l2(cfgs.L2_REGULAR), kernel_initializer='he_normal', name='block1_conv1')(Input_img)
     x1 = BatchNormalization(name='block1_bn1')(x1)
     x1 = Activation('relu', name='block1_ac1')(x1)
     x1 = Conv2D(16, (3, 3), padding='same', kernel_regularizer=regularizers.l2(cfgs.L2_REGULAR), kernel_initializer='he_normal', name='block1_conv2')(x1)
