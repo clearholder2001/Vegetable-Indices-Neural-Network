@@ -322,24 +322,24 @@ def AE_model_4(model_name):
     x1 = BatchNormalization(name='block1_bn2')(x1)
     x1 = Activation(activation, name='block1_ac2')(x1)
     x1 = Conv2D(16, (3, 3), padding='same', kernel_regularizer=regularizers.l2(cfgs.L2_REGULAR), kernel_initializer='he_normal', name='block1_conv3')(x1)
-    x1 = BatchNormalization(name='block1_bn2')(x1)
-    x1 = Activation(activation, name='block1_ac2')(x1)
-    x1 = MaxPooling2D((2, 2), strides=(2, 2), padding='same', name='block1_pool')(x1)
+    x1 = BatchNormalization(name='block1_bn3')(x1)
+    x1 = Activation(activation, name='block1_ac3')(x1)
+    x1d = MaxPooling2D((2, 2), strides=(2, 2), padding='same', name='block1_pool')(x1)
 
     # Block 2
-    x2 = Conv2D(32, (3, 3), padding='same', kernel_regularizer=regularizers.l2(cfgs.L2_REGULAR), kernel_initializer='he_normal', name='block2_conv1')(x1)
+    x2 = Conv2D(32, (3, 3), padding='same', kernel_regularizer=regularizers.l2(cfgs.L2_REGULAR), kernel_initializer='he_normal', name='block2_conv1')(x1d)
     x2 = BatchNormalization(name='block2_bn1')(x2)
     x2 = Activation(activation, name='block2_ac1')(x2)
     x2 = Conv2D(32, (3, 3), padding='same', kernel_regularizer=regularizers.l2(cfgs.L2_REGULAR), kernel_initializer='he_normal', name='block2_conv2')(x2)
     x2 = BatchNormalization(name='block2_bn2')(x2)
     x2 = Activation(activation, name='block2_ac2')(x2)
     x2 = Conv2D(32, (3, 3), padding='same', kernel_regularizer=regularizers.l2(cfgs.L2_REGULAR), kernel_initializer='he_normal', name='block2_conv3')(x2)
-    x2 = BatchNormalization(name='block2_bn2')(x2)
-    x2 = Activation(activation, name='block2_ac2')(x2)
-    x2 = MaxPooling2D((2, 2), strides=(2, 2), padding='same', name='block2_pool')(x2)
+    x2 = BatchNormalization(name='block2_bn3')(x2)
+    x2 = Activation(activation, name='block2_ac3')(x2)
+    x2d = MaxPooling2D((2, 2), strides=(2, 2), padding='same', name='block2_pool')(x2)
 
     # Block 3
-    x3 = Conv2D(64, (3, 3), padding='same', kernel_regularizer=regularizers.l2(cfgs.L2_REGULAR), kernel_initializer='he_normal', name='block3_conv1')(x2)
+    x3 = Conv2D(64, (3, 3), padding='same', kernel_regularizer=regularizers.l2(cfgs.L2_REGULAR), kernel_initializer='he_normal', name='block3_conv1')(x2d)
     x3 = BatchNormalization(name='block3_bn1')(x3)
     x3 = Activation(activation, name='block3_ac1')(x3)
     x3 = Conv2D(64, (3, 3), padding='same', kernel_regularizer=regularizers.l2(cfgs.L2_REGULAR), kernel_initializer='he_normal', name='block3_conv2')(x3)
@@ -348,10 +348,10 @@ def AE_model_4(model_name):
     x3 = Conv2D(64, (3, 3), padding='same', kernel_regularizer=regularizers.l2(cfgs.L2_REGULAR), kernel_initializer='he_normal', name='block3_conv3')(x3)
     x3 = BatchNormalization(name='block3_bn3')(x3)
     x3 = Activation(activation, name='block3_ac3')(x3)
-    x3 = MaxPooling2D((2, 2), strides=(2, 2), padding='same', name='block3_pool')(x3)
+    x3d = MaxPooling2D((2, 2), strides=(2, 2), padding='same', name='block3_pool')(x3)
 
     # Block 4
-    x4 = Conv2D(128, (3, 3), padding='same', kernel_regularizer=regularizers.l2(cfgs.L2_REGULAR), kernel_initializer='he_normal', name='block4_conv1')(x3)
+    x4 = Conv2D(128, (3, 3), padding='same', kernel_regularizer=regularizers.l2(cfgs.L2_REGULAR), kernel_initializer='he_normal', name='block4_conv1')(x3d)
     x4 = BatchNormalization(name='block4_bn1')(x4)
     x4 = Activation(activation, name='block4_ac1')(x4)
     x4 = Conv2D(128, (3, 3), padding='same', kernel_regularizer=regularizers.l2(cfgs.L2_REGULAR), kernel_initializer='he_normal', name='block4_conv2')(x4)
@@ -360,10 +360,10 @@ def AE_model_4(model_name):
     x4 = Conv2D(128, (3, 3), padding='same', kernel_regularizer=regularizers.l2(cfgs.L2_REGULAR), kernel_initializer='he_normal', name='block4_conv3')(x4)
     x4 = BatchNormalization(name='block4_bn3')(x4)
     x4 = Activation(activation, name='block4_ac3')(x4)
-    x4 = MaxPooling2D((2, 2), strides=(2, 2), padding='same', name='block4_pool')(x4)
+    x4d = MaxPooling2D((2, 2), strides=(2, 2), padding='same', name='block4_pool')(x4)
 
     # Block 5
-    x5 = Conv2D(128, (3, 3), padding='same', kernel_regularizer=regularizers.l2(cfgs.L2_REGULAR), kernel_initializer='he_normal', name='block5_conv1')(x4)
+    x5 = Conv2D(128, (3, 3), padding='same', kernel_regularizer=regularizers.l2(cfgs.L2_REGULAR), kernel_initializer='he_normal', name='block5_conv1')(x4d)
     x5 = BatchNormalization(name='block5_bn1')(x5)
     x5 = Activation(activation, name='block5_ac1')(x5)
     x5 = Conv2D(128, (3, 3), padding='same', kernel_regularizer=regularizers.l2(cfgs.L2_REGULAR), kernel_initializer='he_normal', name='block5_conv2')(x5)
@@ -394,7 +394,7 @@ def AE_model_4(model_name):
     x7 = Conv2D(128, (3, 3), padding='same', kernel_regularizer=regularizers.l2(cfgs.L2_REGULAR), kernel_initializer='he_normal', name='block7_conv1')(x7)
     x7 = BatchNormalization(name='block7_bn1')(x7)
     x7 = Activation(activation, name='block7_ac1')(x7)
-    x7 = Concatenate(axis=3)[x4, x7]
+    x7 = Concatenate(axis=3)([x4, x7])
     x7 = Conv2D(128, (3, 3), padding='same', kernel_regularizer=regularizers.l2(cfgs.L2_REGULAR), kernel_initializer='he_normal', name='block7_conv2')(x7)
     x7 = BatchNormalization(name='block7_bn2')(x7)
     x7 = Activation(activation, name='block7_ac2')(x7)
@@ -407,7 +407,7 @@ def AE_model_4(model_name):
     x8 = Conv2D(64, (3, 3), padding='same', kernel_regularizer=regularizers.l2(cfgs.L2_REGULAR), kernel_initializer='he_normal', name='block8_conv1')(x8)
     x8 = BatchNormalization(name='block8_bn1')(x8)
     x8 = Activation(activation, name='block8_ac1')(x8)
-    x8 = Concatenate(axis=3)[x3, x8]
+    x8 = Concatenate(axis=3)([x3, x8])
     x8 = Conv2D(64, (3, 3), padding='same', kernel_regularizer=regularizers.l2(cfgs.L2_REGULAR), kernel_initializer='he_normal', name='block8_conv2')(x8)
     x8 = BatchNormalization(name='block8_bn2')(x8)
     x8 = Activation(activation, name='block8_ac2')(x8)
@@ -420,26 +420,26 @@ def AE_model_4(model_name):
     x9 = Conv2D(32, (3, 3), padding='same', kernel_regularizer=regularizers.l2(cfgs.L2_REGULAR), kernel_initializer='he_normal', name='block9_conv1')(x9)
     x9 = BatchNormalization(name='block9_bn1')(x9)
     x9 = Activation(activation, name='block9_ac1')(x9)
-    x9 = Concatenate(axis=3)[x2, x9]
+    x9 = Concatenate(axis=3)([x2, x9])
     x9 = Conv2D(32, (3, 3), padding='same', kernel_regularizer=regularizers.l2(cfgs.L2_REGULAR), kernel_initializer='he_normal', name='block9_conv2')(x9)
     x9 = BatchNormalization(name='block9_bn2')(x9)
     x9 = Activation(activation, name='block9_ac2')(x9)
     x9 = Conv2D(32, (3, 3), padding='same', kernel_regularizer=regularizers.l2(cfgs.L2_REGULAR), kernel_initializer='he_normal', name='block9_conv3')(x9)
-    x9 = BatchNormalization(name='block9_bn2')(x9)
-    x9 = Activation(activation, name='block9_ac2')(x9)
+    x9 = BatchNormalization(name='block9_bn3')(x9)
+    x9 = Activation(activation, name='block9_ac3')(x9)
 
     # Block 10
     x10 = UpSampling2D((2, 2), name='block10_pool')(x9)
     x10 = Conv2D(16, (3, 3), padding='same', kernel_regularizer=regularizers.l2(cfgs.L2_REGULAR), kernel_initializer='he_normal', name='block10_conv1')(x10)
     x10 = BatchNormalization(name='block10_bn1')(x10)
     x10 = Activation(activation, name='block10_ac1')(x10)
-    x10 = Concatenate(axis=3)[x1, x10]
+    x10 = Concatenate(axis=3)([x1, x10])
     x10 = Conv2D(16, (3, 3), padding='same', kernel_regularizer=regularizers.l2(cfgs.L2_REGULAR), kernel_initializer='he_normal', name='block10_conv2')(x10)
     x10 = BatchNormalization(name='block10_bn2')(x10)
     x10 = Activation(activation, name='block10_ac2')(x10)
     x10 = Conv2D(16, (3, 3), padding='same', kernel_regularizer=regularizers.l2(cfgs.L2_REGULAR), kernel_initializer='he_normal', name='block10_conv3')(x10)
-    x10 = BatchNormalization(name='block10_bn2')(x10)
-    x10 = Activation(activation, name='block10_ac2')(x10)
+    x10 = BatchNormalization(name='block10_bn3')(x10)
+    x10 = Activation(activation, name='block10_ac3')(x10)
 
     decoded = Conv2D(1, (3, 3), activation='tanh', padding='same', kernel_initializer='glorot_normal', name='block10_output')(x10)
 
