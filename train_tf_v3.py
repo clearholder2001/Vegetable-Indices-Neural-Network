@@ -114,6 +114,11 @@ def image_preprocessing(image):
 
 
 if __name__ == "__main__":
+    fit_verbose = 1
+
+    if len(sys.argv) > 1 and sys.argv[1] == "--production":
+        fit_verbose = 2
+
     train_X_obj = DataObject('RGB ', cfgs.TRAIN_RGB_PATH)
     train_Y_obj = DataObject('NDVI', cfgs.TRAIN_NDVI_PATH)
     train_X_obj.load_data(devided_by_255=True, expand_dims=False, save_image=False)
@@ -127,11 +132,11 @@ if __name__ == "__main__":
     train_Y = train_Y_obj.get_data_resample()
     train_X, train_Y = shuffle(train_X, train_Y)
 
+    plot_two_images_array(train_X, train_Y, 'Train - RGB, NDVI', 0)
+
     val_split_count = int(train_X.shape[0] * (1 - cfgs.VAL_SPLIT))
     train_ds = tf.data.Dataset.from_tensor_slices((train_X, train_Y)).take(val_split_count)
     val_ds = tf.data.Dataset.from_tensor_slices((train_X, train_Y)).skip(val_split_count)
-
-    plot_two_images_array(train_X, train_Y, 'Train - RGB, NDVI', 0)
 
     lr_schedule = tf.keras.optimizers.schedules.ExponentialDecay(
         initial_learning_rate=cfgs.INIT_LEARNING_RATE,
@@ -140,7 +145,7 @@ if __name__ == "__main__":
         staircase=cfgs.STAIRCASE
     )
 
-    Model = AE_model_3(cfgs.MODEL_NAME)
+    Model = AE_model_4_1(cfgs.MODEL_NAME)
     adam = optimizers.Adam(learning_rate=lr_schedule)
     Model.compile(optimizer=adam, loss='mean_absolute_error')
     Model.summary()
@@ -226,7 +231,7 @@ if __name__ == "__main__":
             validation_data=val_ds,
             validation_steps=validation_steps,
             callbacks=callbacks,
-            verbose=1
+            verbose=fit_verbose
         )
     else:
         train_history = Model.fit(
@@ -238,7 +243,7 @@ if __name__ == "__main__":
             shuffle=True,
             validation_split=cfgs.VAL_SPLIT,
             callbacks=callbacks,
-            verbose=1
+            verbose=fit_verbose
         )
 
     Model.save_weights('./weights/trained_model.h5')

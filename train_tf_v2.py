@@ -1,7 +1,7 @@
 '''
 tf.data version #2
 -----------------------------------------------------
-keras preprocessing layer
+keras preprocessing layer + tf.data.Dataset
 '''
 
 import os
@@ -102,7 +102,7 @@ def image_preprocessing(image):
 if __name__ == "__main__":
     fit_verbose = 1
 
-    if sys.argv[1] == "--production":
+    if len(sys.argv) > 1 and sys.argv[1] == "--production":
         fit_verbose = 2
 
     train_X_obj = DataObject('RGB ', cfgs.TRAIN_RGB_PATH)
@@ -197,4 +197,4 @@ if __name__ == "__main__":
     Model.save_weights('./weights/trained_model.h5')
     show_train_history(train_history, 'loss', 'val_loss')
 
-    print("Average epoch time: {0}s".format(str(np.mean(timing_callback.times))))
+    print("Average epoch time: {0:.2f}s".format(str(np.mean(timing_callback.times))))
