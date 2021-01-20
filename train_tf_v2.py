@@ -5,6 +5,7 @@ keras preprocessing layer
 '''
 
 import os
+import sys
 import warnings
 from time import time
 
@@ -99,6 +100,11 @@ def image_preprocessing(image):
 
 
 if __name__ == "__main__":
+    fit_verbose = 1
+
+    if sys.argv[1] == "--production":
+        fit_verbose = 2
+
     train_X_obj = DataObject('RGB ', cfgs.TRAIN_RGB_PATH)
     train_Y_obj = DataObject('NDVI', cfgs.TRAIN_NDVI_PATH)
     train_X_obj.load_data(devided_by_255=True, expand_dims=False, save_image=False)
@@ -173,7 +179,7 @@ if __name__ == "__main__":
             validation_data=val_ds,
             validation_steps=validation_steps,
             callbacks=callbacks,
-            verbose=1
+            verbose=fit_verbose
         )
     else:
         train_history = Model.fit(
@@ -185,7 +191,7 @@ if __name__ == "__main__":
             shuffle=True,
             validation_split=cfgs.VAL_SPLIT,
             callbacks=callbacks,
-            verbose=1
+            verbose=fit_verbose
         )
 
     Model.save_weights('./weights/trained_model.h5')
