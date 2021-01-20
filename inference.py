@@ -80,7 +80,7 @@ if __name__ == "__main__":
 
     # cfgs.INPUT_LAYER_DIM = (test_X.shape[1], test_X.shape[2], test_X.shape[3])
 
-    Model = AE_model_4(cfgs.MODEL_NAME)
+    Model = AE_model_4_1(cfgs.MODEL_NAME)
     adam = optimizers.Adam(cfgs.INIT_LEARNING_RATE)
     Model.compile(optimizer=adam, loss='mean_absolute_error')
     weight = os.path.join('.', 'weights', weight_name)
