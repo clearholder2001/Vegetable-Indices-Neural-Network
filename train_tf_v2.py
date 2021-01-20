@@ -22,11 +22,11 @@ import numpy as np
 import tensorflow as tf
 from sklearn.utils import shuffle
 from tensorflow import keras
-from tensorflow.keras import optimizers, Sequential
+from tensorflow.keras import Sequential, optimizers
 from tensorflow.keras.callbacks import Callback, TensorBoard
+from tensorflow.keras.layers.experimental import preprocessing
 from tensorflow.keras.models import Model
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
-from tensorflow.keras.layers.experimental import preprocessing
 
 from configs import cfgs
 from dataset import *
@@ -131,7 +131,7 @@ if __name__ == "__main__":
         staircase=cfgs.STAIRCASE
     )
 
-    Model = AE_model_4(cfgs.MODEL_NAME)
+    Model = AE_model_4_1(cfgs.MODEL_NAME)
     adam = optimizers.Adam(learning_rate=lr_schedule)
     Model.compile(optimizer=adam, loss='mean_absolute_error')
     Model.summary()

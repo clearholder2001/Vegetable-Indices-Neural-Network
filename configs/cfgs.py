@@ -13,7 +13,7 @@ RESAMPLE_MULTIPLE_FACTOR = 9
 
 # Model
 # ------------------------------------------------
-MODEL_NAME = 'AE_v0.4'
+MODEL_NAME = 'AE_v0.4.1_swish'
 INPUT_LAYER_DIM = (352, 480, 3)
 RANDOMCONTRAST_FACTOR = 0.2
 L2_REGULAR = 0.001
@@ -21,18 +21,18 @@ L2_REGULAR = 0.001
 
 # Data Augmentation
 # ------------------------------------------------
-ENABLE_DATA_AUG = True
-DATA_AUG_BATCH_SIZE = 32
+ENABLE_DATA_AUG = False
+DATA_AUG_BATCH_SIZE = 16
 
 
 # Train
 # ------------------------------------------------
 EPOCHS = 200
-TRAIN_BATCH_SIZE = 32
+TRAIN_BATCH_SIZE = 16
 VAL_SPLIT = 0.1
 INIT_LEARNING_RATE = 0.001
 DECAY_STEPS = 1000
-DECAY_RATE = 0.90
+DECAY_RATE = 0.98
 STAIRCASE = False
 
 
