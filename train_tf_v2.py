@@ -140,12 +140,12 @@ if __name__ == "__main__":
     timing_callback = TimingCallback()
     tensorboard_callback = TensorBoard(
         log_dir='tb_log',
-        histogram_freq=1,
+        histogram_freq=0,
         write_graph=True,
-        write_images=True,
+        write_images=False,
         update_freq='epoch',
         profile_batch=2,
-        embeddings_freq=1,
+        embeddings_freq=0,
         embeddings_metadata=None
     )
     callbacks = [early_stop_callback, timing_callback, tensorboard_callback]
