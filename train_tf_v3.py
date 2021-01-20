@@ -5,6 +5,7 @@ ImageDataGenerator + tf.numpy_function + tf.data.Dataset
 '''
 
 import os
+import sys
 import warnings
 from time import time
 
@@ -21,8 +22,9 @@ import numpy as np
 import tensorflow as tf
 from sklearn.utils import shuffle
 from tensorflow import keras
-from tensorflow.keras import optimizers
+from tensorflow.keras import Sequential, optimizers
 from tensorflow.keras.callbacks import Callback, TensorBoard
+from tensorflow.keras.layers.experimental import preprocessing
 from tensorflow.keras.models import Model
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
@@ -81,25 +83,25 @@ def show_train_history(train_history, train, validation):
     plt.close(fig)
 
 
-def augment(image, mask, batch_size, seed):
+def augment(image, mask):
     image_datagen = ImageDataGenerator(**cfgs.DATAGEN_ARGS)
     #image_datagen.brightness_range = (1 - cfgs.RANDOMCONTRAST_FACTOR, 1 + cfgs.RANDOMCONTRAST_FACTOR)
-    #image_datagen._validation_split = None
+    image_datagen._validation_split = None
 
     mask_datagen = ImageDataGenerator(**cfgs.DATAGEN_ARGS)
-    #mask_datagen._validation_split = None
+    mask_datagen._validation_split = None
 
-    image_datagen.ran
+    seed = int(time())
 
-    augmented_images = next(image_datagen.flow(image, batch_size=batch_size, shuffle=False, seed=seed, save_to_dir='./fig/datagen/train/rgb', save_format='jpg'))
-    augmented_masks = next(mask_datagen.flow(mask, batch_size=batch_size, shuffle=False, seed=seed, save_to_dir='./fig/datagen/train/ndvi', save_format='jpg'))
+    augmented_images = next(image_datagen.flow(image, batch_size=1, shuffle=False, seed=seed, save_to_dir='./fig/datagen/train/rgb', save_format='jpg'))
+    augmented_masks = next(mask_datagen.flow(mask, batch_size=1, shuffle=False, seed=seed, save_to_dir='./fig/datagen/train/ndvi', save_format='jpg'))
 
     return augmented_images, augmented_masks
 
 
-def prepare(ds, batch_size, seed):
+def prepare(ds, batch_size):
     ds = ds.repeat().batch(batch_size)
-    ds = ds.map(lambda x, y: tf.numpy_function(func=augment, inp=[x, y, batch_size, seed], Tout=[tf.float32, tf.float32]), num_parallel_calls=AUTOTUNE).unbatch()
+    ds = ds.map(lambda x, y: tf.numpy_function(func=augment, inp=[x, y], Tout=[tf.float32, tf.float32]), num_parallel_calls=AUTOTUNE)
     return ds.prefetch(buffer_size=AUTOTUNE)
 
 
@@ -220,8 +222,8 @@ if __name__ == "__main__":
     )
     '''
 
-    train_ds = prepare(train_ds, batch_size, seed)
-    val_ds = prepare(val_ds, batch_size, seed)
+    train_ds = prepare(train_ds, batch_size)
+    val_ds = prepare(val_ds, batch_size)
 
     if cfgs.ENABLE_DATA_AUG:
         train_history = Model.fit(
@@ -249,4 +251,4 @@ if __name__ == "__main__":
     Model.save_weights('./weights/trained_model.h5')
     show_train_history(train_history, 'loss', 'val_loss')
 
-    print("Average epoch time: {0}s".format(str(np.mean(timing_callback.times))))
+    print("Average epoch time: {0:.2f}s".format(str(np.mean(timing_callback.times))))
