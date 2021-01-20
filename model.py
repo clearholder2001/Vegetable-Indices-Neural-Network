@@ -2,8 +2,9 @@ from time import time
 
 from tensorflow.keras import regularizers
 from tensorflow.keras.layers import (Activation, BatchNormalization,
-                                     Concatenate, Conv2D, Dense, Flatten,
-                                     Input, MaxPooling2D, UpSampling2D)
+                                     Concatenate, Conv2D, Conv2DTranspose,
+                                     Dense, Flatten, Input, MaxPooling2D,
+                                     UpSampling2D)
 from tensorflow.keras.layers.experimental.preprocessing import RandomContrast
 from tensorflow.keras.models import Model
 
@@ -502,8 +503,9 @@ def AE_model_4_1(model_name):
     encoded = x5
 
     # Block 7
-    x7 = UpSampling2D((2, 2), name='block7_pool')(encoded)
-    x7 = Conv2D(128, (3, 3), padding='same', kernel_initializer='he_normal', name='block7_conv1')(x7)
+    x7 = Conv2DTranspose(128, (3, 3), strides=(2, 2), padding='same', kernel_initializer='he_normal', name='block7_convT1')(encoded)
+    #x7 = UpSampling2D((2, 2), name='block7_pool')(encoded)
+    #x7 = Conv2D(128, (3, 3), padding='same', kernel_initializer='he_normal', name='block7_conv1')(x7)
     x7 = Activation(activation, name='block7_ac1')(x7)
     x7 = Concatenate(axis=3)([x4, x7])
     x7 = Conv2D(128, (3, 3), padding='same', kernel_initializer='he_normal', name='block7_conv2')(x7)
@@ -512,8 +514,9 @@ def AE_model_4_1(model_name):
     x7 = Activation(activation, name='block7_ac3')(x7)
 
     # Block 8
-    x8 = UpSampling2D((2, 2), name='block8_pool')(x7)
-    x8 = Conv2D(64, (3, 3), padding='same', kernel_initializer='he_normal', name='block8_conv1')(x8)
+    x8 = Conv2DTranspose(64, (3, 3), strides=(2, 2), padding='same', kernel_initializer='he_normal', name='block8_convT1')(x7)
+    #x8 = UpSampling2D((2, 2), name='block8_pool')(x7)
+    #x8 = Conv2D(64, (3, 3), padding='same', kernel_initializer='he_normal', name='block8_conv1')(x8)
     x8 = Activation(activation, name='block8_ac1')(x8)
     x8 = Concatenate(axis=3)([x3, x8])
     x8 = Conv2D(64, (3, 3), padding='same', kernel_initializer='he_normal', name='block8_conv2')(x8)
@@ -522,8 +525,9 @@ def AE_model_4_1(model_name):
     x8 = Activation(activation, name='block8_ac3')(x8)
 
     # Block 9
-    x9 = UpSampling2D((2, 2), name='block9_pool')(x8)
-    x9 = Conv2D(32, (3, 3), padding='same', kernel_initializer='he_normal', name='block9_conv1')(x9)
+    x9 = Conv2DTranspose(32, (3, 3), strides=(2, 2), padding='same', kernel_initializer='he_normal', name='block9_convT1')(x8)
+    #x9 = UpSampling2D((2, 2), name='block9_pool')(x8)
+    #x9 = Conv2D(32, (3, 3), padding='same', kernel_initializer='he_normal', name='block9_conv1')(x9)
     x9 = Activation(activation, name='block9_ac1')(x9)
     x9 = Concatenate(axis=3)([x2, x9])
     x9 = Conv2D(32, (3, 3), padding='same', kernel_initializer='he_normal', name='block9_conv2')(x9)
@@ -532,8 +536,9 @@ def AE_model_4_1(model_name):
     x9 = Activation(activation, name='block9_ac3')(x9)
 
     # Block 10
-    x10 = UpSampling2D((2, 2), name='block10_pool')(x9)
-    x10 = Conv2D(16, (3, 3), padding='same', kernel_initializer='he_normal', name='block10_conv1')(x10)
+    x10 = Conv2DTranspose(16, (3, 3), strides=(2, 2), padding='same', kernel_initializer='he_normal', name='block10_convT1')(x9)
+    #x10 = UpSampling2D((2, 2), name='block10_pool')(x9)
+    #x10 = Conv2D(16, (3, 3), padding='same', kernel_initializer='he_normal', name='block10_conv1')(x10)
     x10 = Activation(activation, name='block10_ac1')(x10)
     x10 = Concatenate(axis=3)([x1, x10])
     x10 = Conv2D(16, (3, 3), padding='same', kernel_initializer='he_normal', name='block10_conv2')(x10)
