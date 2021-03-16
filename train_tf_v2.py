@@ -197,4 +197,4 @@ if __name__ == "__main__":
     Model.save_weights('./weights/trained_model.h5')
     show_train_history(train_history, 'loss', 'val_loss')
 
-    print("Average epoch time: {0:.2f}s".format(str(np.mean(timing_callback.times))))
+    print("Average epoch time: {0:.2f}s".format(np.mean(timing_callback.times)))
