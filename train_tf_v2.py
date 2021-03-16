@@ -29,8 +29,8 @@ from tensorflow.keras.models import Model
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
 from configs import cfgs
-from dataset import *
-from model import *
+from dataset import DataObject, plot_three_images_array, plot_two_images_array
+from model import AE_model_4_1
 
 gpus = tf.config.list_physical_devices('GPU')
 tf.config.experimental.set_memory_growth(gpus[0], True)
