@@ -42,7 +42,7 @@ AUTOTUNE = tf.data.AUTOTUNE
 # 當loss function 低於某個值時，迭代自動停止
 class EarlyStoppingByLossVal(Callback):
     def __init__(self, monitor='val_loss', value=0.0001, verbose=0):
-        super(Callback, self).__init__()
+        super().__init__()
         self.monitor = monitor
         self.value = value
         self.verbose = verbose
