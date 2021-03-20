@@ -6,7 +6,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 from PIL import Image
 
-
 class DataObject():
     """
     data object for NN model
@@ -94,32 +93,3 @@ class DataObject():
         if self.data_raw is not None:
             matplotlib.image.imsave('fig/image.jpg', self.data_raw[index])
             print('Image saved: index ', index)
-
-
-def plot_two_images_array(images1, images2, title, idx):
-    fig, axs = plt.subplots(4, 4)
-    fig.set_size_inches(8, 6)
-    plt.setp(axs, xticks=[], yticks=[])
-    for i in range(4):
-        axs[i, 0].imshow(images1[idx+i], vmin=0, vmax=1)
-        axs[i, 1].imshow(images2[idx+i], vmin=-1, vmax=1, cmap=plt.get_cmap('jet'))
-        axs[i, 2].imshow(images1[idx+4+i], vmin=0, vmax=1)
-        axs[i, 3].imshow(images2[idx+4+i], vmin=-1, vmax=1, cmap=plt.get_cmap('jet'))
-    fig.suptitle(title, fontsize=24)
-    fig.tight_layout()
-    fig.savefig('./fig/' + title + '.png')
-    plt.close(fig)
-
-
-def plot_three_images_array(images1, images2, images3, title, idx):
-    fig, axs = plt.subplots(4, 3)
-    fig.set_size_inches(12, 13)
-    plt.setp(axs, xticks=[], yticks=[])
-    for i in range(4):
-        axs[i, 0].imshow(images1[idx+i], vmin=0, vmax=1)
-        axs[i, 1].imshow(images2[idx+i], vmin=-1, vmax=1, cmap=plt.get_cmap('jet'))
-        axs[i, 2].imshow(images3[idx+i], vmin=-1, vmax=1, cmap=plt.get_cmap('jet'))
-    fig.suptitle(title, fontsize=24)
-    fig.tight_layout()
-    fig.savefig('./fig/' + title + '.png')
-    plt.close(fig)

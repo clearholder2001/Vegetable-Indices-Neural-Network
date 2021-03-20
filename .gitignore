@@ -4,12 +4,8 @@
 *.npz
 *.log
 __pycache__
-__init__.py
 .env
 .vscode
 .ipynb_checkpoints
 
-fig
-weights
-log
-tb_log
+outputs
