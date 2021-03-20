@@ -140,7 +140,7 @@ if __name__ == "__main__":
     Model.compile(optimizer=adam, loss='mean_absolute_error')
     Model.summary()
 
-    early_stop_callback = EarlyStoppingByLossVal(monitor='loss', value=1e-3, verbose=1)
+    early_stop_callback = EarlyStoppingByLossVal(monitor='loss', value=cfgs.EARLY_STOP_LOSS, verbose=1)
     timing_callback = TimingCallback()
     tensorboard_callback = TensorBoard(
         log_dir='tb_log',
