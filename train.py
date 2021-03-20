@@ -26,7 +26,7 @@ from models import unet_C2DT as model
 from utils.callback import EarlyStoppingByLossVal, TimingCallback
 from utils.data_aug import data_aug_layer_tf_dataset as data_augmentation
 from utils.dataset import DataObject
-from utils.helper import show_train_history
+from utils.helper import print_cfg, show_train_history
 from utils.image import plot_two_images_array
 
 gpus = tf.config.list_physical_devices('GPU')
@@ -38,6 +38,8 @@ if __name__ == "__main__":
 
     if len(sys.argv) > 1 and sys.argv[1] == "--production":
         fit_verbose = 2
+
+    print_cfg()
 
     train_X_obj = DataObject('RGB ', cfg.TRAIN_RGB_PATH)
     train_Y_obj = DataObject('NDVI', cfg.TRAIN_NDVI_PATH)
