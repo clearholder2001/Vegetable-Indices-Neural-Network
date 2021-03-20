@@ -19,9 +19,9 @@ from tensorflow import keras
 from tensorflow.keras import optimizers
 from tensorflow.keras.models import Model, load_model
 
-from configs import cfgs
-from dataset import *
-from model import *
+import utils
+from cfgs import cfg
+from models import model
 
 gpus = tf.config.list_physical_devices('GPU')
 tf.config.experimental.set_memory_growth(gpus[0], True)
@@ -59,16 +59,16 @@ def save_result_image(test_X, test_Y, predict, output_compare=True):
 
 
 if __name__ == "__main__":
-    cfgs.RESAMPLE_MULTIPLE_FACTOR = 1
+    cfg.RESAMPLE_MULTIPLE_FACTOR = 1
     weight_name = 'trained_model.h5'
 
-    test_X_obj = DataObject('RGB ', cfgs.TEST_RGB_PATH)
-    test_Y_obj = DataObject('NDVI', cfgs.TEST_NDVI_PATH)
+    test_X_obj = DataObject('RGB ', cfg.TEST_RGB_PATH)
+    test_Y_obj = DataObject('NDVI', cfg.TEST_NDVI_PATH)
     test_X_obj.load_data(devided_by_255=True, expand_dims=False)
     test_Y_obj.load_data(devided_by_255=False, expand_dims=True)
     test_X_obj.crop()
     test_Y_obj.crop()
-    table = test_X_obj.generate_resample_table(multiple_factor=cfgs.RESAMPLE_MULTIPLE_FACTOR)
+    table = test_X_obj.generate_resample_table(multiple_factor=cfg.RESAMPLE_MULTIPLE_FACTOR)
     test_X_obj.resample(table)
     test_Y_obj.resample(table)
     test_X = test_X_obj.get_data_resample()
@@ -78,15 +78,15 @@ if __name__ == "__main__":
 
     plot_two_images_array(test_X, test_Y, 'Inference - RGB, NDVI', 140)
 
-    # cfgs.INPUT_LAYER_DIM = (test_X.shape[1], test_X.shape[2], test_X.shape[3])
+    # cfg.INPUT_LAYER_DIM = (test_X.shape[1], test_X.shape[2], test_X.shape[3])
 
-    Model = AE_model_4_1(cfgs.MODEL_NAME)
-    adam = optimizers.Adam(cfgs.INIT_LEARNING_RATE)
+    Model = AE_model_4_1(cfg.MODEL_NAME)
+    adam = optimizers.Adam(cfg.INIT_LEARNING_RATE)
     Model.compile(optimizer=adam, loss='mean_absolute_error')
     weight = os.path.join('.', 'weights', weight_name)
     Model.load_weights(weight)
 
-    batch_size = cfgs.TRAIN_BATCH_SIZE
+    batch_size = cfg.TRAIN_BATCH_SIZE
     predict = Model.predict(test_X, batch_size=batch_size, verbose=2)
     lossfunc = Model.evaluate(test_X, test_Y, batch_size=batch_size, verbose=2)
     assert predict.shape == test_Y.shape, 'Dimension inconsistent: test_Y, predict'

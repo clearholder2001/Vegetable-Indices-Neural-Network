@@ -29,10 +29,10 @@ from tensorflow.keras.layers.experimental import preprocessing
 from tensorflow.keras.models import Model
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
-from configs import cfgs
-from dataset import DataObject, plot_three_images_array, plot_two_images_array
-from model import AE_model_4_1
-from tool.helper import *
+from cfgs import cfg
+from models.model import AE_model_4_1
+from utils.dataset import DataObject
+from utils.image import plot_two_images_array
 
 gpus = tf.config.list_physical_devices('GPU')
 tf.config.experimental.set_memory_growth(gpus[0], True)
@@ -107,40 +107,38 @@ if __name__ == "__main__":
     if len(sys.argv) > 1 and sys.argv[1] == "--production":
         fit_verbose = 2
 
-    print_config(cfgs)
-
-    train_X_obj = DataObject('RGB ', cfgs.TRAIN_RGB_PATH)
-    train_Y_obj = DataObject('NDVI', cfgs.TRAIN_NDVI_PATH)
+    train_X_obj = DataObject('RGB ', cfg.TRAIN_RGB_PATH)
+    train_Y_obj = DataObject('NDVI', cfg.TRAIN_NDVI_PATH)
     train_X_obj.load_data(devided_by_255=True, expand_dims=False, save_image=False)
     train_Y_obj.load_data(devided_by_255=False, expand_dims=True, save_image=False)
     train_X_obj.crop(save_image=False)
     train_Y_obj.crop(save_image=False)
-    table = train_X_obj.generate_resample_table(multiple_factor=cfgs.RESAMPLE_MULTIPLE_FACTOR)
+    table = train_X_obj.generate_resample_table(multiple_factor=cfg.RESAMPLE_MULTIPLE_FACTOR)
     train_X_obj.resample(table, save_image=False)
     train_Y_obj.resample(table, save_image=False)
     train_X = train_X_obj.get_data_resample()
     train_Y = train_Y_obj.get_data_resample()
     train_X, train_Y = shuffle(train_X, train_Y)
 
-    val_split_count = int(train_X.shape[0] * (1 - cfgs.VAL_SPLIT))
+    val_split_count = int(train_X.shape[0] * (1 - cfg.VAL_SPLIT))
     train_ds = tf.data.Dataset.from_tensor_slices((train_X, train_Y)).take(val_split_count)
     val_ds = tf.data.Dataset.from_tensor_slices((train_X, train_Y)).skip(val_split_count)
 
     plot_two_images_array(train_X, train_Y, 'Train - RGB, NDVI', 0)
 
     lr_schedule = tf.keras.optimizers.schedules.ExponentialDecay(
-        initial_learning_rate=cfgs.INIT_LEARNING_RATE,
-        decay_steps=cfgs.DECAY_STEPS,
-        decay_rate=cfgs.DECAY_RATE,
-        staircase=cfgs.STAIRCASE
+        initial_learning_rate=cfg.INIT_LEARNING_RATE,
+        decay_steps=cfg.DECAY_STEPS,
+        decay_rate=cfg.DECAY_RATE,
+        staircase=cfg.STAIRCASE
     )
 
-    Model = AE_model_4_1(cfgs.MODEL_NAME)
+    Model = AE_model_4_1(cfg.MODEL_NAME)
     adam = optimizers.Adam(learning_rate=lr_schedule)
     Model.compile(optimizer=adam, loss='mean_absolute_error')
     Model.summary()
 
-    early_stop_callback = EarlyStoppingByLossVal(monitor='loss', value=cfgs.EARLY_STOP_LOSS, verbose=1)
+    early_stop_callback = EarlyStoppingByLossVal(monitor='loss', value=cfg.EARLY_STOP_LOSS, verbose=1)
     timing_callback = TimingCallback()
     tensorboard_callback = TensorBoard(
         log_dir='tb_log',
@@ -156,29 +154,29 @@ if __name__ == "__main__":
 
     data_used_amount = train_X.shape[0]
     seed = int(time())
-    batch_size = cfgs.DATA_AUG_BATCH_SIZE
-    steps_per_epoch = int(np.ceil((data_used_amount / batch_size) * (1 - cfgs.VAL_SPLIT)))
-    validation_steps = int(np.ceil((data_used_amount / batch_size) * cfgs.VAL_SPLIT))
+    batch_size = cfg.DATA_AUG_BATCH_SIZE
+    steps_per_epoch = int(np.ceil((data_used_amount / batch_size) * (1 - cfg.VAL_SPLIT)))
+    validation_steps = int(np.ceil((data_used_amount / batch_size) * cfg.VAL_SPLIT))
 
     data_augmentation_image = tf.keras.Sequential([
         preprocessing.RandomFlip(mode="horizontal_and_vertical", seed=seed),
-        preprocessing.RandomRotation(factor=np.radians(cfgs.DATAGEN_ARGS["rotation_range"]), fill_mode=cfgs.DATAGEN_ARGS["fill_mode"], interpolation="bilinear", seed=seed),
-        preprocessing.RandomZoom(height_factor=cfgs.DATAGEN_ARGS["zoom_range"], width_factor=cfgs.DATAGEN_ARGS["zoom_range"], fill_mode=cfgs.DATAGEN_ARGS["fill_mode"], interpolation="bilinear", seed=seed),
-        preprocessing.RandomContrast(factor=cfgs.RANDOMCONTRAST_FACTOR, seed=seed),
+        preprocessing.RandomRotation(factor=np.radians(cfg.DATAGEN_ARGS["rotation_range"]), fill_mode=cfg.DATAGEN_ARGS["fill_mode"], interpolation="bilinear", seed=seed),
+        preprocessing.RandomZoom(height_factor=cfg.DATAGEN_ARGS["zoom_range"], width_factor=cfg.DATAGEN_ARGS["zoom_range"], fill_mode=cfg.DATAGEN_ARGS["fill_mode"], interpolation="bilinear", seed=seed),
+        preprocessing.RandomContrast(factor=cfg.RANDOMCONTRAST_FACTOR, seed=seed),
     ])
     data_augmentation_mask = tf.keras.Sequential([
         preprocessing.RandomFlip(mode="horizontal_and_vertical", seed=seed),
-        preprocessing.RandomRotation(factor=np.radians(cfgs.DATAGEN_ARGS["rotation_range"]), fill_mode=cfgs.DATAGEN_ARGS["fill_mode"], interpolation="bilinear", seed=seed),
-        preprocessing.RandomZoom(height_factor=cfgs.DATAGEN_ARGS["zoom_range"], width_factor=cfgs.DATAGEN_ARGS["zoom_range"], fill_mode=cfgs.DATAGEN_ARGS["fill_mode"], interpolation="bilinear", seed=seed),
+        preprocessing.RandomRotation(factor=np.radians(cfg.DATAGEN_ARGS["rotation_range"]), fill_mode=cfg.DATAGEN_ARGS["fill_mode"], interpolation="bilinear", seed=seed),
+        preprocessing.RandomZoom(height_factor=cfg.DATAGEN_ARGS["zoom_range"], width_factor=cfg.DATAGEN_ARGS["zoom_range"], fill_mode=cfg.DATAGEN_ARGS["fill_mode"], interpolation="bilinear", seed=seed),
     ])
 
     train_ds = prepare(train_ds, batch_size, data_augmentation_image, data_augmentation_mask)
     val_ds = prepare(val_ds, batch_size, data_augmentation_image, data_augmentation_mask)
 
-    if cfgs.ENABLE_DATA_AUG:
+    if cfg.ENABLE_DATA_AUG:
         train_history = Model.fit(
             train_ds,
-            epochs=cfgs.EPOCHS,
+            epochs=cfg.EPOCHS,
             steps_per_epoch=steps_per_epoch,
             validation_data=val_ds,
             validation_steps=validation_steps,
@@ -189,11 +187,11 @@ if __name__ == "__main__":
         train_history = Model.fit(
             train_X[:data_used_amount],
             train_Y[:data_used_amount],
-            epochs=cfgs.EPOCHS,
+            epochs=cfg.EPOCHS,
             steps_per_epoch=None,
-            batch_size=cfgs.TRAIN_BATCH_SIZE,
+            batch_size=cfg.TRAIN_BATCH_SIZE,
             shuffle=True,
-            validation_split=cfgs.VAL_SPLIT,
+            validation_split=cfg.VAL_SPLIT,
             callbacks=callbacks,
             verbose=fit_verbose
         )
