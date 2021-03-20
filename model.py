@@ -3,10 +3,11 @@ from time import time
 from tensorflow.keras import regularizers
 from tensorflow.keras.layers import (Activation, BatchNormalization,
                                      Concatenate, Conv2D, Conv2DTranspose,
-                                     Dense, Flatten, Input, MaxPooling2D,
-                                     UpSampling2D)
+                                     Dense, Flatten, Input, Lambda,
+                                     MaxPooling2D, UpSampling2D)
 from tensorflow.keras.layers.experimental.preprocessing import RandomContrast
 from tensorflow.keras.models import Model
+from tensorflow.keras.backend import mean
 
 from configs import cfgs
 
@@ -453,7 +454,7 @@ def AE_model_4_1(model_name):
     Input_img = Input(shape=cfgs.INPUT_LAYER_DIM)
 
     # Setup
-    activation = 'swish'
+    activation = 'relu'
 
     # Encoding Architecture
     # Block 1
@@ -545,8 +546,10 @@ def AE_model_4_1(model_name):
     x10 = Activation(activation, name='block10_ac2')(x10)
     x10 = Conv2D(16, (3, 3), padding='same', kernel_initializer='he_normal', name='block10_conv3')(x10)
     x10 = Activation(activation, name='block10_ac3')(x10)
+    #x10 = Activation(activation='tanh', name='block10_ac3')(x10)
 
     decoded = Conv2D(1, (3, 3), activation='tanh', padding='same', kernel_initializer='glorot_normal', name='block10_output')(x10)
+    #decoded = Lambda(lambda x: mean(x, axis=3)[:, :, :, None])(x10)
 
     autoencoder = Model(inputs=Input_img, outputs=decoded, name=model_name)
     return autoencoder
