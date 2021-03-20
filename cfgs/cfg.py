@@ -8,11 +8,15 @@ TRAIN_NDVI_PATH = os.path.join('..', 'Jim', 'dataset', '20meter', 'train_20meter
 TEST_RGB_PATH = os.path.join('..', 'Jim', 'dataset', 'testing', 'test_15meter_RGB.npy')
 TEST_NDVI_PATH = os.path.join('..', 'Jim', 'dataset', 'testing', 'test_15meter_NDVI.npy')
 RESAMPLE_MULTIPLE_FACTOR = 9
+SAVED_IMAGE_PATH = os.path.join('outputs', 'default', 'image')
+SAVED_FIGURE_PATH = os.path.join('outputs', 'default')
 
 
 # Model
 # ------------------------------------------------
-MODEL_NAME = 'AE_v0.4.1_swish'
+MODEL_NAME = 'model'
+SAVED_MODEL_PATH = os.path.join('outputs', 'default', 'model')
+SAVED_WEIGHT_PATH = os.path.join('outputs', 'default', 'model')
 INPUT_LAYER_DIM = (352, 480, 3)
 RANDOMCONTRAST_FACTOR = 0.2
 L2_REGULAR = 0.001
@@ -69,6 +73,7 @@ DATAGEN_ARGS = dict(
 
 # TensorBoard
 # ------------------------------------------------
+TENSORBOARD_LOG_PATH = os.path.join('outputs', 'TensorBoard')
 TENSORBOARD_ARGS = dict(
     log_dir='tb_log',
     histogram_freq=0,
