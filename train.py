@@ -23,14 +23,13 @@ from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from cfgs import cfg
 from models.model import AE_model_4
 from utils.callback import EarlyStoppingByLossVal, TimingCallback
+from utils.data_aug import data_aug_layer_tf_dataset as data_augmentation
 from utils.dataset import DataObject
 from utils.helper import show_train_history
 from utils.image import plot_two_images_array
 
 gpus = tf.config.list_physical_devices('GPU')
 tf.config.experimental.set_memory_growth(gpus[0], True)
-
-AUTOTUNE = tf.data.AUTOTUNE
 
 
 if __name__ == "__main__":
@@ -81,71 +80,22 @@ if __name__ == "__main__":
     callbacks = [early_stop_callback, timing_callback, tensorboard_callback]
 
     data_used_amount = train_X.shape[0]
-    seed = int(time())
     batch_size = cfg.DATA_AUG_BATCH_SIZE
-    steps_per_epoch = int(np.ceil((data_used_amount / batch_size) * (1 - cfg.VAL_SPLIT)))
-    validation_steps = int(np.ceil((data_used_amount / batch_size) * cfg.VAL_SPLIT))
+    split_ratio = cfg.VAL_SPLIT
+    steps_per_epoch = int(np.ceil((data_used_amount / batch_size) * (1 - split_ratio)))
+    validation_steps = int(np.ceil((data_used_amount / batch_size) * split_ratio))
 
-    image_datagen = ImageDataGenerator(**cfg.DATAGEN_ARGS)
-    mask_datagen = ImageDataGenerator(**cfg.DATAGEN_ARGS)
-    #image_datagen.preprocessing_function = image_preprocessing
-
-    train_image_generator = image_datagen.flow(
-        train_X,
-        batch_size=batch_size,
-        shuffle=True,
-        seed=seed,
-        subset='training',  # set as training data
-        #save_to_dir='./fig/datagen/train/rgb',
-        #save_prefix='train',
-        #save_format='jpg'
-    )
-
-    train_mask_generator = mask_datagen.flow(
-        train_Y,
-        batch_size=batch_size,
-        shuffle=True,
-        seed=seed,
-        subset='training',  # set as training data
-        #save_to_dir='./fig/datagen/train/ndvi',
-        #save_prefix='train',
-        #save_format='jpg'
-    )
-
-    validation_image_generator = image_datagen.flow(
-        train_X,
-        batch_size=batch_size,
-        shuffle=True,
-        seed=seed,
-        subset='validation',  # set as validation data
-        #save_to_dir='./fig/datagen/val/rgb',
-        #save_prefix='val',
-        #save_format='jpg'
-    )
-
-    validation_mask_generator = mask_datagen.flow(
-        train_Y,
-        batch_size=batch_size,
-        shuffle=True,
-        seed=seed,
-        subset='validation',  # set as validation data
-        #save_to_dir='./fig/datagen/val/ndvi',
-        #save_prefix='val',
-        #save_format='jpg'
-    )
-
-    train_generator = zip(train_image_generator, train_mask_generator)
-    validation_generator = zip(validation_image_generator, validation_mask_generator)
+    train_ds, validation_ds = data_augmentation(train_X, train_Y)
 
     if cfg.ENABLE_DATA_AUG:
         train_history = Model.fit(
-            train_generator,
+            train_ds,
             epochs=cfg.EPOCHS,
             steps_per_epoch=steps_per_epoch,
-            validation_data=validation_generator,
+            validation_data=validation_ds,
             validation_steps=validation_steps,
             callbacks=callbacks,
-            verbose=2
+            verbose=fit_verbose
         )
     else:
         train_history = Model.fit(
@@ -157,7 +107,7 @@ if __name__ == "__main__":
             shuffle=True,
             validation_split=cfg.VAL_SPLIT,
             callbacks=callbacks,
-            verbose=1
+            verbose=fit_verbose
         )
 
     Model.save_weights('./weights/trained_model.h5')
