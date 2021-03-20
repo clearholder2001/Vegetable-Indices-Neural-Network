@@ -1,5 +1,5 @@
 import os
-import warnings
+import sys
 from time import time
 
 ''' TF_CPP_MIN_LOG_LEVEL
@@ -22,58 +22,23 @@ from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
 from cfgs import cfg
 from models.model import AE_model_4
+from utils.callback import EarlyStoppingByLossVal, TimingCallback
 from utils.dataset import DataObject
+from utils.helper import show_train_history
 from utils.image import plot_two_images_array
 
 gpus = tf.config.list_physical_devices('GPU')
 tf.config.experimental.set_memory_growth(gpus[0], True)
 
-
-# 設定迭代停止器
-# 當loss function 低於某個值時，迭代自動停止
-class EarlyStoppingByLossVal(Callback):
-    def __init__(self, monitor='val_loss', value=0.0001, verbose=0):
-        super(Callback, self).__init__()
-        self.monitor = monitor
-        self.value = value
-        self.verbose = verbose
-
-    def on_epoch_end(self, epoch, logs={}):
-        current = logs.get(self.monitor)
-        if current is None:
-            warnings.warn("Early stopping requires %s available!" % self.monitor, RuntimeWarning)
-
-        if current < self.value:
-            if self.verbose > 0:
-                print("Epoch %05d: early stopping THR" % epoch)
-            self.model.stop_training = True
-        # save the weights in every epoch
-        self.model.save_weights("./weights/VGG_%d.h5" % epoch)
-
-
-def show_train_history(train_history, train, validation):
-    fig = plt.figure(figsize=(8, 6))
-    plt.plot(train_history.history[train])
-    plt.plot(train_history.history[validation])
-    plt.title = "Train History"
-    plt.ylabel(train)
-    plt.xlabel('Epoch')
-    plt.legend(['train', 'validation'], loc='upper left')
-    plt.savefig('./fig/Train History.png')
-    plt.close(fig)
-
-
-'''
-def image_preprocessing(image):
-    assert image.ndim==3, 'image ndim != 3'
-    if image.shape[-1] == (3 or 4):
-        # process for color image
-        pass
-    return image
-'''
+AUTOTUNE = tf.data.AUTOTUNE
 
 
 if __name__ == "__main__":
+    fit_verbose = 1
+
+    if len(sys.argv) > 1 and sys.argv[1] == "--production":
+        fit_verbose = 2
+
     train_X_obj = DataObject('RGB ', cfg.TRAIN_RGB_PATH)
     train_Y_obj = DataObject('NDVI', cfg.TRAIN_NDVI_PATH)
     train_X_obj.load_data(devided_by_255=True, expand_dims=False, save_image=False)
@@ -102,17 +67,18 @@ if __name__ == "__main__":
     Model.summary()
 
     early_stop_callback = EarlyStoppingByLossVal(monitor='loss', value=1e-3, verbose=1)
+    timing_callback = TimingCallback()
     tensorboard_callback = TensorBoard(
         log_dir='tb_log',
-        histogram_freq=1,
+        histogram_freq=0,
         write_graph=True,
-        write_images=True,
+        write_images=False,
         update_freq='epoch',
         profile_batch=2,
-        embeddings_freq=1,
+        embeddings_freq=0,
         embeddings_metadata=None
     )
-    callbacks = [early_stop_callback, tensorboard_callback]
+    callbacks = [early_stop_callback, timing_callback, tensorboard_callback]
 
     data_used_amount = train_X.shape[0]
     seed = int(time())
@@ -196,3 +162,5 @@ if __name__ == "__main__":
 
     Model.save_weights('./weights/trained_model.h5')
     show_train_history(train_history, 'loss', 'val_loss')
+
+    print("Average epoch time: {0:.2f}s".format(np.mean(timing_callback.times)))
