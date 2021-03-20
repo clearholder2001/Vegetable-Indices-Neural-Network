@@ -30,11 +30,13 @@ SEED = 0
 EPOCHS = 200
 TRAIN_BATCH_SIZE = 16
 VAL_SPLIT = 0.1
-INIT_LEARNING_RATE = 0.001
-DECAY_STEPS = 1000
-DECAY_RATE = 0.98
-STAIRCASE = False
 EARLY_STOP_LOSS = 0.02
+LEARNING_RATE_ARGS = dict(
+    initial_learning_rate=0.001,
+    decay_steps=1000,
+    decay_rate=0.98,
+    staircase=False
+)
 
 
 # ImageDataGenerator
@@ -62,4 +64,18 @@ DATAGEN_ARGS = dict(
     #data_format=None,
     validation_split=VAL_SPLIT,
     #dtype=None,
+)
+
+
+# TensorBoard
+# ------------------------------------------------
+TENSORBOARD_ARGS = dict(
+    log_dir='tb_log',
+    histogram_freq=0,
+    write_graph=True,
+    write_images=False,
+    update_freq='epoch',
+    profile_batch=2,
+    embeddings_freq=0,
+    embeddings_metadata=None
 )
