@@ -18,6 +18,7 @@ from tensorflow import keras
 from tensorflow.keras import optimizers
 from tensorflow.keras.callbacks import Callback, TensorBoard
 from tensorflow.keras.models import Model
+from tensorflow.keras.optimizers.schedules import ExponentialDecay
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
 from cfgs import cfg
@@ -53,30 +54,13 @@ if __name__ == "__main__":
 
     plot_two_images_array(train_X, train_Y, 'Train - RGB, NDVI', 0)
 
-    lr_schedule = tf.keras.optimizers.schedules.ExponentialDecay(
-        initial_learning_rate=cfg.INIT_LEARNING_RATE,
-        decay_steps=cfg.DECAY_STEPS,
-        decay_rate=cfg.DECAY_RATE,
-        staircase=cfg.STAIRCASE
-    )
+    train_ds, validation_ds = data_augmentation(train_X, train_Y)
 
-    Model = AE_model_4(cfg.MODEL_NAME)
-    adam = optimizers.Adam(learning_rate=lr_schedule)
-    Model.compile(optimizer=adam, loss='mean_absolute_error')
-    Model.summary()
+    lr_schedule = ExponentialDecay(**cfg.LEARNING_RATE_ARGS)
 
     early_stop_callback = EarlyStoppingByLossVal(monitor='loss', value=1e-3, verbose=1)
     timing_callback = TimingCallback()
-    tensorboard_callback = TensorBoard(
-        log_dir='tb_log',
-        histogram_freq=0,
-        write_graph=True,
-        write_images=False,
-        update_freq='epoch',
-        profile_batch=2,
-        embeddings_freq=0,
-        embeddings_metadata=None
-    )
+    tensorboard_callback = TensorBoard(**cfg.TENSORBOARD_ARGS)
     callbacks = [early_stop_callback, timing_callback, tensorboard_callback]
 
     data_used_amount = train_X.shape[0]
@@ -85,7 +69,10 @@ if __name__ == "__main__":
     steps_per_epoch = int(np.ceil((data_used_amount / batch_size) * (1 - split_ratio)))
     validation_steps = int(np.ceil((data_used_amount / batch_size) * split_ratio))
 
-    train_ds, validation_ds = data_augmentation(train_X, train_Y)
+    Model = AE_model_4(cfg.MODEL_NAME)
+    adam = optimizers.Adam(learning_rate=lr_schedule)
+    Model.compile(optimizer=adam, loss='mean_absolute_error')
+    Model.summary()
 
     if cfg.ENABLE_DATA_AUG:
         train_history = Model.fit(
