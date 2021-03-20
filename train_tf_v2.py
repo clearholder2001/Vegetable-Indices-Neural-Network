@@ -4,6 +4,7 @@ tf.data version #2
 keras preprocessing layer + tf.data.Dataset
 '''
 
+import inspect
 import os
 import sys
 import warnings
@@ -31,6 +32,7 @@ from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from configs import cfgs
 from dataset import DataObject, plot_three_images_array, plot_two_images_array
 from model import AE_model_4_1
+from tool.helper import *
 
 gpus = tf.config.list_physical_devices('GPU')
 tf.config.experimental.set_memory_growth(gpus[0], True)
@@ -104,6 +106,8 @@ if __name__ == "__main__":
 
     if len(sys.argv) > 1 and sys.argv[1] == "--production":
         fit_verbose = 2
+
+    print_config(cfgs)
 
     train_X_obj = DataObject('RGB ', cfgs.TRAIN_RGB_PATH)
     train_Y_obj = DataObject('NDVI', cfgs.TRAIN_NDVI_PATH)
