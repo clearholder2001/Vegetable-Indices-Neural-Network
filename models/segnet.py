@@ -3,7 +3,7 @@ from tensorflow.keras.layers import (Activation, BatchNormalization, Conv2D,
                                      regularizers)
 from tensorflow.keras.models import Model
 
-from ..cfgs import cfg
+from cfgs import cfg
 
 
 def segnet(model_name):

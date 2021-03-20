@@ -3,7 +3,7 @@ from tensorflow.keras.layers import (Activation, BatchNormalization,
                                      Input, MaxPooling2D, regularizers)
 from tensorflow.keras.models import Model
 
-from ..cfgs import cfg
+from cfgs import cfg
 
 
 def unet_C2DT(model_name):

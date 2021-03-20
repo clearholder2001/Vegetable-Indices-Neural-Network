@@ -3,7 +3,7 @@ from tensorflow.keras.layers import (Activation, BatchNormalization,
                                      UpSampling2D, regularizers)
 from tensorflow.keras.models import Model
 
-from ..cfgs import cfg
+from cfgs import cfg
 
 
 def unet(model_name):
