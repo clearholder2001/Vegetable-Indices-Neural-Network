@@ -22,7 +22,7 @@ from tensorflow.keras.optimizers.schedules import ExponentialDecay
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
 from cfgs import cfg
-from models.model import AE_model_4
+from models import unet_C2DT as model
 from utils.callback import EarlyStoppingByLossVal, TimingCallback
 from utils.data_aug import data_aug_layer_tf_dataset as data_augmentation
 from utils.dataset import DataObject
@@ -69,7 +69,7 @@ if __name__ == "__main__":
     steps_per_epoch = int(np.ceil((data_used_amount / batch_size) * (1 - split_ratio)))
     validation_steps = int(np.ceil((data_used_amount / batch_size) * split_ratio))
 
-    Model = AE_model_4(cfg.MODEL_NAME)
+    Model = model(cfg.MODEL_NAME)
     adam = optimizers.Adam(learning_rate=lr_schedule)
     Model.compile(optimizer=adam, loss='mean_absolute_error')
     Model.summary()
