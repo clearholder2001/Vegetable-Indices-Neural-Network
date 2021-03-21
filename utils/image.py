@@ -1,11 +1,11 @@
-import os
+from pathlib import Path
 
 import matplotlib.image
 import matplotlib.pyplot as plt
 import numpy as np
 
 
-def plot_two_images_array(images1, images2, title, idx):
+def plot_two_images_array(images1, images2, title, idx, save_figure_path):
     fig, axs = plt.subplots(4, 4)
     fig.set_size_inches(8, 6)
     plt.setp(axs, xticks=[], yticks=[])
@@ -16,11 +16,11 @@ def plot_two_images_array(images1, images2, title, idx):
         axs[i, 3].imshow(images2[idx+4+i], vmin=-1, vmax=1, cmap=plt.get_cmap('jet'))
     fig.suptitle(title, fontsize=24)
     fig.tight_layout()
-    fig.savefig('./fig/' + title + '.png')
+    fig.savefig(save_figure_path.joinpath("{}.jpg".format(title)))
     plt.close(fig)
 
 
-def plot_three_images_array(images1, images2, images3, title, idx):
+def plot_three_images_array(images1, images2, images3, title, idx, save_figure_path):
     fig, axs = plt.subplots(4, 3)
     fig.set_size_inches(12, 13)
     plt.setp(axs, xticks=[], yticks=[])
@@ -30,13 +30,23 @@ def plot_three_images_array(images1, images2, images3, title, idx):
         axs[i, 2].imshow(images3[idx+i], vmin=-1, vmax=1, cmap=plt.get_cmap('jet'))
     fig.suptitle(title, fontsize=24)
     fig.tight_layout()
-    fig.savefig('./fig/' + title + '.png')
+    fig.savefig(save_figure_path.joinpath("{}.jpg".format(title)))
     plt.close(fig)
 
 
-def save_result_image(test_X, test_Y, predict, output_compare=True):
+def save_result_image(test_X, test_Y, predict, output_compare=True, save_image_path=None):
     assert test_X.shape[0] == test_Y.shape[0] == predict.shape[0], 'Length inconsistent: test_X, test_Y, preditc'
-    path = './fig/inference/'
+
+    rgb_path = save_image_path.joinpath("rgb")
+    ndvi_path = save_image_path.joinpath("ndvi")
+    predict_path = save_image_path.joinpath("predict")
+    rgb_path.mkdir(parents=True, exist_ok=True)
+    ndvi_path.mkdir(parents=True, exist_ok=True)
+    predict_path.mkdir(parents=True, exist_ok=True)
+    if output_compare:
+        compare_path = save_image_path.joinpath("comparison")
+        compare_path.mkdir(parents=True, exist_ok=True)
+
     print("Saving result...", end='')
 
     if output_compare:
@@ -51,37 +61,15 @@ def save_result_image(test_X, test_Y, predict, output_compare=True):
         img3 = axs[2].imshow(predict[0], vmin=-1, vmax=1, cmap=plt.get_cmap('jet'))
 
     for i in range(test_X.shape[0]):
-        matplotlib.image.imsave(path + 'rgb/rgb_{0}.jpg'.format(i), test_X[i])
-        matplotlib.image.imsave(path + 'ndvi/ndvi_{0}.jpg'.format(i), np.squeeze(test_Y[i]), cmap=plt.get_cmap('jet'))
-        matplotlib.image.imsave(path + 'predict/predict_{0}.jpg'.format(i), np.squeeze(predict[i]), cmap=plt.get_cmap('jet'))
+        matplotlib.image.imsave(rgb_path.joinpath("rgb_{}.jpg".format(i)), test_X[i])
+        matplotlib.image.imsave(ndvi_path.joinpath("ndvi_{}.jpg".format(i)), np.squeeze(test_Y[i]), cmap=plt.get_cmap('jet'))
+        matplotlib.image.imsave(predict_path.joinpath("predict_{}.jpg".format(i)), np.squeeze(predict[i]), cmap=plt.get_cmap('jet'))
         if output_compare:
             img1.set_data(test_X[i])
             img2.set_data(test_Y[i])
             img3.set_data(predict[i])
-            fig.suptitle("Compare #" + str(i), fontsize=24)
+            fig.suptitle("Comparison #" + str(i), fontsize=24)
             fig.tight_layout()
-            fig.savefig(path + 'compare/compare_{0}.jpg'.format(i))
+            fig.savefig(compare_path.joinpath("comparison_{}.jpg".format(i)))
     plt.close()
     print("Done")
-
-
-def load_data():
-    rgb_path = os.path.join('..', 'Jim', 'dataset', '20meter', 'train_20meter_RGB.npy')
-    # ndvi_path = os.path.join('..', 'Jim', 'dataset','20meter', 'train_20meter_NDVI.npy')
-    rgb_image_array = np.load(rgb_path, allow_pickle=True)
-    # ndvi_image_array = np.load(ndvi_path, allow_pickle=True)
-    print('array shape: ', rgb_image_array.shape)
-    data_array = rgb_image_array
-    return data_array
-
-
-def save_image(data_array, idx):
-    image = data_array[idx]
-    matplotlib.image.imsave('fig/image.jpg', image)
-    print('image saved')
-
-
-def image_viewer(data_array, idx):
-    print("load data...")
-    data_array = load_data()
-    save_image(data_array, 240)
