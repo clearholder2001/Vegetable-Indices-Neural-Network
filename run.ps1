@@ -1,5 +1,12 @@
+Write-Host "Start"
 $PSDefaultParameterValues['Out-File:Encoding'] = 'utf8'
-$time = Get-Date -UFormat "%Y%m%d_%H%M%S"
-python train.py > $(".\log\train_" + $time + ".log")
-python inference.py > (".\log\inference_" + $time + ".log")
-Rename-Item -Path ".\weights\trained_model.h5" -NewName ("trained_model_" + $time + ".h5")
+$null = New-Item -ItemType Directory -Force -Path ".\outputs\default"
+$timestamp = Get-Date -UFormat "%Y%m%d_%H%M%S"
+Write-Host "Train:         " -NoNewline
+python train.py --production > $(".\outputs\default\train_" + $timestamp + ".log")
+Write-Host "Done"
+Write-Host "Inference:     " -NoNewline
+python inference.py > (".\outputs\default\inference_" + $timestamp + ".log")
+Write-Host "Done"
+Rename-Item -Path ".\outputs\default" -NewName ("output_" + $timestamp)
+Write-Host "Complete"
