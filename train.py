@@ -16,17 +16,16 @@ import tensorflow as tf
 from sklearn.utils import shuffle
 from tensorflow import keras
 from tensorflow.keras import optimizers
-from tensorflow.keras.callbacks import Callback, TensorBoard
-from tensorflow.keras.models import Model
+from tensorflow.keras.callbacks import TensorBoard
 from tensorflow.keras.optimizers.schedules import ExponentialDecay
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
 from cfgs import cfg
-from models import unet_C2DT as model
+from models.basic_autoencoder import basic_autoencoder as Model
 from utils.callback import EarlyStoppingByLossVal, TimingCallback
-from utils.data_aug import data_aug_layer_tf_dataset as data_augmentation
+from utils.data_aug import data_aug_keras as data_augmentation
 from utils.dataset import DataObject
-from utils.helper import print_cfg, show_train_history
+from utils.helper import output_init, plot_train_history, print_cfg
 from utils.image import plot_two_images_array
 
 gpus = tf.config.list_physical_devices('GPU')
@@ -39,31 +38,23 @@ if __name__ == "__main__":
     if len(sys.argv) > 1 and sys.argv[1] == "--production":
         fit_verbose = 2
 
-    print_cfg()
+    print_cfg(cfg)
+    output_init(cfg)
 
-    train_X_obj = DataObject('RGB ', cfg.TRAIN_RGB_PATH)
-    train_Y_obj = DataObject('NDVI', cfg.TRAIN_NDVI_PATH)
+    train_X_obj = DataObject('RGB ', data_path=cfg.TRAIN_RGB_PATH, save_image_path=cfg.SAVE_IMAGE_PATH.joinpath("train/input"))
+    train_Y_obj = DataObject('NDVI', data_path=cfg.TRAIN_NDVI_PATH, save_image_path=cfg.SAVE_IMAGE_PATH.joinpath("train/input"))
     train_X_obj.load_data(devided_by_255=True, expand_dims=False, save_image=False)
     train_Y_obj.load_data(devided_by_255=False, expand_dims=True, save_image=False)
     train_X_obj.crop(save_image=False)
     train_Y_obj.crop(save_image=False)
-    table = train_X_obj.generate_resample_table(multiple_factor=cfg.RESAMPLE_MULTIPLE_FACTOR)
+    table = train_X_obj.generate_resample_table(multiple_factor=cfg.RESAMPLE_MULTIPLE_FACTOR, seed=cfg.SEED)
     train_X_obj.resample(table, save_image=False)
     train_Y_obj.resample(table, save_image=False)
     train_X = train_X_obj.get_data_resample()
     train_Y = train_Y_obj.get_data_resample()
     train_X, train_Y = shuffle(train_X, train_Y)
 
-    plot_two_images_array(train_X, train_Y, 'Train - RGB, NDVI', 0)
-
-    train_ds, validation_ds = data_augmentation(train_X, train_Y)
-
-    lr_schedule = ExponentialDecay(**cfg.LEARNING_RATE_ARGS)
-
-    early_stop_callback = EarlyStoppingByLossVal(monitor='loss', value=1e-3, verbose=1)
-    timing_callback = TimingCallback()
-    tensorboard_callback = TensorBoard(**cfg.TENSORBOARD_ARGS)
-    callbacks = [early_stop_callback, timing_callback, tensorboard_callback]
+    plot_two_images_array(train_X, train_Y, 'Train - RGB, NDVI', 0, cfg.SAVE_FIGURE_PATH)
 
     data_used_amount = train_X.shape[0]
     batch_size = cfg.DATA_AUG_BATCH_SIZE
@@ -71,13 +62,22 @@ if __name__ == "__main__":
     steps_per_epoch = int(np.ceil((data_used_amount / batch_size) * (1 - split_ratio)))
     validation_steps = int(np.ceil((data_used_amount / batch_size) * split_ratio))
 
-    Model = model(cfg.MODEL_NAME)
+    lr_schedule = ExponentialDecay(**cfg.LEARNING_RATE_ARGS)
+
+    early_stop_callback = EarlyStoppingByLossVal(monitor='loss', loss=1e-3, save_weight_path=cfg.SAVE_WEIGHT_PATH, verbose=1)
+    timing_callback = TimingCallback()
+    tensorboard_callback = TensorBoard(**cfg.TENSORBOARD_ARGS)
+    callbacks = [early_stop_callback, timing_callback, tensorboard_callback]
+
+    model = Model(cfg.MODEL_NAME)
     adam = optimizers.Adam(learning_rate=lr_schedule)
-    Model.compile(optimizer=adam, loss='mean_absolute_error')
-    Model.summary()
+    model.compile(optimizer=adam, loss='mean_absolute_error')
+    model.summary()
 
     if cfg.ENABLE_DATA_AUG:
-        train_history = Model.fit(
+        train_ds, validation_ds = data_augmentation(train_X, train_Y)
+
+        train_history = model.fit(
             train_ds,
             epochs=cfg.EPOCHS,
             steps_per_epoch=steps_per_epoch,
@@ -87,7 +87,7 @@ if __name__ == "__main__":
             verbose=fit_verbose
         )
     else:
-        train_history = Model.fit(
+        train_history = model.fit(
             train_X[:data_used_amount],
             train_Y[:data_used_amount],
             epochs=cfg.EPOCHS,
@@ -99,7 +99,7 @@ if __name__ == "__main__":
             verbose=fit_verbose
         )
 
-    Model.save_weights('./weights/trained_model.h5')
-    show_train_history(train_history, 'loss', 'val_loss')
+    model.save(cfg.SAVE_MODEL_PATH.joinpath("trained_model.h5"))
+    plot_train_history(train_history, 'loss', 'val_loss', save_figure_path=cfg.SAVE_FIGURE_PATH)
 
     print("Average epoch time: {0:.2f}s".format(np.mean(timing_callback.times)))

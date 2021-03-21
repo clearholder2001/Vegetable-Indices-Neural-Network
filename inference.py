@@ -30,41 +30,34 @@ tf.config.experimental.set_memory_growth(gpus[0], True)
 
 
 if __name__ == "__main__":
-    cfg.RESAMPLE_MULTIPLE_FACTOR = 1
-    weight_name = 'trained_model.h5'
+    model_path = cfg.SAVE_MODEL_PATH.joinpath("trained_model.h5")
 
-    test_X_obj = DataObject('RGB ', cfg.TEST_RGB_PATH)
-    test_Y_obj = DataObject('NDVI', cfg.TEST_NDVI_PATH)
-    test_X_obj.load_data(devided_by_255=True, expand_dims=False)
-    test_Y_obj.load_data(devided_by_255=False, expand_dims=True)
-    test_X_obj.crop()
-    test_Y_obj.crop()
+    test_X_obj = DataObject('RGB ', cfg.TEST_RGB_PATH, save_image_path=cfg.SAVE_IMAGE_PATH.joinpath("inference/input"))
+    test_Y_obj = DataObject('NDVI', cfg.TEST_NDVI_PATH, save_image_path=cfg.SAVE_IMAGE_PATH.joinpath("inference/input"))
+    test_X_obj.load_data(devided_by_255=True, expand_dims=False, save_image=False)
+    test_Y_obj.load_data(devided_by_255=False, expand_dims=True, save_image=False)
+    test_X_obj.crop(save_image=False)
+    test_Y_obj.crop(save_image=False)
     table = test_X_obj.generate_resample_table(multiple_factor=cfg.RESAMPLE_MULTIPLE_FACTOR)
-    test_X_obj.resample(table)
-    test_Y_obj.resample(table)
+    test_X_obj.resample(table, save_image=False)
+    test_Y_obj.resample(table, save_image=False)
     test_X = test_X_obj.get_data_resample()
     test_Y = test_Y_obj.get_data_resample()
     print('RGB  array shape: ', test_X.shape)
     print('NDVI array shape: ', test_Y.shape)
 
-    plot_two_images_array(test_X, test_Y, 'Inference - RGB, NDVI', 140)
+    plot_two_images_array(test_X, test_Y, 'Inference - RGB, NDVI', 0, cfg.SAVE_FIGURE_PATH)
 
-    # cfg.INPUT_LAYER_DIM = (test_X.shape[1], test_X.shape[2], test_X.shape[3])
-
-    Model = model(cfg.MODEL_NAME)
-    adam = optimizers.Adam(cfg.INIT_LEARNING_RATE)
-    Model.compile(optimizer=adam, loss='mean_absolute_error')
-    weight = os.path.join('.', 'weights', weight_name)
-    Model.load_weights(weight)
+    model = load_model(model_path)
 
     batch_size = cfg.TRAIN_BATCH_SIZE
-    predict = Model.predict(test_X, batch_size=batch_size, verbose=2)
-    lossfunc = Model.evaluate(test_X, test_Y, batch_size=batch_size, verbose=2)
+    predict = model.predict(test_X, batch_size=batch_size, verbose=2)
+    lossfunc = model.evaluate(test_X, test_Y, batch_size=batch_size, verbose=2)
     assert predict.shape == test_Y.shape, 'Dimension inconsistent: test_Y, predict'
 
-    #np.save('predict', predict, allow_pickle=True)
-    plot_three_images_array(test_X, test_Y, predict, 'Inference - RGB, NDVI, Predict', 0)
-    save_result_image(test_X, test_Y, predict, output_compare=True)
+    np.save(cfg.OUTPUT_DEFAULT_PATH.joinpath("predict"), predict, allow_pickle=True)
+    plot_three_images_array(test_X, test_Y, predict, 'Inference - RGB, NDVI, Predict', 0, cfg.SAVE_FIGURE_PATH)
+    save_result_image(test_X, test_Y, predict, output_compare=True, save_image_path=cfg.SAVE_IMAGE_PATH.joinpath("inference/output"))
 
     num = test_Y.shape[0]
     rmse = math.sqrt(np.mean(np.square(test_Y - predict)))
