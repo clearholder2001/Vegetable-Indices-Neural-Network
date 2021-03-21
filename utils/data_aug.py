@@ -2,10 +2,9 @@ from time import time
 
 import numpy as np
 import tensorflow as tf
+from cfgs import cfg
 from tensorflow.keras.layers.experimental import preprocessing
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
-
-from ..cfgs import cfg
 
 seed = cfg.SEED
 batch_size = cfg.DATA_AUG_BATCH_SIZE
@@ -14,7 +13,21 @@ layer_dim = cfg.INPUT_LAYER_DIM
 autotune = tf.data.AUTOTUNE
 
 
+def output_init():
+    train_image_path = cfg.SAVE_IMAGE_PATH.joinpath('data_aug/train/rgb')
+    train_mask_path = cfg.SAVE_IMAGE_PATH.joinpath('data_aug/train/ndvi')
+    validation_image_path = cfg.SAVE_IMAGE_PATH.joinpath('data_aug/val/rgb')
+    validation_mask_path = cfg.SAVE_IMAGE_PATH.joinpath('data_aug/val/ndvi')
+    train_image_path.mkdir(parents=True, exist_ok=True)
+    train_mask_path.mkdir(parents=True, exist_ok=True)
+    validation_image_path.mkdir(parents=True, exist_ok=True)
+    validation_mask_path.mkdir(parents=True, exist_ok=True)
+    return train_image_path, train_mask_path, validation_image_path, validation_mask_path
+
+
 def data_aug_keras(train_X, train_Y):
+    #train_image_path, train_mask_path, validation_image_path, validation_mask_path = output_init()
+
     image_datagen = ImageDataGenerator(**cfg.DATAGEN_ARGS)
     mask_datagen = ImageDataGenerator(**cfg.DATAGEN_ARGS)
 
@@ -24,9 +37,9 @@ def data_aug_keras(train_X, train_Y):
         shuffle=True,
         seed=seed,
         subset='training',  # set as training data
-        # save_to_dir='./fig/datagen/train/rgb',
-        # save_prefix='train',
-        # save_format='jpg'
+        #save_to_dir=train_image_path,
+        #save_prefix='train_rgb',
+        #save_format='jpg'
     )
 
     train_mask_generator = mask_datagen.flow(
@@ -35,9 +48,9 @@ def data_aug_keras(train_X, train_Y):
         shuffle=True,
         seed=seed,
         subset='training',  # set as training data
-        # save_to_dir='./fig/datagen/train/ndvi',
-        # save_prefix='train',
-        # save_format='jpg'
+        #save_to_dir=train_mask_path,
+        #save_prefix='train_ndvi',
+        #save_format='jpg'
     )
 
     validation_image_generator = image_datagen.flow(
@@ -46,9 +59,9 @@ def data_aug_keras(train_X, train_Y):
         shuffle=True,
         seed=seed,
         subset='validation',  # set as validation data
-        # save_to_dir='./fig/datagen/val/rgb',
-        # save_prefix='val',
-        # save_format='jpg'
+        #save_to_dir=validation_image_path,
+        #save_prefix='val_rgb',
+        #save_format='jpg'
     )
 
     validation_mask_generator = mask_datagen.flow(
@@ -57,9 +70,9 @@ def data_aug_keras(train_X, train_Y):
         shuffle=True,
         seed=seed,
         subset='validation',  # set as validation data
-        # save_to_dir='./fig/datagen/val/ndvi',
-        # save_prefix='val',
-        # save_format='jpg'
+        #save_to_dir=validation_mask_path,
+        #save_prefix='val_ndvi',
+        #save_format='jpg'
     )
 
     train_generator = zip(train_image_generator, train_mask_generator)
@@ -69,7 +82,7 @@ def data_aug_keras(train_X, train_Y):
 
 
 def data_aug_keras_tf_generator(train_X, train_Y):
-    layer_dim = cfg.INPUT_LAYER_DIM
+    #train_image_path, train_mask_path, validation_image_path, validation_mask_path = output_init()
 
     image_datagen = ImageDataGenerator(**cfg.DATAGEN_ARGS)
     mask_datagen = ImageDataGenerator(**cfg.DATAGEN_ARGS)
@@ -80,9 +93,9 @@ def data_aug_keras_tf_generator(train_X, train_Y):
         shuffle=True,
         seed=seed,
         subset='training',  # set as training data
-        # save_to_dir='./fig/datagen/train/rgb',
-        # save_prefix='train',
-        # save_format='jpg'
+        #save_to_dir=train_image_path,
+        #save_prefix='train_rgb',
+        #save_format='jpg'
     )
 
     train_mask_generator = mask_datagen.flow(
@@ -91,9 +104,9 @@ def data_aug_keras_tf_generator(train_X, train_Y):
         shuffle=True,
         seed=seed,
         subset='training',  # set as training data
-        # save_to_dir='./fig/datagen/train/ndvi',
-        # save_prefix='train',
-        # save_format='jpg'
+        #save_to_dir=train_mask_path,
+        #save_prefix='train_ndvi',
+        #save_format='jpg'
     )
 
     validation_image_generator = image_datagen.flow(
@@ -102,9 +115,9 @@ def data_aug_keras_tf_generator(train_X, train_Y):
         shuffle=True,
         seed=seed,
         subset='validation',  # set as validation data
-        # save_to_dir='./fig/datagen/val/rgb',
-        # save_prefix='val',
-        # save_format='jpg'
+        #save_to_dir=validation_image_path,
+        #save_prefix='val_rgb',
+        #save_format='jpg'
     )
 
     validation_mask_generator = mask_datagen.flow(
@@ -113,9 +126,9 @@ def data_aug_keras_tf_generator(train_X, train_Y):
         shuffle=True,
         seed=seed,
         subset='validation',  # set as validation data
-        # save_to_dir='./fig/datagen/val/ndvi',
-        # save_prefix='val',
-        # save_format='jpg'
+        #save_to_dir=validation_mask_path,
+        #save_prefix='val_ndvi',
+        #save_format='jpg'
     )
 
     train_image_generator_ds = tf.data.Dataset.from_generator(lambda: train_image_generator, output_types=tf.float32, output_shapes=[batch_size].extend(layer_dim))
@@ -163,6 +176,8 @@ def data_aug_layer_tf_dataset(train_X, train_Y):
 
 
 def data_aug_keras_numpy_tf_dataset(train_X, train_Y):
+    #train_image_path, train_mask_path, validation_image_path, validation_mask_path = output_init()
+
     validation_split_count = int(train_X.shape[0] * (1 - split_ratio))
     train_ds = tf.data.Dataset.from_tensor_slices((train_X, train_Y)).take(validation_split_count)
     validation_ds = tf.data.Dataset.from_tensor_slices((train_X, train_Y)).skip(validation_split_count)
@@ -175,8 +190,10 @@ def data_aug_keras_numpy_tf_dataset(train_X, train_Y):
         mask_datagen = ImageDataGenerator(**cfg.DATAGEN_ARGS)
         mask_datagen._validation_split = None
 
-        augmented_images = next(image_datagen.flow(image, batch_size=1, shuffle=False, seed=seed, save_to_dir='./fig/datagen/train/rgb', save_format='jpg'))
-        augmented_masks = next(mask_datagen.flow(mask, batch_size=1, shuffle=False, seed=seed, save_to_dir='./fig/datagen/train/ndvi', save_format='jpg'))
+        augmented_images = next(image_datagen.flow(image, batch_size=1, shuffle=False, seed=seed))
+        augmented_masks = next(mask_datagen.flow(mask, batch_size=1, shuffle=False, seed=seed))
+        #augmented_images = next(image_datagen.flow(image, batch_size=1, shuffle=False, seed=seed, save_to_dir=train_image_path, save_prefix='train_rgb', save_format='jpg'))
+        #augmented_masks = next(mask_datagen.flow(mask, batch_size=1, shuffle=False, seed=seed, save_to_dir=train_mask_path, save_prefix='train_ndvi', save_format='jpg'))
 
         return augmented_images, augmented_masks
 
