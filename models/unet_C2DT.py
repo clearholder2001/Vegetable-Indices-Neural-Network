@@ -1,9 +1,8 @@
+from cfgs import cfg
 from tensorflow.keras.layers import (Activation, BatchNormalization,
                                      Concatenate, Conv2D, Conv2DTranspose,
-                                     Input, MaxPooling2D, regularizers)
+                                     Input, MaxPooling2D)
 from tensorflow.keras.models import Model
-
-from cfgs import cfg
 
 
 def unet_C2DT(model_name):
