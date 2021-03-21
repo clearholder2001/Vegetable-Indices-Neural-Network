@@ -1,22 +1,23 @@
-import os
+from pathlib import Path
 
 
 # Data
 # ------------------------------------------------
-TRAIN_RGB_PATH = os.path.join('..', 'Jim', 'dataset', '20meter', 'train_20meter_RGB.npy')
-TRAIN_NDVI_PATH = os.path.join('..', 'Jim', 'dataset', '20meter', 'train_20meter_NDVI.npy')
-TEST_RGB_PATH = os.path.join('..', 'Jim', 'dataset', 'testing', 'test_15meter_RGB.npy')
-TEST_NDVI_PATH = os.path.join('..', 'Jim', 'dataset', 'testing', 'test_15meter_NDVI.npy')
-RESAMPLE_MULTIPLE_FACTOR = 9
-SAVED_IMAGE_PATH = os.path.join('outputs', 'default', 'image')
-SAVED_FIGURE_PATH = os.path.join('outputs', 'default')
+TRAIN_RGB_PATH = Path("../Jim/dataset/20meter/train_20meter_RGB.npy")
+TRAIN_NDVI_PATH = Path("../Jim/dataset/20meter/train_20meter_NDVI.npy")
+TEST_RGB_PATH = Path("../Jim/dataset/testing/test_15meter_RGB.npy")
+TEST_NDVI_PATH = Path("../Jim/dataset/testing/test_15meter_NDVI.npy")
+OUTPUT_DEFAULT_PATH = Path("outputs/default")
+SAVE_IMAGE_PATH = OUTPUT_DEFAULT_PATH.joinpath("image")
+SAVE_FIGURE_PATH = OUTPUT_DEFAULT_PATH
+RESAMPLE_MULTIPLE_FACTOR = 4
 
 
 # Model
 # ------------------------------------------------
 MODEL_NAME = 'model'
-SAVED_MODEL_PATH = os.path.join('outputs', 'default', 'model')
-SAVED_WEIGHT_PATH = os.path.join('outputs', 'default', 'model')
+SAVE_MODEL_PATH = OUTPUT_DEFAULT_PATH.joinpath("model")
+SAVE_WEIGHT_PATH = OUTPUT_DEFAULT_PATH.joinpath("model")
 INPUT_LAYER_DIM = (352, 480, 3)
 RANDOMCONTRAST_FACTOR = 0.2
 L2_REGULAR = 0.001
@@ -73,9 +74,9 @@ DATAGEN_ARGS = dict(
 
 # TensorBoard
 # ------------------------------------------------
-TENSORBOARD_LOG_PATH = os.path.join('outputs', 'TensorBoard')
+TENSORBOARD_LOG_PATH = OUTPUT_DEFAULT_PATH.joinpath("TensorBoard")
 TENSORBOARD_ARGS = dict(
-    log_dir='tb_log',
+    log_dir=TENSORBOARD_LOG_PATH,
     histogram_freq=0,
     write_graph=True,
     write_images=False,
