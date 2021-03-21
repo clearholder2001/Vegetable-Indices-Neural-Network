@@ -3,8 +3,9 @@ from tensorflow.keras.layers import (Activation, BatchNormalization, Conv2D,
 from tensorflow.keras.models import Model
 
 
-def basic_CNN():
-    X_input = Input((51, 51, 3))
+def basic_CNN(model_name):
+    Input_img = Input((51, 51, 3))
+    
     # stage 1
     X = Conv2D(4, (3, 3), strides=(1, 1), name="conv1", padding="same")(X_input)
     X = BatchNormalization()(X)
@@ -28,5 +29,6 @@ def basic_CNN():
     fcn = Activation('relu')(fcn)
     fcn = Dense(1)(fcn)
     fcn = Activation('tanh')(fcn)
-    model = Model(X_input, fcn)
+    
+    model = Model(inputs=Input_img, outputs=fcn, name=model_name)
     return model
