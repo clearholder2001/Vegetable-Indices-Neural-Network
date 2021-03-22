@@ -21,7 +21,7 @@ from tensorflow.keras.optimizers.schedules import ExponentialDecay
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
 from cfgs import cfg
-from models.basic_autoencoder import basic_autoencoder as Model
+from models.unet_C2DT import unet_C2DT as Model
 from utils.callback import EarlyStoppingByLossVal, TimingCallback
 from utils.data_aug import data_aug_keras as data_augmentation
 from utils.dataset import DataObject
@@ -52,7 +52,7 @@ if __name__ == "__main__":
     train_Y_obj.resample(table, save_image=False)
     train_X = train_X_obj.get_data_resample()
     train_Y = train_Y_obj.get_data_resample()
-    train_X, train_Y = shuffle(train_X, train_Y)
+    train_X, train_Y = shuffle(train_X, train_Y, random_state=cfg.SEED)
 
     plot_two_images_array(train_X, train_Y, 'Train - RGB, NDVI', 0, cfg.SAVE_FIGURE_PATH)
 

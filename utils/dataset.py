@@ -23,7 +23,6 @@ class DataObject():
 
     def load_data(self, devided_by_255=True, expand_dims=False, save_image=False):
         self.data_raw = np.load(self.data_path, allow_pickle=True)
-        self.data_raw = self.data_raw[:10]
         if devided_by_255:
             self.data_raw = self.data_raw.astype('float32') / 255.
         if expand_dims:
