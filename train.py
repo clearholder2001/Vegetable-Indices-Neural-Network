@@ -23,7 +23,7 @@ from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
 from cfgs import cfg
 from models.unet_C2DT import unet_C2DT as Model
-from utils.callback import EarlyStoppingByLossVal, TimingCallback
+from utils.callback import EarlyStoppingCallback, TimingCallback
 from utils.data_aug import data_aug_keras as data_augmentation
 from utils.dataset import DataObject
 from utils.helper import output_init, plot_train_history, print_cfg
@@ -65,7 +65,7 @@ if __name__ == "__main__":
 
     lr_schedule = ExponentialDecay(**cfg.LEARNING_RATE_ARGS)
 
-    early_stop_callback = EarlyStoppingByLossVal(monitor='loss', loss=1e-3, save_weight_path=cfg.SAVE_WEIGHT_PATH, verbose=1)
+    early_stop_callback = EarlyStoppingCallback(monitor='loss', loss=cfg.EARLY_STOP_LOSS, save_weight_path=cfg.SAVE_WEIGHT_PATH)
     timing_callback = TimingCallback()
     tensorboard_callback = TensorBoard(**cfg.TENSORBOARD_ARGS)
     callbacks = [early_stop_callback, timing_callback, tensorboard_callback]
