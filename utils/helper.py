@@ -33,6 +33,6 @@ def output_init(cfg):
 def print_cfg(cfg):
     print("--------------------cfg--------------------")
     for setting in inspect.getmembers(cfg):
-        if not setting[0].startswith('_') and not setting[0] == 'os':
+        if not setting[0].startswith('_') and not setting[0] == 'Path':
             print(setting)
     print("--------------------end--------------------")
