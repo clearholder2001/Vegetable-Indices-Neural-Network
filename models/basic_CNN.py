@@ -7,7 +7,7 @@ def basic_CNN(model_name):
     Input_img = Input((51, 51, 3))
     
     # stage 1
-    X = Conv2D(4, (3, 3), strides=(1, 1), name="conv1", padding="same")(X_input)
+    X = Conv2D(4, (3, 3), strides=(1, 1), name="conv1", padding="same")(Input_img)
     X = BatchNormalization()(X)
     X = Activation('relu')(X)
     X = Conv2D(4, (3, 3), strides=(1, 1), name="conv1_2", padding="same")(X)
