@@ -9,6 +9,7 @@ from time import time
 3 = INFO, WARNING, and ERROR messages are not printed
 '''
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
+os.environ['TF_XLA_FLAGS'] = '--tf_xla_enable_xla_devices'
 
 import matplotlib.pyplot as plt
 import numpy as np
