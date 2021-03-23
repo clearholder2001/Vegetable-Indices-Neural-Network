@@ -36,7 +36,7 @@ if __name__ == "__main__":
     test_Y_obj.load_data(devided_by_255=False, expand_dims=True, save_image=False)
     test_X_obj.crop(save_image=False)
     test_Y_obj.crop(save_image=False)
-    table = test_X_obj.generate_resample_table(multiple_factor=cfg.RESAMPLE_MULTIPLE_FACTOR)
+    table = test_X_obj.generate_resample_table(multiple_factor=cfg.RESAMPLE_MULTIPLE_FACTOR, seed=cfg.SEED)
     test_X_obj.resample(table, save_image=False)
     test_Y_obj.resample(table, save_image=False)
     test_X = test_X_obj.get_data_resample()
