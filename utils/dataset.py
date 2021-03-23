@@ -73,12 +73,14 @@ class DataObject():
             print('No data: load data first.')
 
     def generate_resample_table(self, target_size=(352, 480), multiple_factor=9, seed=0):
-        np.random.seed(seed)
         array_len = self.num * multiple_factor
+        range_max = (self.height-target_size[0]) * (self.width-target_size[1])
+        np.random.seed(seed)
+        random_array = np.random.randint(low=0, high=range_max, size=array_len)
         index_array = np.repeat(np.arange(self.num, dtype=np.uint32), multiple_factor).reshape(-1, 1)
-        top_array = np.rint(np.random.rand(array_len) * (self.height-target_size[0])).astype(np.uint32).reshape(-1, 1)
+        top_array = np.rint(np.mod(random_array, target_size[0])).astype(np.uint32).reshape(-1, 1)
         down_array = top_array + target_size[0]
-        left_array = np.rint(np.random.rand(array_len) * (self.width-target_size[1])).astype(np.uint32).reshape(-1, 1)
+        left_array = np.rint(np.mod(random_array, target_size[1])).astype(np.uint32).reshape(-1, 1)
         right_array = left_array + target_size[1]
         table = np.concatenate((index_array, top_array, down_array, left_array, right_array), axis=1)
         print('Table is generated.')
