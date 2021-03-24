@@ -1,12 +1,11 @@
-from cfgs import cfg
 from tensorflow.keras.layers import (Activation, BatchNormalization,
                                      Concatenate, Conv2D, Conv2DTranspose,
                                      Input, MaxPooling2D)
 from tensorflow.keras.models import Model
 
 
-def unet_C2DT(model_name):
-    Input_img = Input(shape=cfg.INPUT_LAYER_DIM)
+def unet_C2DT(model_name, input_dim):
+    Input_img = Input(shape=input_dim)
 
     # Setup
     activation = 'relu'

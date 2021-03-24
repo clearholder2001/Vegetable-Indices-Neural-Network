@@ -46,7 +46,10 @@ if __name__ == "__main__":
 
     plot_two_images_array(test_X, test_Y, 'Inference - RGB, NDVI', 0, cfg.SAVE_FIGURE_PATH)
 
-    model = load_model(model_path)
+    model = Model(model_name=cfg.MODEL_NAME, input_dim=cfg.INFERENCE_INPUT_DIM)
+    model.compile(loss='mean_absolute_error')
+    model.load_weights(model_path)
+    model.summary()
 
     batch_size = cfg.TRAIN_BATCH_SIZE
     predict = model.predict(test_X, batch_size=batch_size, verbose=2)
@@ -60,7 +63,7 @@ if __name__ == "__main__":
     print("Final RMSE: {0:.4f}".format(rmse))
     print("Final R Square: {0:.4f}".format(r2))
     print("Final Correlation: {0:.4f}".format(correlation[0]))
-    print("Final Loss ({0}): {1:.4f}".format(model.loss.__name__, lossfunc))
+    print("Final Loss ({0}): {1:.4f}".format(model.loss, lossfunc))
 
     np.save(cfg.OUTPUT_DEFAULT_PATH.joinpath("predict"), predict, allow_pickle=True)
     plot_three_images_array(test_X, test_Y, predict, 'Inference - RGB, NDVI, Predict', 0, cfg.SAVE_FIGURE_PATH)

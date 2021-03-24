@@ -9,7 +9,7 @@ from tensorflow.keras.preprocessing.image import ImageDataGenerator
 seed = cfg.SEED
 batch_size = cfg.DATA_AUG_BATCH_SIZE
 split_ratio = cfg.VAL_SPLIT
-layer_dim = cfg.INPUT_LAYER_DIM
+layer_dim = cfg.TRAIN_INPUT_DIM
 autotune = tf.data.AUTOTUNE
 
 

@@ -1,11 +1,10 @@
-from cfgs import cfg
 from tensorflow.keras.layers import (Activation, Conv2D, Input, MaxPooling2D,
                                      UpSampling2D)
 from tensorflow.keras.models import Model
 
 
-def basic_autoencoder(model_name):
-    Input_img = Input(shape=cfg.INPUT_LAYER_DIM)
+def basic_autoencoder(model_name, input_dim):
+    Input_img = Input(shape=input_dim)
 
     # Encoding architecture
     x1 = Conv2D(16, (3, 3), activation='relu', padding='same')(Input_img)

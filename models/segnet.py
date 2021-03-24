@@ -1,12 +1,11 @@
-from cfgs import cfg
 from tensorflow.keras import regularizers
 from tensorflow.keras.layers import (Activation, BatchNormalization, Conv2D,
                                      Input, MaxPooling2D, UpSampling2D)
 from tensorflow.keras.models import Model
 
 
-def segnet(model_name):
-    Input_img = Input(shape=cfg.INPUT_LAYER_DIM)
+def segnet(model_name, input_dim):
+    Input_img = Input(shape=input_dim)
 
     # Encoding Architecture
     # Block 1
