@@ -70,7 +70,7 @@ if __name__ == "__main__":
     tensorboard_callback = TensorBoard(**cfg.TENSORBOARD_ARGS)
     callbacks = [early_stop_callback, timing_callback, tensorboard_callback]
 
-    model = Model(cfg.MODEL_NAME)
+    model = Model(model_name=cfg.MODEL_NAME, input_dim=cfg.TRAIN_INPUT_DIM)
     adam = optimizers.Adam(learning_rate=lr_schedule)
     model.compile(optimizer=adam, loss='mean_absolute_error')
     model.summary()

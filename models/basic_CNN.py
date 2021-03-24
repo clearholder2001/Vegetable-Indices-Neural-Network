@@ -3,8 +3,8 @@ from tensorflow.keras.layers import (Activation, BatchNormalization, Conv2D,
 from tensorflow.keras.models import Model
 
 
-def basic_CNN(model_name):
-    Input_img = Input((51, 51, 3))
+def basic_CNN(model_name, input_dim):
+    Input_img = Input(shape=input_dim)
     
     # stage 1
     X = Conv2D(4, (3, 3), strides=(1, 1), name="conv1", padding="same")(Input_img)

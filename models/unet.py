@@ -1,4 +1,3 @@
-from cfgs import cfg
 from tensorflow.keras import regularizers
 from tensorflow.keras.layers import (Activation, BatchNormalization,
                                      Concatenate, Conv2D, Input, MaxPooling2D,
@@ -6,8 +5,8 @@ from tensorflow.keras.layers import (Activation, BatchNormalization,
 from tensorflow.keras.models import Model
 
 
-def unet(model_name):
-    Input_img = Input(shape=cfg.INPUT_LAYER_DIM)
+def unet(model_name, input_dim):
+    Input_img = Input(shape=input_dim)
 
     # Setup
     activation = 'swish'
