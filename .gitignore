@@ -3,6 +3,7 @@
 *.npy
 *.npz
 *.log
+*.h5
 __pycache__
 .env
 .vscode
