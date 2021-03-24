@@ -13,7 +13,6 @@ def plot_train_history(train_history, train, validation, save_figure_path):
     plt.title = "Train History"
     plt.ylabel(train)
     plt.xlabel('Epoch')
-    plt.xticks(np.arange(0, len(train_history.history[train]), step=1.0))
     plt.legend(['train', 'validation'], loc='upper left')
     plt.savefig(save_figure_path.joinpath("Train History.jpg"))
     plt.close(fig)
