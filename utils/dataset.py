@@ -38,7 +38,7 @@ class DataObject():
                     matplotlib.image.imsave(ndvi_path.joinpath("ndvi_{0}.jpg".format(i)), img, cmap=plt.get_cmap('jet'))
         print('Data {0} shape: {1}'.format(self.obj_name, self.data_raw.shape))
 
-    def crop(self, top_width=0, down_width=52, left_width=23, right_width=23, save_image=False):
+    def crop(self, top_width=0, down_width=54, left_width=35, right_width=20, save_image=False):
         if self.data_raw is not None:
             self.data_raw = self.data_raw[:, top_width:(self.height - down_width), left_width:(self.width - right_width), :]
             self.num, self.height, self.width, self.channel = self.data_raw.shape
