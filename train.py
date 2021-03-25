@@ -30,6 +30,7 @@ from utils.helper import output_init, plot_train_history, print_cfg
 from utils.image import plot_two_images_array
 
 gpus = tf.config.list_physical_devices('GPU')
+tf.config.set_visible_devices(gpus[0], 'GPU')
 tf.config.experimental.set_memory_growth(gpus[0], True)
 
 
