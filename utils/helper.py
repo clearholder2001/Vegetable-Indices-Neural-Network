@@ -1,9 +1,12 @@
 import inspect
+import math
 import shutil
 from pathlib import Path
 
 import matplotlib.pyplot as plt
 import numpy as np
+from scipy import stats
+from sklearn.metrics import r2_score
 
 
 def plot_train_history(train_history, train, validation, save_figure_path):
@@ -35,3 +38,13 @@ def print_cfg(cfg):
         if not setting[0].startswith('_') and not setting[0] == 'Path':
             print(setting)
     print("--------------------end--------------------")
+
+
+def calculate_statistics(test_Y, predict):
+    assert test_Y.shape == predict.shape, 'Dimension inconsistent: test_Y, predict'
+    rmse = math.sqrt(np.mean(np.square(test_Y - predict)))
+    r2 = r2_score(test_Y.reshape(-1), predict.reshape(-1))
+    correlation = stats.pearsonr(test_Y.reshape(-1), predict.reshape(-1))
+    print("Final RMSE: {0:.4f}".format(rmse))
+    print("Final R Square: {0:.4f}".format(r2))
+    print("Final Correlation: {0:.4f}".format(correlation[0]))
