@@ -1,6 +1,5 @@
-from tensorflow.keras.layers import (Activation, BatchNormalization,
-                                     Concatenate, Conv2D, Conv2DTranspose,
-                                     Input, MaxPooling2D)
+from tensorflow.keras.layers import (Activation, Concatenate, Conv2D,
+                                     Conv2DTranspose, Input, MaxPooling2D)
 from tensorflow.keras.models import Model
 
 

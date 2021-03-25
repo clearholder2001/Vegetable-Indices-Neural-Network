@@ -1,3 +1,4 @@
+from cfgs import cfg
 from tensorflow.keras import regularizers
 from tensorflow.keras.layers import (Activation, BatchNormalization, Conv2D,
                                      Input, MaxPooling2D, UpSampling2D)

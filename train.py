@@ -13,13 +13,11 @@ os.environ['TF_XLA_FLAGS'] = '--tf_xla_enable_xla_devices'
 
 import matplotlib.pyplot as plt
 import numpy as np
-import tensorflow as tf
 from sklearn.utils import shuffle
-from tensorflow import keras
-from tensorflow.keras import optimizers
+from tensorflow import config
 from tensorflow.keras.callbacks import TensorBoard
+from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.optimizers.schedules import ExponentialDecay
-from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
 from cfgs import cfg
 from models.unet_C2DT import unet_C2DT as Model
@@ -29,9 +27,9 @@ from utils.dataset import DataObject
 from utils.helper import output_init, plot_train_history, print_cfg
 from utils.image import plot_two_images_array
 
-gpus = tf.config.list_physical_devices('GPU')
-tf.config.set_visible_devices(gpus[0], 'GPU')
-tf.config.experimental.set_memory_growth(gpus[0], True)
+gpus = config.list_physical_devices('GPU')
+config.set_visible_devices(gpus[0], 'GPU')
+config.experimental.set_memory_growth(gpus[0], True)
 
 
 if __name__ == "__main__":
@@ -72,7 +70,7 @@ if __name__ == "__main__":
     callbacks = [early_stop_callback, timing_callback, tensorboard_callback]
 
     model = Model(model_name=cfg.MODEL_NAME, input_dim=cfg.TRAIN_INPUT_DIM)
-    adam = optimizers.Adam(learning_rate=lr_schedule)
+    adam = Adam(learning_rate=lr_schedule)
     model.compile(optimizer=adam, loss='mean_absolute_error')
     model.summary()
 
