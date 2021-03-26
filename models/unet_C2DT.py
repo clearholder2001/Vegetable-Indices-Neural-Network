@@ -90,12 +90,10 @@ def unet_C2DT(model_name, input_dim):
     x9 = Concatenate(axis=3)([x1, x9])
     x9 = Conv2D(16, (3, 3), padding='same', kernel_initializer='he_normal', name='block9_conv2')(x9)
     x9 = Activation(activation, name='block9_ac2')(x9)
-    x9 = Conv2D(16, (3, 3), padding='same', kernel_initializer='he_normal', name='block9_conv3')(x9)
-    x9 = Activation(activation, name='block9_ac3')(x9)
-    #x9 = Activation(activation='tanh', name='block9_ac3')(x9)
+    x9 = Conv2D(1, (3, 3), padding='same', kernel_initializer='he_normal', name='block9_conv3')(x9)
+    x9 = Activation('tanh', name='block9_output')(x9)
 
-    decoded = Conv2D(1, (3, 3), activation='tanh', padding='same', kernel_initializer='glorot_normal', name='block9_output')(x9)
-    #decoded = Lambda(lambda x: mean(x, axis=3)[:, :, :, None])(x9)
+    decoded = x9
 
     model = Model(inputs=Input_img, outputs=decoded, name=model_name)
     return model
