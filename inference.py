@@ -44,7 +44,7 @@ if __name__ == "__main__":
 
     plot_two_images_array(test_X, test_Y, 'Inference - RGB, NDVI', 0, cfg.SAVE_FIGURE_PATH)
 
-    model = Model(model_name=cfg.MODEL_NAME, input_dim=cfg.INFERENCE_INPUT_DIM)
+    model = Model(model_name=cfg.MODEL_NAME, input_dim=test_X[0].shape)
     model.compile(loss='mean_absolute_error')
     model.load_weights(model_path)
     model.summary()
