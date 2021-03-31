@@ -32,10 +32,10 @@ class DataObject():
             rgb_path, ndvi_path = self.output_init("raw")
             for i in range(self.num):
                 if self.channel is 3:
-                    matplotlib.image.imsave(rgb_path.joinpath("rgb_{0}.jpg".format(i)), self.data_raw[i])
+                    matplotlib.image.imsave(rgb_path.joinpath("rgb_{0}.jpg".format(i)), self.data_raw[i], vmin=0, vmax=1)
                 elif self.channel is 1:
                     img = np.squeeze(self.data_raw[i])
-                    matplotlib.image.imsave(ndvi_path.joinpath("ndvi_{0}.jpg".format(i)), img, cmap=plt.get_cmap('jet'))
+                    matplotlib.image.imsave(ndvi_path.joinpath("ndvi_{0}.jpg".format(i)), img, vmin=-1, vmax=1, cmap=plt.get_cmap('jet'))
         print('Data {0} shape: {1}'.format(self.obj_name, self.data_raw.shape))
 
     def crop(self, top_width=0, down_width=54, left_width=35, right_width=20, save_image=False):
@@ -46,10 +46,10 @@ class DataObject():
                 rgb_path, ndvi_path = self.output_init("crop")
                 for i in range(self.num):
                     if self.channel is 3:
-                        matplotlib.image.imsave(rgb_path.joinpath("rgb_{0}.jpg".format(i)), self.data_raw[i])
+                        matplotlib.image.imsave(rgb_path.joinpath("rgb_{0}.jpg".format(i)), self.data_raw[i], vmin=0, vmax=1)
                     elif self.channel is 1:
                         img = np.squeeze(self.data_raw[i])
-                        matplotlib.image.imsave(ndvi_path.joinpath("ndvi_{0}.jpg".format(i)), img, cmap=plt.get_cmap('jet'))
+                        matplotlib.image.imsave(ndvi_path.joinpath("ndvi_{0}.jpg".format(i)), img, vmin=-1, vmax=1, cmap=plt.get_cmap('jet'))
             print('Data {0} shape after crop: {1}'.format(self.obj_name, self.data_raw.shape))
         else:
             print('No data: load data first.')
@@ -64,10 +64,10 @@ class DataObject():
                 self.data_resample[i] = self.data_raw[index, top:down, left:right, :]
                 if save_image:
                     if self.channel is 3:
-                        matplotlib.image.imsave(rgb_path.joinpath("rgb_{0}.jpg".format(i)), self.data_resample[i])
+                        matplotlib.image.imsave(rgb_path.joinpath("rgb_{0}.jpg".format(i)), self.data_resample[i], vmin=0, vmax=1)
                     elif self.channel is 1:
                         img = np.squeeze(self.data_resample[i])
-                        matplotlib.image.imsave(ndvi_path.joinpath("ndvi_{0}.jpg".format(i)), img, cmap=plt.get_cmap('jet'))
+                        matplotlib.image.imsave(ndvi_path.joinpath("ndvi_{0}.jpg".format(i)), img, vmin=-1, vmax=1, cmap=plt.get_cmap('jet'))
             print('Resample data {0} shape: {1}'.format(self.obj_name, self.data_resample.shape))
         else:
             print('No data: load data first.')
@@ -100,7 +100,7 @@ class DataObject():
 
     def save_single_image(self, index=0):
         if self.data_raw is not None:
-            matplotlib.image.imsave(self.save_image_path.joinpath("raw_{}.jpg".format(index)), self.data_raw[index])
+            matplotlib.image.imsave(self.save_image_path.joinpath("raw_{}.jpg".format(index)), self.data_raw[index], vmin=0, vmax=1)
             print('Image saved: index ', index)
 
     def output_init(self, prefix):

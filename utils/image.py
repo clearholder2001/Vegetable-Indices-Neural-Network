@@ -62,8 +62,8 @@ def save_result_image(test_X, test_Y, predict, output_compare=True, save_image_p
 
     for i in range(test_X.shape[0]):
         matplotlib.image.imsave(rgb_path.joinpath("rgb_{}.jpg".format(i)), test_X[i])
-        matplotlib.image.imsave(ndvi_path.joinpath("ndvi_{}.jpg".format(i)), np.squeeze(test_Y[i]), cmap=plt.get_cmap('jet'))
-        matplotlib.image.imsave(predict_path.joinpath("predict_{}.jpg".format(i)), np.squeeze(predict[i]), cmap=plt.get_cmap('jet'))
+        matplotlib.image.imsave(ndvi_path.joinpath("ndvi_{}.jpg".format(i)), np.squeeze(test_Y[i]), vmin=-1, vmax=1, cmap=plt.get_cmap('jet'))
+        matplotlib.image.imsave(predict_path.joinpath("predict_{}.jpg".format(i)), np.squeeze(predict[i]), vmin=-1, vmax=1, cmap=plt.get_cmap('jet'))
         if output_compare:
             img1.set_data(test_X[i])
             img2.set_data(test_Y[i])
