@@ -22,9 +22,9 @@ class DataObject():
         self.save_image_path = save_image_path
 
     def load_data(self, devided_by_255=True, expand_dims=False, save_image=False):
-        self.data_raw = np.load(self.data_path, allow_pickle=True)
+        self.data_raw = np.load(self.data_path, mmap_mode='r', allow_pickle=True).astype('float32')
         if devided_by_255:
-            self.data_raw = self.data_raw.astype('float32') / 255.
+            self.data_raw = self.data_raw / 255.
         if expand_dims:
             self.data_raw = np.expand_dims(self.data_raw, axis=3)
         self.num, self.height, self.width, self.channel = self.data_raw.shape
