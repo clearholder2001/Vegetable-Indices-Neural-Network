@@ -17,7 +17,8 @@ from tensorflow import config
 from cfgs import cfg
 from models.unet_C2DT import unet_C2DT as Model
 from utils.dataset import DataObject
-from utils.helper import calculate_statistics
+from utils.helper import (calculate_statistics, create_tf_dataset, output_init,
+                          simple_image_generator)
 from utils.image import (plot_three_images_array, plot_two_images_array,
                          save_result_image)
 
@@ -31,8 +32,8 @@ if __name__ == "__main__":
 
     test_X_obj = DataObject('RGB ', cfg.TEST_RGB_PATH, save_image_path=cfg.SAVE_IMAGE_PATH.joinpath("inference/input"))
     test_Y_obj = DataObject('NDVI', cfg.TEST_NDVI_PATH, save_image_path=cfg.SAVE_IMAGE_PATH.joinpath("inference/input"))
-    test_X_obj.load_data(devided_by_255=True, expand_dims=False, save_image=False)
-    test_Y_obj.load_data(devided_by_255=False, expand_dims=True, save_image=False)
+    test_X_obj.load_data(devided_by_255=False, expand_dims=False, save_image=False)
+    test_Y_obj.load_data(devided_by_255=False, expand_dims=False, save_image=False)
     test_X_obj.crop(save_image=False)
     test_Y_obj.crop(save_image=False)
     table = test_X_obj.generate_resample_table(multiple_factor=cfg.RESAMPLE_MULTIPLE_FACTOR, seed=cfg.SEED)
@@ -43,16 +44,30 @@ if __name__ == "__main__":
     print('RGB  array shape: ', test_X.shape)
     print('NDVI array shape: ', test_Y.shape)
 
+    batch_size = cfg.TRAIN_BATCH_SIZE
+    test_X_ds = create_tf_dataset(test_X, simple_image_generator, batch_size=batch_size)
+    test_Y_ds = create_tf_dataset(test_Y, simple_image_generator, batch_size=batch_size)
+
     plot_two_images_array(test_X, test_Y, 'Inference - RGB, NDVI', 0, cfg.SAVE_FIGURE_PATH)
 
-    model = Model(model_name=cfg.MODEL_NAME, input_dim=test_X[0].shape)
+    model = Model(model_name=cfg.MODEL_NAME, input_dim=test_X.shape[0])
     model.compile(loss='mean_absolute_error')
     model.load_weights(model_path)
     model.summary()
 
-    batch_size = cfg.TRAIN_BATCH_SIZE
-    predict = model.predict(test_X, batch_size=batch_size, verbose=0)
-    lossfunc = model.evaluate(test_X, test_Y, batch_size=batch_size, verbose=0)
+    predict = np.zeros((test_Y.shape))
+    steps = int(np.ceil(test_X.shape[0] / batch_size))
+    print("Predicting...", end='')
+    for i in range(steps):
+        begin = i * batch_size
+        if i == steps - 1:
+            end = test_X.shape[0]
+        else:
+            end = (i + 1) * batch_size
+        predict[begin:end, :, :, :] = model.predict_on_batch(test_X[begin:end, :, :, :])
+    print("Done")
+
+    lossfunc = model.evaluate(zip(test_X_ds, test_Y_ds), verbose=1)
     calculate_statistics(test_Y, predict)
 
     np.save(cfg.OUTPUT_DEFAULT_PATH.joinpath("predict.npy"), predict, allow_pickle=True)
