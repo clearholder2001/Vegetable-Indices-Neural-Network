@@ -13,6 +13,7 @@ import matplotlib.image
 import matplotlib.pyplot as plt
 import numpy as np
 from tensorflow import config
+from tensorflow.keras.metrics import RootMeanSquaredError
 
 from cfgs import cfg
 from models.unet_C2DT import unet_C2DT as Model
@@ -25,6 +26,21 @@ from utils.image import (plot_three_images_array, plot_two_images_array,
 gpus = config.list_physical_devices('GPU')
 config.set_visible_devices(gpus[0], 'GPU')
 config.experimental.set_memory_growth(gpus[0], True)
+
+
+def predict_function(model, test_X, predict_shape, batch_size):
+    predict = np.zeros((predict_shape))
+    steps = int(np.ceil(test_X.shape[0] / batch_size))
+    print("Predicting...", end='')
+    for i in range(steps):
+        begin = i * batch_size
+        if i == steps - 1:
+            end = test_X.shape[0]
+        else:
+            end = (i + 1) * batch_size
+        predict[begin:end, :, :, :] = model.predict_on_batch(test_X[begin:end, :, :, :])
+    print("Done")
+    return predict
 
 
 if __name__ == "__main__":
@@ -51,22 +67,11 @@ if __name__ == "__main__":
     plot_two_images_array(test_X, test_Y, 'Inference - RGB, NDVI', 0, cfg.SAVE_FIGURE_PATH)
 
     model = Model(model_name=cfg.MODEL_NAME, input_dim=test_X.shape[0])
-    model.compile(loss='mean_absolute_error')
+    model.compile(loss='mean_absolute_error', metrics=RootMeanSquaredError())
     model.load_weights(model_path)
     model.summary()
 
-    predict = np.zeros((test_Y.shape))
-    steps = int(np.ceil(test_X.shape[0] / batch_size))
-    print("Predicting...", end='')
-    for i in range(steps):
-        begin = i * batch_size
-        if i == steps - 1:
-            end = test_X.shape[0]
-        else:
-            end = (i + 1) * batch_size
-        predict[begin:end, :, :, :] = model.predict_on_batch(test_X[begin:end, :, :, :])
-    print("Done")
-
+    predict = predict_function(model, test_X, test_Y.shape, batch_size)
     lossfunc = model.evaluate(zip(test_X_ds, test_Y_ds), verbose=1)
     calculate_statistics(test_Y, predict)
 
