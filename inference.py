@@ -17,7 +17,7 @@ from tensorflow.keras.metrics import RootMeanSquaredError
 
 from cfgs import cfg
 from models.unet_C2DT import unet_C2DT as Model
-from utils.dataset import DataObject
+from utils.dataset import ImageDataSet
 from utils.helper import (calculate_statistics, create_tf_dataset, output_init,
                           simple_image_generator)
 from utils.image import (plot_three_images_array, plot_two_images_array,
@@ -46,8 +46,8 @@ def predict_function(model, test_X, predict_shape, batch_size):
 if __name__ == "__main__":
     model_path = cfg.SAVE_MODEL_PATH.joinpath("trained_model.h5")
 
-    test_X_obj = DataObject('RGB ', cfg.TEST_RGB_PATH, save_image_path=cfg.SAVE_IMAGE_PATH.joinpath("inference/input"))
-    test_Y_obj = DataObject('NDVI', cfg.TEST_NDVI_PATH, save_image_path=cfg.SAVE_IMAGE_PATH.joinpath("inference/input"))
+    test_X_obj = ImageDataSet('RGB ', cfg.TEST_RGB_PATH, save_image_path=cfg.SAVE_IMAGE_PATH.joinpath("inference/input"))
+    test_Y_obj = ImageDataSet('NDVI', cfg.TEST_NDVI_PATH, save_image_path=cfg.SAVE_IMAGE_PATH.joinpath("inference/input"))
     test_X_obj.load_data(devided_by_255=False, expand_dims=False, save_image=False)
     test_Y_obj.load_data(devided_by_255=False, expand_dims=False, save_image=False)
     test_X_obj.crop(save_image=False)

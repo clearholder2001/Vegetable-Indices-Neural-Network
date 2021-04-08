@@ -8,9 +8,9 @@ import numpy as np
 from PIL import Image
 
 
-class DataObject():
+class ImageDataSet():
     """
-    data object for NN model
+    image dataset class for NN model
     """
 
     def __init__(self, obj_name, data_path, save_image_path):
