@@ -10,7 +10,7 @@ TEST_NDVI_PATH = Path("../Jim/dataset/testing/test_15meter_NDVI.npy")
 OUTPUT_DEFAULT_PATH = Path("outputs/default")
 SAVE_IMAGE_PATH = OUTPUT_DEFAULT_PATH.joinpath("image")
 SAVE_FIGURE_PATH = OUTPUT_DEFAULT_PATH
-RESAMPLE_MULTIPLE_FACTOR = 4
+RESAMPLE_MULTIPLE_FACTOR = 9
 
 
 # Model
@@ -33,7 +33,7 @@ SEED = 0
 # Train
 # ------------------------------------------------
 EPOCHS = 200
-TRAIN_BATCH_SIZE = 16
+TRAIN_BATCH_SIZE = 32
 VAL_SPLIT = 0.1
 EARLY_STOP_LOSS = 0.02
 LEARNING_RATE_ARGS = dict(
