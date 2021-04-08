@@ -42,7 +42,7 @@ def print_cfg(cfg):
 
 def calculate_statistics(test_Y, predict):
     assert test_Y.shape == predict.shape, 'Dimension inconsistent: test_Y, predict'
-    rmse = math.sqrt(np.mean(np.square(test_Y - predict)))
+    rmse = np.sqrt(np.mean(np.square(test_Y - predict)))
     r2 = r2_score(test_Y.reshape(-1), predict.reshape(-1))
     correlation = stats.pearsonr(test_Y.reshape(-1), predict.reshape(-1))
     print("Final RMSE: {0:.4f}".format(rmse))

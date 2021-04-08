@@ -55,6 +55,6 @@ if __name__ == "__main__":
     lossfunc = model.evaluate(test_X, test_Y, batch_size=batch_size, verbose=0)
     calculate_statistics(test_Y, predict)
 
-    np.save(cfg.OUTPUT_DEFAULT_PATH.joinpath("predict"), predict, allow_pickle=True)
+    np.save(cfg.OUTPUT_DEFAULT_PATH.joinpath("predict.npy"), predict, allow_pickle=True)
     plot_three_images_array(test_X, test_Y, predict, 'Inference - RGB, NDVI, Predict', 0, cfg.SAVE_FIGURE_PATH)
     save_result_image(test_X, test_Y, predict, output_compare=True, save_image_path=cfg.SAVE_IMAGE_PATH.joinpath("inference/output"))
