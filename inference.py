@@ -7,6 +7,7 @@ import os
 3 = INFO, WARNING, and ERROR messages are not printed
 '''
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
+os.environ['TF_XLA_FLAGS'] = '--tf_xla_enable_xla_devices'
 
 import matplotlib.image
 import matplotlib.pyplot as plt
