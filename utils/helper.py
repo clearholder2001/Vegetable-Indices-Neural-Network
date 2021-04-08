@@ -5,8 +5,11 @@ from pathlib import Path
 
 import matplotlib.pyplot as plt
 import numpy as np
+import tensorflow as tf
 from scipy import stats
 from sklearn.metrics import r2_score
+
+autotune = tf.data.AUTOTUNE
 
 
 def plot_train_history(train_history, train, validation, save_figure_path):
@@ -48,3 +51,17 @@ def calculate_statistics(test_Y, predict):
     print("Final RMSE: {0:.4f}".format(rmse))
     print("Final R Square: {0:.4f}".format(r2))
     print("Final Correlation: {0:.4f}".format(correlation[0]))
+
+
+def create_tf_dataset(array, generator, batch_size):
+    dataset = tf.data.Dataset.from_generator(lambda: generator(array), output_signature=(tf.TensorSpec(shape=array.shape[1:], dtype=tf.float32)))
+    dataset = dataset.batch(batch_size).prefetch(buffer_size=autotune)
+    return dataset
+
+
+def simple_image_generator(images):
+    i = 0
+    while i < images.shape[0]:
+        image = images[i, :, :, :]
+        yield image
+        i += 1
