@@ -16,6 +16,7 @@ import numpy as np
 from sklearn.utils import shuffle
 from tensorflow import config
 from tensorflow.keras.callbacks import TensorBoard
+from tensorflow.keras.metrics import RootMeanSquaredError
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.optimizers.schedules import ExponentialDecay
 
@@ -71,7 +72,7 @@ if __name__ == "__main__":
 
     model = Model(model_name=cfg.MODEL_NAME, input_dim=cfg.TRAIN_INPUT_DIM)
     adam = Adam(learning_rate=lr_schedule)
-    model.compile(optimizer=adam, loss='mean_absolute_error')
+    model.compile(optimizer=adam, loss='mean_absolute_error', metrics=RootMeanSquaredError())
     model.summary()
 
     if cfg.ENABLE_DATA_AUG:
