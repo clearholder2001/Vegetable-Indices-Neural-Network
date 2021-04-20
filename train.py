@@ -34,6 +34,7 @@ np.random.seed(cfg.SEED)
 python_random.seed(cfg.SEED)
 tf.random.set_seed(cfg.SEED)
 
+os.system('nvcc -V')
 gpus = config.list_physical_devices('GPU')
 config.set_visible_devices(gpus[0], 'GPU')
 config.experimental.set_memory_growth(gpus[0], True)
