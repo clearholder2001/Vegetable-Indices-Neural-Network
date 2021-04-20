@@ -1,4 +1,5 @@
 import os
+import random as python_random
 import sys
 from time import time
 
@@ -10,10 +11,11 @@ from time import time
 '''
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 os.environ['TF_XLA_FLAGS'] = '--tf_xla_enable_xla_devices'
+os.environ['PYTHONHASHSEED'] = '0'
 
 import matplotlib.pyplot as plt
 import numpy as np
-from sklearn.utils import shuffle
+import tensorflow as tf
 from tensorflow import config
 from tensorflow.keras.callbacks import TensorBoard
 from tensorflow.keras.metrics import RootMeanSquaredError
@@ -27,6 +29,10 @@ from utils.data_aug import data_aug_keras as data_augmentation
 from utils.dataset import ImageDataSet
 from utils.helper import output_init, plot_train_history, print_cfg
 from utils.image import plot_two_images_array
+
+np.random.seed(cfg.SEED)
+python_random.seed(cfg.SEED)
+tf.random.set_seed(cfg.SEED)
 
 gpus = config.list_physical_devices('GPU')
 config.set_visible_devices(gpus[0], 'GPU')

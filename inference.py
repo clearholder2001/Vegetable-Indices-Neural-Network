@@ -1,4 +1,5 @@
 import os
+import random as python_random
 
 ''' TF_CPP_MIN_LOG_LEVEL
 0 = all messages are logged (default behavior)
@@ -8,10 +9,12 @@ import os
 '''
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 os.environ['TF_XLA_FLAGS'] = '--tf_xla_enable_xla_devices'
+os.environ['PYTHONHASHSEED'] = '0'
 
 import matplotlib.image
 import matplotlib.pyplot as plt
 import numpy as np
+import tensorflow as tf
 from tensorflow import config
 from tensorflow.keras.metrics import RootMeanSquaredError
 
@@ -22,6 +25,10 @@ from utils.helper import (calculate_statistics, create_tf_dataset, output_init,
                           simple_image_generator)
 from utils.image import (plot_three_images_array, plot_two_images_array,
                          save_result_image)
+
+np.random.seed(cfg.SEED)
+python_random.seed(cfg.SEED)
+tf.random.set_seed(cfg.SEED)
 
 gpus = config.list_physical_devices('GPU')
 config.set_visible_devices(gpus[0], 'GPU')
