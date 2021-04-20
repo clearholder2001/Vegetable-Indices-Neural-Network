@@ -1,7 +1,6 @@
 import os
 import random as python_random
 import sys
-from time import time
 
 ''' TF_CPP_MIN_LOG_LEVEL
 0 = all messages are logged (default behavior)
@@ -25,10 +24,10 @@ from tensorflow.keras.optimizers.schedules import ExponentialDecay
 from cfgs import cfg
 from models.unet_C2DT import unet_C2DT as Model
 from utils.callback import EarlyStoppingCallback, TimingCallback
-from utils.data_aug import data_aug_keras as data_augmentation
+from utils.data_aug import train_preprocessing
 from utils.dataset import ImageDataSet
 from utils.helper import output_init, plot_train_history, print_cfg
-from utils.image import plot_two_images_array
+from utils.image import dataset_plot_batch, plot_two_images_array
 
 np.random.seed(cfg.SEED)
 python_random.seed(cfg.SEED)
@@ -60,15 +59,13 @@ if __name__ == "__main__":
     train_Y_obj.resample(table, save_image=False)
     train_X = train_X_obj.get_data_resample()
     train_Y = train_Y_obj.get_data_resample()
-    train_X, train_Y = shuffle(train_X, train_Y, random_state=cfg.SEED)
 
     plot_two_images_array(train_X, train_Y, 'Train - RGB, NDVI', 0, cfg.SAVE_FIGURE_PATH)
 
-    data_used_amount = train_X.shape[0]
-    batch_size = cfg.DATA_AUG_BATCH_SIZE
-    split_ratio = cfg.VAL_SPLIT
-    steps_per_epoch = int(np.ceil((data_used_amount / batch_size) * (1 - split_ratio)))
-    validation_steps = int(np.ceil((data_used_amount / batch_size) * split_ratio))
+    batch_size = cfg.TRAIN_BATCH_SIZE
+    val_split = cfg.VAL_SPLIT
+    steps_per_epoch = int(round(train_X.shape[0] / batch_size * (1 - val_split)))
+    validation_steps = int(round(train_X.shape[0] / batch_size * val_split))
 
     lr_schedule = ExponentialDecay(**cfg.LEARNING_RATE_ARGS)
 
@@ -82,30 +79,20 @@ if __name__ == "__main__":
     model.compile(optimizer=adam, loss='mean_absolute_error', metrics=RootMeanSquaredError())
     model.summary()
 
-    if cfg.ENABLE_DATA_AUG:
-        train_ds, validation_ds = data_augmentation(train_X, train_Y)
+    train_ds, validation_ds = train_preprocessing(train_X, train_Y, batch_size=batch_size, enable_data_aug=cfg.ENABLE_DATA_AUG, use_imagedatagenerator=True, datagen_args=cfg.DATAGEN_ARGS, seed=cfg.SEED, val_split=val_split)
+        
+    # dataset_plot_batch(train_ds, 10, "train", cfg.SAVE_FIGURE_PATH)
+    # dataset_plot_batch(validation_ds, 10, "val", cfg.SAVE_FIGURE_PATH)
 
-        train_history = model.fit(
-            train_ds,
-            epochs=cfg.EPOCHS,
-            steps_per_epoch=steps_per_epoch,
-            validation_data=validation_ds,
-            validation_steps=validation_steps,
-            callbacks=callbacks,
-            verbose=fit_verbose
-        )
-    else:
-        train_history = model.fit(
-            train_X[:data_used_amount],
-            train_Y[:data_used_amount],
-            epochs=cfg.EPOCHS,
-            steps_per_epoch=None,
-            batch_size=cfg.TRAIN_BATCH_SIZE,
-            shuffle=True,
-            validation_split=cfg.VAL_SPLIT,
-            callbacks=callbacks,
-            verbose=fit_verbose
-        )
+    train_history = model.fit(
+        train_ds,
+        epochs=cfg.EPOCHS,
+        steps_per_epoch=steps_per_epoch,
+        validation_data=validation_ds,
+        validation_steps=validation_steps,
+        callbacks=callbacks,
+        verbose=fit_verbose
+    )
 
     model.save(cfg.SAVE_MODEL_PATH.joinpath("trained_model.h5"))
     plot_train_history(train_history, 'loss', 'val_loss', save_figure_path=cfg.SAVE_FIGURE_PATH)

@@ -34,6 +34,26 @@ def plot_three_images_array(images1, images2, images3, title, idx, save_figure_p
     plt.close(fig)
 
 
+def dataset_plot_single(dataset, iteration, save_prefix, save_image_path):
+    ds_iterator = iter(dataset)
+    for i in range(iteration):
+        images, masks = [], []
+        for j in range(8):
+            image, mask = next(ds_iterator)
+            images.append(image)
+            masks.append(mask)
+        images = np.stack(images, axis=0)
+        masks = np.stack(masks, axis=0)
+        plot_two_images_array(images, masks, "{0}_{1}".format(save_prefix, i), 0, cfg.SAVE_FIGURE_PATH)
+
+
+def dataset_plot_batch(dataset, iteration, save_prefix, save_image_path):
+    ds_iterator = iter(dataset)
+    for i in range(iteration):
+        image, mask = next(ds_iterator)
+        plot_two_images_array(image, mask, "{0}_{1}".format(save_prefix, i), 0, cfg.SAVE_FIGURE_PATH)
+
+
 def save_result_image(test_X, test_Y, predict, output_compare=True, save_image_path=None):
     assert test_X.shape[0] == test_Y.shape[0] == predict.shape[0], 'Length inconsistent: test_X, test_Y, preditc'
 
