@@ -3,10 +3,10 @@ from pathlib import Path
 
 # Data
 # ------------------------------------------------
-TRAIN_RGB_PATH = Path("../Jim/dataset/20meter/train_20meter_RGB.npy")
-TRAIN_NDVI_PATH = Path("../Jim/dataset/20meter/train_20meter_NDVI.npy")
-TEST_RGB_PATH = Path("../Jim/dataset/testing/test_15meter_RGB.npy")
-TEST_NDVI_PATH = Path("../Jim/dataset/testing/test_15meter_NDVI.npy")
+TRAIN_RGB_PATH = Path("../Jim/dataset/20meter/train_20meter_RGB_f32.npy")
+TRAIN_NDVI_PATH = Path("../Jim/dataset/20meter/train_20meter_NDVI_f32.npy")
+TEST_RGB_PATH = Path("../Jim/dataset/testing/test_15meter_RGB_f32.npy")
+TEST_NDVI_PATH = Path("../Jim/dataset/testing/test_15meter_NDVI_f32.npy")
 OUTPUT_DEFAULT_PATH = Path("outputs/default")
 SAVE_IMAGE_PATH = OUTPUT_DEFAULT_PATH.joinpath("image")
 SAVE_FIGURE_PATH = OUTPUT_DEFAULT_PATH
