@@ -20,7 +20,7 @@ from tensorflow.keras.metrics import RootMeanSquaredError
 
 from cfgs import cfg
 from models.unet_C2DT import unet_C2DT as Model
-from utils.data_aug import test_precessing
+from utils.preprocessing import test_precessing
 from utils.dataset import ImageDataSet
 from utils.helper import calculate_statistics, output_init
 from utils.image import (plot_three_images_array, plot_two_images_array,
