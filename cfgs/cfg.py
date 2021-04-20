@@ -26,7 +26,6 @@ L2_REGULAR = 0.01
 # Data Augmentation
 # ------------------------------------------------
 ENABLE_DATA_AUG = False
-DATA_AUG_BATCH_SIZE = 16
 SEED = 1
 
 
