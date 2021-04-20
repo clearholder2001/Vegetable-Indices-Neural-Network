@@ -24,10 +24,10 @@ from tensorflow.keras.optimizers.schedules import ExponentialDecay
 from cfgs import cfg
 from models.unet_C2DT import unet_C2DT as Model
 from utils.callback import EarlyStoppingCallback, TimingCallback
-from utils.preprocessing import train_preprocessing
 from utils.dataset import ImageDataSet
 from utils.helper import output_init, plot_train_history, print_cfg
 from utils.image import dataset_plot_batch, plot_two_images_array
+from utils.preprocessing import train_preprocessing
 
 np.random.seed(cfg.SEED)
 python_random.seed(cfg.SEED)
