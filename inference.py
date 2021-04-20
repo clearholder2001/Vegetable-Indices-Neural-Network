@@ -20,9 +20,9 @@ from tensorflow.keras.metrics import RootMeanSquaredError
 
 from cfgs import cfg
 from models.unet_C2DT import unet_C2DT as Model
+from utils.data_aug import test_precessing
 from utils.dataset import ImageDataSet
-from utils.helper import (calculate_statistics, create_tf_dataset, output_init,
-                          simple_image_generator)
+from utils.helper import calculate_statistics, output_init
 from utils.image import (plot_three_images_array, plot_two_images_array,
                          save_result_image)
 
@@ -34,21 +34,6 @@ os.system('nvcc -V')
 gpus = config.list_physical_devices('GPU')
 config.set_visible_devices(gpus[0], 'GPU')
 config.experimental.set_memory_growth(gpus[0], True)
-
-
-def predict_function(model, test_X, predict_shape, batch_size):
-    predict = np.zeros((predict_shape))
-    steps = int(np.ceil(test_X.shape[0] / batch_size))
-    print("Predicting...", end='')
-    for i in range(steps):
-        begin = i * batch_size
-        if i == steps - 1:
-            end = test_X.shape[0]
-        else:
-            end = (i + 1) * batch_size
-        predict[begin:end, :, :, :] = model.predict_on_batch(test_X[begin:end, :, :, :])
-    print("Done")
-    return predict
 
 
 if __name__ == "__main__":
@@ -68,19 +53,24 @@ if __name__ == "__main__":
     print('RGB  array shape: ', test_X.shape)
     print('NDVI array shape: ', test_Y.shape)
 
-    batch_size = cfg.TRAIN_BATCH_SIZE
-    test_X_ds = create_tf_dataset(test_X, simple_image_generator, batch_size=batch_size)
-    test_Y_ds = create_tf_dataset(test_Y, simple_image_generator, batch_size=batch_size)
-
     plot_two_images_array(test_X, test_Y, 'Inference - RGB, NDVI', 0, cfg.SAVE_FIGURE_PATH)
 
-    model = Model(model_name=cfg.MODEL_NAME, input_dim=test_X.shape[0])
+    model = Model(model_name=cfg.MODEL_NAME, input_dim=test_X.shape[1:])
     model.compile(loss='mean_absolute_error', metrics=RootMeanSquaredError())
     model.load_weights(model_path)
     model.summary()
 
-    predict = predict_function(model, test_X, test_Y.shape, batch_size)
-    lossfunc = model.evaluate(zip(test_X_ds, test_Y_ds), verbose=1)
+    batch_size = cfg.TRAIN_BATCH_SIZE
+    test_ds = test_precessing(test_X, test_Y, batch_size)
+
+    print("Predicting...")
+    predict = np.zeros((test_Y.shape), dtype=np.float32)
+    for idx, (image_batch, mask_batch) in enumerate(test_ds.as_numpy_iterator()):
+        begin = idx * batch_size
+        end = begin + image_batch.shape[0]
+        predict[begin:end, :, :, :] = model.predict_on_batch(image_batch)
+
+    loss = model.evaluate(test_ds, verbose=1)
     calculate_statistics(test_Y, predict)
 
     np.save(cfg.OUTPUT_DEFAULT_PATH.joinpath("predict.npy"), predict, allow_pickle=True)
