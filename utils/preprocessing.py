@@ -1,8 +1,7 @@
 import copy
 
-import numpy as np
 import tensorflow as tf
-from cfgs import cfg
+from ..cfgs import cfg
 from sklearn.utils import shuffle
 from tensorflow.keras import Sequential
 from tensorflow.keras.layers.experimental import preprocessing
@@ -63,9 +62,9 @@ def train_preprocessing(train_X, train_Y, batch_size, enable_data_aug, use_image
             validation_ds = tf.data.Dataset.from_tensor_slices((train_X, train_Y)).skip(validation_split_count)
 
             data_augmentation_layer = [
-                train_preprocessing.RandomFlip(mode="horizontal_and_vertical", seed=seed),
-                train_preprocessing.RandomRotation(factor=(cfg.DATAGEN_ARGS["rotation_range"] / 360), fill_mode=cfg.DATAGEN_ARGS["fill_mode"], interpolation="bilinear", seed=seed),
-                train_preprocessing.RandomZoom(height_factor=cfg.DATAGEN_ARGS["zoom_range"], fill_mode=cfg.DATAGEN_ARGS["fill_mode"], interpolation="bilinear", seed=seed),
+                preprocessing.RandomFlip(mode="horizontal_and_vertical", seed=seed),
+                preprocessing.RandomRotation(factor=(cfg.DATAGEN_ARGS["rotation_range"] / 360), fill_mode=cfg.DATAGEN_ARGS["fill_mode"], interpolation="bilinear", seed=seed),
+                preprocessing.RandomZoom(height_factor=cfg.DATAGEN_ARGS["zoom_range"], fill_mode=cfg.DATAGEN_ARGS["fill_mode"], interpolation="bilinear", seed=seed),
             ]
             image_model_map = Sequential(copy.deepcopy(data_augmentation_layer))
             mask_model_map = Sequential(copy.deepcopy(data_augmentation_layer))

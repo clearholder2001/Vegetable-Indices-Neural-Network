@@ -1,5 +1,3 @@
-from pathlib import Path
-
 import matplotlib.image
 import matplotlib.pyplot as plt
 import numpy as np
@@ -44,14 +42,14 @@ def dataset_plot_single(dataset, iteration, save_prefix, save_image_path):
             masks.append(mask)
         images = np.stack(images, axis=0)
         masks = np.stack(masks, axis=0)
-        plot_two_images_array(images, masks, "{0}_{1}".format(save_prefix, i), 0, cfg.SAVE_FIGURE_PATH)
+        plot_two_images_array(images, masks, "{0}_{1}".format(save_prefix, i), 0, save_image_path)
 
 
 def dataset_plot_batch(dataset, iteration, save_prefix, save_image_path):
     ds_iterator = iter(dataset)
     for i in range(iteration):
         image, mask = next(ds_iterator)
-        plot_two_images_array(image, mask, "{0}_{1}".format(save_prefix, i), 0, cfg.SAVE_FIGURE_PATH)
+        plot_two_images_array(image, mask, "{0}_{1}".format(save_prefix, i), 0, save_image_path)
 
 
 def save_result_image(test_X, test_Y, predict, output_compare=True, save_image_path=None):
@@ -88,7 +86,7 @@ def save_result_image(test_X, test_Y, predict, output_compare=True, save_image_p
             img1.set_data(test_X[i])
             img2.set_data(test_Y[i])
             img3.set_data(predict[i])
-            fig.suptitle("Comparison #" + str(i), fontsize=24)
+            fig.suptitle("Comparison # " + str(i), fontsize=24)
             fig.tight_layout()
             fig.savefig(compare_path.joinpath("comparison_{}.jpg".format(i)))
     plt.close()
