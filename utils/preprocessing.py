@@ -1,7 +1,7 @@
 import copy
 
 import tensorflow as tf
-from ..cfgs import cfg
+from cfgs import cfg
 from sklearn.utils import shuffle
 from tensorflow.keras import Sequential
 from tensorflow.keras.layers.experimental import preprocessing

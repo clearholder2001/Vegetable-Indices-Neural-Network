@@ -19,11 +19,10 @@ MODEL_NAME = 'model'
 SAVE_MODEL_PATH = OUTPUT_DEFAULT_PATH.joinpath("model")
 SAVE_WEIGHT_PATH = OUTPUT_DEFAULT_PATH.joinpath("model")
 TRAIN_INPUT_DIM = (352, 480, 3)
-RANDOMCONTRAST_FACTOR = 0.2
 L2_REGULAR = 0.01
 
 
-# Data Augmentation
+# Preprocessing
 # ------------------------------------------------
 ENABLE_DATA_AUG = False
 SEED = 1
