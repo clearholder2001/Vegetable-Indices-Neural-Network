@@ -1,15 +1,10 @@
 import inspect
-import math
 import shutil
-from pathlib import Path
 
 import matplotlib.pyplot as plt
 import numpy as np
-import tensorflow as tf
 from scipy import stats
 from sklearn.metrics import r2_score
-
-autotune = tf.data.AUTOTUNE
 
 
 def plot_train_history(train_history, train, validation, save_figure_path):

@@ -1,11 +1,6 @@
-import os
-from pathlib import Path
-from time import time
-
 import matplotlib.image
 import matplotlib.pyplot as plt
 import numpy as np
-from PIL import Image
 
 
 class ImageDataSet():
@@ -23,7 +18,7 @@ class ImageDataSet():
 
     def load_data(self, devided_by_255=False, expand_dims=False, save_image=False):
         self.data_raw = np.load(self.data_path, mmap_mode='r', allow_pickle=True)
-        #self.data_raw = np.load(self.data_path, allow_pickle=True).astype('float32')
+        # self.data_raw = np.load(self.data_path, allow_pickle=True).astype('float32')
         if devided_by_255:
             self.data_raw = self.data_raw / 255.
         if expand_dims:

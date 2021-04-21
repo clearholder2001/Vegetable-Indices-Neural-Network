@@ -11,17 +11,14 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 os.environ['TF_XLA_FLAGS'] = '--tf_xla_enable_xla_devices'
 os.environ['PYTHONHASHSEED'] = '0'
 
-import matplotlib.image
-import matplotlib.pyplot as plt
 import numpy as np
 import tensorflow as tf
-from tensorflow import config
 from tensorflow.keras.metrics import RootMeanSquaredError
 
 from cfgs import cfg
 from models.unet_C2DT_test2 import unet_C2DT_test2 as Model
 from utils.dataset import ImageDataSet
-from utils.helper import calculate_statistics, output_init
+from utils.helper import calculate_statistics
 from utils.image import (plot_three_images_array, plot_two_images_array,
                          save_result_image)
 from utils.preprocessing import test_precessing
@@ -31,9 +28,9 @@ python_random.seed(cfg.SEED)
 tf.random.set_seed(cfg.SEED)
 
 os.system('nvcc -V')
-gpus = config.list_physical_devices('GPU')
-config.set_visible_devices(gpus[0], 'GPU')
-config.experimental.set_memory_growth(gpus[0], True)
+gpus = tf.config.list_physical_devices('GPU')
+tf.config.set_visible_devices(gpus[0], 'GPU')
+tf.config.experimental.set_memory_growth(gpus[0], True)
 
 
 if __name__ == "__main__":

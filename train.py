@@ -15,7 +15,6 @@ os.environ['PYTHONHASHSEED'] = '0'
 import matplotlib.pyplot as plt
 import numpy as np
 import tensorflow as tf
-from tensorflow import config
 from tensorflow.keras.callbacks import TensorBoard
 from tensorflow.keras.metrics import RootMeanSquaredError
 from tensorflow.keras.optimizers import Adam
@@ -26,7 +25,7 @@ from models.unet_C2DT_test2 import unet_C2DT_test2 as Model
 from utils.callback import EarlyStoppingCallback, TimingCallback
 from utils.dataset import ImageDataSet
 from utils.helper import output_init, plot_train_history, print_cfg
-from utils.image import dataset_plot_batch, plot_two_images_array
+from utils.image import plot_two_images_array
 from utils.preprocessing import train_preprocessing
 
 np.random.seed(cfg.SEED)
@@ -34,9 +33,9 @@ python_random.seed(cfg.SEED)
 tf.random.set_seed(cfg.SEED)
 
 os.system('nvcc -V')
-gpus = config.list_physical_devices('GPU')
-config.set_visible_devices(gpus[0], 'GPU')
-config.experimental.set_memory_growth(gpus[0], True)
+gpus = tf.config.list_physical_devices('GPU')
+tf.config.set_visible_devices(gpus[0], 'GPU')
+tf.config.experimental.set_memory_growth(gpus[0], True)
 
 
 if __name__ == "__main__":

@@ -1,5 +1,4 @@
-from tensorflow.keras.layers import (Activation, Conv2D, Input, MaxPooling2D,
-                                     UpSampling2D)
+from tensorflow.keras.layers import Conv2D, Input, MaxPooling2D, UpSampling2D
 from tensorflow.keras.models import Model
 
 
