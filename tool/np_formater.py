@@ -3,7 +3,7 @@ from pathlib import Path
 import numpy as np
 
 init_path = Path("../Jim/dataset/20meter")
-include_sub_path = True
+include_sub_path = False
 regex = "*.npy"
 
 
