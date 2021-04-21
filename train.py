@@ -22,7 +22,7 @@ from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.optimizers.schedules import ExponentialDecay
 
 from cfgs import cfg
-from models.unet_C2DT import unet_C2DT as Model
+from models.unet_C2DT_test2 import unet_C2DT_test2 as Model
 from utils.callback import EarlyStoppingCallback, TimingCallback
 from utils.dataset import ImageDataSet
 from utils.helper import output_init, plot_train_history, print_cfg
