@@ -9,7 +9,7 @@ TEST_RGB_PATH = Path("../Jim/dataset/testing/test_15meter_RGB_f32.npy")
 TEST_NDVI_PATH = Path("../Jim/dataset/testing/test_15meter_NDVI_f32.npy")
 OUTPUT_DEFAULT_PATH = Path("outputs/default")
 SAVE_IMAGE_PATH = OUTPUT_DEFAULT_PATH.joinpath("image")
-SAVE_FIGURE_PATH = OUTPUT_DEFAULT_PATH
+SAVE_FIGURE_PATH = OUTPUT_DEFAULT_PATH.joinpath("figure")
 RESAMPLE_MULTIPLE_FACTOR = 9
 
 
@@ -25,6 +25,7 @@ L2_REGULAR = 0.01
 # Preprocessing
 # ------------------------------------------------
 ENABLE_DATA_AUG = False
+USE_IMAGEDATAGENERATOR = False
 SEED = 1
 
 
@@ -50,7 +51,7 @@ DATAGEN_ARGS = dict(
     rotation_range=20,
     # width_shift_range=0.1,
     # height_shift_range=0.1,
-    brightness_range=(0.5, 1.5),
+    brightness_range=(0.9, 1.1),
     # shear_range=0.3,
     zoom_range=0.3,
     channel_shift_range=0.1,
@@ -76,7 +77,7 @@ TENSORBOARD_LOG_PATH = OUTPUT_DEFAULT_PATH.joinpath("TensorBoard")
 TENSORBOARD_ARGS = dict(
     log_dir=TENSORBOARD_LOG_PATH,
     histogram_freq=1,
-    write_graph=True,
+    write_graph=False,
     write_images=True,
     update_freq='epoch',
     profile_batch=2,

@@ -24,8 +24,10 @@ def output_init(cfg):
     shutil.rmtree(cfg.OUTPUT_DEFAULT_PATH, ignore_errors=True)
     shutil.rmtree(cfg.TENSORBOARD_LOG_PATH, ignore_errors=True)
     cfg.OUTPUT_DEFAULT_PATH.mkdir(parents=True, exist_ok=True)
-    cfg.SAVE_MODEL_PATH.mkdir(parents=True, exist_ok=True)
     cfg.SAVE_IMAGE_PATH.mkdir(parents=True, exist_ok=True)
+    cfg.SAVE_FIGURE_PATH.mkdir(parents=True, exist_ok=True)
+    cfg.SAVE_MODEL_PATH.mkdir(parents=True, exist_ok=True)
+    cfg.SAVE_WEIGHT_PATH.mkdir(parents=True, exist_ok=True)
     cfg.TENSORBOARD_LOG_PATH.mkdir(parents=True, exist_ok=True)
     print("Output folder is ready.")
 
