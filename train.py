@@ -78,8 +78,8 @@ if __name__ == "__main__":
     model.compile(optimizer=adam, loss='mean_absolute_error', metrics=RootMeanSquaredError())
     model.summary()
 
-    train_ds, validation_ds = train_preprocessing(train_X, train_Y, batch_size=batch_size, enable_data_aug=cfg.ENABLE_DATA_AUG, use_imagedatagenerator=True, datagen_args=cfg.DATAGEN_ARGS, seed=cfg.SEED, val_split=val_split)
-        
+    train_ds, validation_ds = train_preprocessing(train_X, train_Y, batch_size=batch_size, enable_data_aug=cfg.ENABLE_DATA_AUG, use_imagedatagenerator=cfg.USE_IMAGEDATAGENERATOR, datagen_args=cfg.DATAGEN_ARGS, seed=cfg.SEED, val_split=val_split)
+
     # dataset_plot_batch(train_ds, 10, "train", cfg.SAVE_FIGURE_PATH)
     # dataset_plot_batch(validation_ds, 10, "val", cfg.SAVE_FIGURE_PATH)
 
