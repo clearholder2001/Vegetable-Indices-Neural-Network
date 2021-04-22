@@ -38,8 +38,8 @@ def dataset_plot_single(dataset, iteration, save_prefix, save_image_path):
         images, masks = [], []
         for j in range(8):
             image, mask = next(ds_iterator)
-            images.append(image)
-            masks.append(mask)
+            images.append(image.numpy())
+            masks.append(mask.numpy())
         images = np.stack(images, axis=0)
         masks = np.stack(masks, axis=0)
         plot_two_images_array(images, masks, "{0}_{1}".format(save_prefix, i), 0, save_image_path)
@@ -48,8 +48,9 @@ def dataset_plot_single(dataset, iteration, save_prefix, save_image_path):
 def dataset_plot_batch(dataset, iteration, save_prefix, save_image_path):
     ds_iterator = iter(dataset)
     for i in range(iteration):
-        image, mask = next(ds_iterator)
-        plot_two_images_array(image, mask, "{0}_{1}".format(save_prefix, i), 0, save_image_path)
+        images, masks = next(ds_iterator)
+        images, masks = images.numpy(), masks.numpy()
+        plot_two_images_array(images, masks, "{0}_{1}".format(save_prefix, i), 0, save_image_path)
 
 
 def save_result_image(test_X, test_Y, predict, output_compare=True, save_image_path=None):
