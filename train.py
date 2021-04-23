@@ -12,7 +12,6 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 os.environ['TF_XLA_FLAGS'] = '--tf_xla_enable_xla_devices'
 os.environ['PYTHONHASHSEED'] = '0'
 
-import matplotlib.pyplot as plt
 import numpy as np
 import tensorflow as tf
 from tensorflow.keras.callbacks import TensorBoard
@@ -21,7 +20,7 @@ from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.optimizers.schedules import ExponentialDecay
 
 from cfgs import cfg
-from models.unet_C2DT_test2 import unet_C2DT_test2 as Model
+from models.unet_new import unet_new as Model
 from utils.callback import EarlyStoppingCallback, TimingCallback
 from utils.dataset import ImageDataSet
 from utils.helper import output_init, plot_train_history, print_cfg
@@ -73,7 +72,7 @@ if __name__ == "__main__":
     tensorboard_callback = TensorBoard(**cfg.TENSORBOARD_ARGS)
     callbacks = [early_stop_callback, timing_callback, tensorboard_callback]
 
-    model = Model(model_name=cfg.MODEL_NAME, input_dim=cfg.TRAIN_INPUT_DIM)
+    model = Model(model_name=cfg.MODEL_NAME)
     adam = Adam(learning_rate=lr_schedule)
     model.compile(optimizer=adam, loss='mean_absolute_error', metrics=RootMeanSquaredError())
     model.summary()
