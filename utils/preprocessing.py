@@ -83,7 +83,7 @@ def train_preprocessing(train_X, train_Y, batch_size, enable_data_aug, use_image
             train_ds = train_ds.batch(batch_size)
             validation_ds = validation_ds.batch(batch_size)
 
-            train_ds = train_ds.map(lambda image, mask: (image_model_map(image, training=True), mask_model_map(mask, training=True)), num_parallel_calls=tf.data.AUTOTUNE, deterministic=None)
+            train_ds = train_ds.map(lambda image, mask: (image_model_map(image, training=True), mask_model_map(mask, training=True)), num_parallel_calls=1, deterministic=None)
 
             train_ds = train_ds.prefetch(tf.data.AUTOTUNE)
             validation_ds = validation_ds.prefetch(tf.data.AUTOTUNE)
