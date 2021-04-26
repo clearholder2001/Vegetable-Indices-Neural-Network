@@ -1,7 +1,7 @@
 from pathlib import Path
 
 
-# Data
+# Path
 # ------------------------------------------------
 TRAIN_RGB_PATH = Path("../Jim/dataset/20meter/train_20meter_RGB_f32.npy")
 TRAIN_NDVI_PATH = Path("../Jim/dataset/20meter/train_20meter_NDVI_f32.npy")
@@ -12,6 +12,7 @@ SAVE_IMAGE_PATH = OUTPUT_DEFAULT_PATH.joinpath("image")
 SAVE_FIGURE_PATH = OUTPUT_DEFAULT_PATH.joinpath("figure")
 SAVE_MODEL_PATH = OUTPUT_DEFAULT_PATH.joinpath("model")
 SAVE_WEIGHT_PATH = OUTPUT_DEFAULT_PATH.joinpath("model")
+TENSORBOARD_LOG_PATH = OUTPUT_DEFAULT_PATH.joinpath("TensorBoard")
 
 
 # Model
@@ -82,7 +83,6 @@ DATAGEN_ARGS = dict(
 
 # TensorBoard
 # ------------------------------------------------
-TENSORBOARD_LOG_PATH = OUTPUT_DEFAULT_PATH.joinpath("TensorBoard")
 TENSORBOARD_ARGS = dict(
     log_dir=TENSORBOARD_LOG_PATH,
     histogram_freq=1,
