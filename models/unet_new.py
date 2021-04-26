@@ -26,11 +26,11 @@ def Conv2DTrans_block(input, element_num, filters, kernel_size, strides, padding
     return layer
 
 
-def unet_new(model_name):
-    Input_img = Input(shape=(None, None, 3))
+def unet_new(model_name, input_dim):
+    Input_img = Input(input_dim)
 
     # Setup
-    filter_factor = 8
+    filter_factor = 64
     kernel_size = (3, 3)
     strides = (2, 2)
     padding = 'same'
@@ -39,11 +39,11 @@ def unet_new(model_name):
 
     # Encoder Architecture
     # Block 1
-    en_b1 = Conv2D_block(input=Input_img, element_num=3, filters=(filter_factor*math.pow(2, 0)), kernel_size=kernel_size, padding=padding, kernel_initializer=kernel_initializer, activation=activation, block_name='encoder_b1')
+    en_b1 = Conv2D_block(input=Input_img, element_num=2, filters=(filter_factor*math.pow(2, 0)), kernel_size=kernel_size, padding=padding, kernel_initializer=kernel_initializer, activation=activation, block_name='encoder_b1')
     en_b1_pooling = MaxPooling2D((2, 2), strides=strides, padding=padding, name='block1_pool')(en_b1)
 
     # Block 2
-    en_b2 = Conv2D_block(input=en_b1_pooling, element_num=3, filters=(filter_factor*math.pow(2, 1)), kernel_size=kernel_size, padding=padding, kernel_initializer=kernel_initializer, activation=activation, block_name='encoder_b2')
+    en_b2 = Conv2D_block(input=en_b1_pooling, element_num=2, filters=(filter_factor*math.pow(2, 1)), kernel_size=kernel_size, padding=padding, kernel_initializer=kernel_initializer, activation=activation, block_name='encoder_b2')
     en_b2_pooling = MaxPooling2D((2, 2), strides=strides, padding=padding, name='block2_pool')(en_b2)
 
     # Block 3
@@ -55,7 +55,7 @@ def unet_new(model_name):
     en_b4_pooling = MaxPooling2D((2, 2), strides=strides, padding=padding, name='block4_pool')(en_b4)
 
     # Block 5
-    en_b5 = Conv2D_block(input=en_b4_pooling, element_num=3, filters=(filter_factor*math.pow(2, 4)), kernel_size=kernel_size, padding=padding, kernel_initializer=kernel_initializer, activation=activation, block_name='encoder_b5')
+    en_b5 = Conv2D_block(input=en_b4_pooling, element_num=3, filters=(filter_factor*math.pow(2, 3)), kernel_size=kernel_size, padding=padding, kernel_initializer=kernel_initializer, activation=activation, block_name='encoder_b5')
 
     encoder = en_b5
 
@@ -73,12 +73,12 @@ def unet_new(model_name):
     # Block 3
     de_b3 = Conv2DTrans_block(input=de_b2, element_num=1, filters=(filter_factor*math.pow(2, 1)), kernel_size=kernel_size, strides=strides, padding=padding, kernel_initializer=kernel_initializer, activation=activation, block_name='decoder_b3')
     de_b3 = Concatenate(axis=3)([en_b2, de_b3])
-    de_b3 = Conv2D_block(input=de_b3, element_num=2, filters=(filter_factor*math.pow(2, 1)), kernel_size=kernel_size, padding=padding, kernel_initializer=kernel_initializer, activation=activation, block_name='decoder_b3')
+    de_b3 = Conv2D_block(input=de_b3, element_num=1, filters=(filter_factor*math.pow(2, 1)), kernel_size=kernel_size, padding=padding, kernel_initializer=kernel_initializer, activation=activation, block_name='decoder_b3')
 
     # Block 4
     de_b4 = Conv2DTrans_block(input=de_b3, element_num=1, filters=(filter_factor*math.pow(2, 0)), kernel_size=kernel_size, strides=strides, padding=padding, kernel_initializer=kernel_initializer, activation=activation, block_name='decoder_b4')
     de_b4 = Concatenate(axis=3)([en_b1, de_b4])
-    de_b4 = Conv2D_block(input=de_b4, element_num=2, filters=(filter_factor*math.pow(2, 0)), kernel_size=kernel_size, padding=padding, kernel_initializer=kernel_initializer, activation=activation, block_name='decoder_b4')
+    de_b4 = Conv2D_block(input=de_b4, element_num=1, filters=(filter_factor*math.pow(2, 0)), kernel_size=kernel_size, padding=padding, kernel_initializer=kernel_initializer, activation=activation, block_name='decoder_b4')
 
     decoder = Conv2D(filters=1, kernel_size=kernel_size, padding=padding, kernel_initializer=kernel_initializer, name='output_conv')(de_b4)
 
