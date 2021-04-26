@@ -33,6 +33,19 @@ tf.config.set_visible_devices(gpus[0], 'GPU')
 tf.config.experimental.set_memory_growth(gpus[0], True)
 
 
+def predict_function(model, test_ds, predict_shape, steps, verbose):
+    predict = np.zeros(predict_shape, dtype=np.float32)
+    for idx, (image_batch, mask_batch) in enumerate(test_ds.as_numpy_iterator()):
+        begin = idx * batch_size
+        end = begin + image_batch.shape[0]
+        predict[begin:end, :, :, :] = model.predict_on_batch(image_batch)
+        if verbose and (idx+1) != steps:
+            print("Predicting...{0}/{1}".format(idx+1, steps), end='\r')
+        elif (idx+1) == steps:
+            print("Predicting...{0}/{1}".format(idx+1, steps))
+    return predict
+
+
 if __name__ == "__main__":
     model_path = cfg.SAVE_MODEL_PATH.joinpath("trained_model.h5")
 
@@ -58,16 +71,11 @@ if __name__ == "__main__":
     model.summary()
 
     batch_size = cfg.TRAIN_BATCH_SIZE
+    steps = int(np.ceil(test_X.shape[0] / batch_size))
     test_ds = test_precessing(test_X, test_Y, batch_size)
 
-    print("Predicting...")
-    predict = np.zeros((test_Y.shape), dtype=np.float32)
-    for idx, (image_batch, mask_batch) in enumerate(test_ds.as_numpy_iterator()):
-        begin = idx * batch_size
-        end = begin + image_batch.shape[0]
-        predict[begin:end, :, :, :] = model.predict_on_batch(image_batch)
-
-    loss = model.evaluate(test_ds, verbose=1)
+    predict = predict_function(model, test_ds, test_Y.shape, steps, test_verbose)
+    loss = model.evaluate(test_ds, verbose=test_verbose)
     calculate_statistics(test_Y, predict)
 
     np.save(cfg.OUTPUT_DEFAULT_PATH.joinpath("predict.npy"), predict, allow_pickle=True)
