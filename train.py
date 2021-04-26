@@ -56,7 +56,7 @@ if __name__ == "__main__":
     train_Y_obj.load_data(devided_by_255=False, expand_dims=False, save_image=False)
     train_X_obj.crop(save_image=False)
     train_Y_obj.crop(save_image=False)
-    table = train_X_obj.generate_resample_table(target_dim=input_dim, multiple_factor=cfg.TRAIN_RESAMPLE_FACTOR, seed=cfg.SEED)
+    table = train_X_obj.generate_resample_table(target_dim=input_dim, multiple_factor=cfg.TRAIN_RESAMPLE_FACTOR)
     train_X_obj.resample(table, target_dim=input_dim, save_image=False)
     train_Y_obj.resample(table, target_dim=input_dim, save_image=False)
     train_X = train_X_obj.get_data_resample()
@@ -64,7 +64,7 @@ if __name__ == "__main__":
 
     plot_two_images_array(train_X, train_Y, 'Train - RGB, NDVI', cfg.SAVE_FIGURE_PATH)
 
-    batch_size = cfg.TRAIN_BATCH_SIZE
+    batch_size = cfg.BATCH_SIZE
     val_split = cfg.VAL_SPLIT
     steps_per_epoch = int(np.round(train_X.shape[0] / batch_size * (1 - val_split)))
     validation_steps = int(np.round(train_X.shape[0] / batch_size * val_split))

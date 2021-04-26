@@ -35,7 +35,7 @@ USE_IMAGEDATAGENERATOR = False
 # Train
 # ------------------------------------------------
 EPOCHS = 200
-TRAIN_BATCH_SIZE = 32
+BATCH_SIZE = 32
 VAL_SPLIT = 0.1
 LEARNING_RATE_ARGS = dict(
     initial_learning_rate=0.002,
