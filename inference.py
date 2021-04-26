@@ -77,7 +77,7 @@ if __name__ == "__main__":
     model.load_weights(model_path)
     model.summary()
 
-    batch_size = cfg.TRAIN_BATCH_SIZE
+    batch_size = cfg.BATCH_SIZE
     steps = int(np.ceil(test_X.shape[0] / batch_size))
     test_ds = test_precessing(test_X, test_Y, batch_size)
 
