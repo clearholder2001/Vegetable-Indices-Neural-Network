@@ -34,12 +34,19 @@ SEED = 1
 EPOCHS = 200
 TRAIN_BATCH_SIZE = 32
 VAL_SPLIT = 0.1
-EARLY_STOP_LOSS = 0.02
 LEARNING_RATE_ARGS = dict(
     initial_learning_rate=0.001,
     decay_steps=1000,
     decay_rate=0.98,
     staircase=False
+)
+EARLY_STOP_ARGS = dict(
+    monitor='loss',
+    min_delta=0.005,
+    patience=5,
+    verbose=0,
+    mode='auto',
+    baseline=0.05
 )
 
 
