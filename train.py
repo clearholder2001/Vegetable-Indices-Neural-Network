@@ -66,8 +66,8 @@ if __name__ == "__main__":
 
     batch_size = cfg.TRAIN_BATCH_SIZE
     val_split = cfg.VAL_SPLIT
-    steps_per_epoch = int(round(train_X.shape[0] / batch_size * (1 - val_split)))
-    validation_steps = int(round(train_X.shape[0] / batch_size * val_split))
+    steps_per_epoch = int(np.round(train_X.shape[0] / batch_size * (1 - val_split)))
+    validation_steps = int(np.round(train_X.shape[0] / batch_size * val_split))
 
     lr_schedule = ExponentialDecay(**cfg.LEARNING_RATE_ARGS)
 
