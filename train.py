@@ -60,7 +60,7 @@ if __name__ == "__main__":
     train_X = train_X_obj.get_data_resample()
     train_Y = train_Y_obj.get_data_resample()
 
-    plot_two_images_array(train_X, train_Y, 'Train - RGB, NDVI', 0, cfg.SAVE_FIGURE_PATH)
+    plot_two_images_array(train_X, train_Y, 'Train - RGB, NDVI', cfg.SAVE_FIGURE_PATH)
 
     batch_size = cfg.TRAIN_BATCH_SIZE
     val_split = cfg.VAL_SPLIT

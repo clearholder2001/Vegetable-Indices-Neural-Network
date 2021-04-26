@@ -3,29 +3,39 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
-def plot_two_images_array(images1, images2, title, idx, save_figure_path):
+def plot_two_images_array(images1, images2, title, save_figure_path, idx=None):
+    assert images1.shape[0] == images2.shape[0], "Image num inconsistent: images1, images2"
+    if idx == None:
+        idx_list = np.random.randint(low=0, high=images1.shape[0], size=8)
+    else:
+        idx_list = range(8)
     fig, axs = plt.subplots(4, 4)
     fig.set_size_inches(8, 6)
     plt.setp(axs, xticks=[], yticks=[])
     for i in range(4):
-        axs[i, 0].imshow(images1[idx+i], vmin=0, vmax=1)
-        axs[i, 1].imshow(images2[idx+i], vmin=-1, vmax=1, cmap=plt.get_cmap('jet'))
-        axs[i, 2].imshow(images1[idx+4+i], vmin=0, vmax=1)
-        axs[i, 3].imshow(images2[idx+4+i], vmin=-1, vmax=1, cmap=plt.get_cmap('jet'))
+        axs[i, 0].imshow(images1[idx_list[i]], vmin=0, vmax=1)
+        axs[i, 1].imshow(images2[idx_list[i]], vmin=-1, vmax=1, cmap=plt.get_cmap('jet'))
+        axs[i, 2].imshow(images1[idx_list[i+4]], vmin=0, vmax=1)
+        axs[i, 3].imshow(images2[idx_list[i+4]], vmin=-1, vmax=1, cmap=plt.get_cmap('jet'))
     fig.suptitle(title, fontsize=24)
     fig.tight_layout()
     fig.savefig(save_figure_path.joinpath("{}.jpg".format(title)))
     plt.close(fig)
 
 
-def plot_three_images_array(images1, images2, images3, title, idx, save_figure_path):
+def plot_three_images_array(images1, images2, images3, title, save_figure_path, idx=None):
+    assert images1.shape[0] == images2.shape[0], "Image num inconsistent: images1, images2"
+    if idx == None:
+        idx_list = np.random.randint(low=0, high=images1.shape[0], size=4)
+    else:
+        idx_list = range(4)
     fig, axs = plt.subplots(4, 3)
     fig.set_size_inches(12, 13)
     plt.setp(axs, xticks=[], yticks=[])
     for i in range(4):
-        axs[i, 0].imshow(images1[idx+i], vmin=0, vmax=1)
-        axs[i, 1].imshow(images2[idx+i], vmin=-1, vmax=1, cmap=plt.get_cmap('jet'))
-        axs[i, 2].imshow(images3[idx+i], vmin=-1, vmax=1, cmap=plt.get_cmap('jet'))
+        axs[i, 0].imshow(images1[idx_list[i]], vmin=0, vmax=1)
+        axs[i, 1].imshow(images2[idx_list[i]], vmin=-1, vmax=1, cmap=plt.get_cmap('jet'))
+        axs[i, 2].imshow(images3[idx_list[i]], vmin=-1, vmax=1, cmap=plt.get_cmap('jet'))
     fig.suptitle(title, fontsize=24)
     fig.tight_layout()
     fig.savefig(save_figure_path.joinpath("{}.jpg".format(title)))
@@ -42,7 +52,7 @@ def dataset_plot_single(dataset, iteration, save_prefix, save_image_path):
             masks.append(mask.numpy())
         images = np.stack(images, axis=0)
         masks = np.stack(masks, axis=0)
-        plot_two_images_array(images, masks, "{0}_{1}".format(save_prefix, i), 0, save_image_path)
+        plot_two_images_array(images, masks, "{0}_{1}".format(save_prefix, i), save_image_path, idx=0)
 
 
 def dataset_plot_batch(dataset, iteration, save_prefix, save_image_path):
@@ -50,7 +60,7 @@ def dataset_plot_batch(dataset, iteration, save_prefix, save_image_path):
     for i in range(iteration):
         images, masks = next(ds_iterator)
         images, masks = images.numpy(), masks.numpy()
-        plot_two_images_array(images, masks, "{0}_{1}".format(save_prefix, i), 0, save_image_path)
+        plot_two_images_array(images, masks, "{0}_{1}".format(save_prefix, i), save_image_path, idx=0)
 
 
 def save_result_image(test_X, test_Y, predict, output_compare=True, save_image_path=None):

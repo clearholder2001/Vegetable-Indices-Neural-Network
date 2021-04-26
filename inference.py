@@ -50,7 +50,7 @@ if __name__ == "__main__":
     print('RGB  array shape: ', test_X.shape)
     print('NDVI array shape: ', test_Y.shape)
 
-    plot_two_images_array(test_X, test_Y, 'Inference - RGB, NDVI', 0, cfg.SAVE_FIGURE_PATH)
+    plot_two_images_array(test_X, test_Y, 'Inference - RGB, NDVI', cfg.SAVE_FIGURE_PATH)
 
     model = Model(model_name=cfg.MODEL_NAME, input_dim=test_X.shape[1:])
     model.compile(loss='mean_absolute_error', metrics=RootMeanSquaredError())
@@ -71,5 +71,5 @@ if __name__ == "__main__":
     calculate_statistics(test_Y, predict)
 
     np.save(cfg.OUTPUT_DEFAULT_PATH.joinpath("predict.npy"), predict, allow_pickle=True)
-    plot_three_images_array(test_X, test_Y, predict, 'Inference - RGB, NDVI, Predict', 0, cfg.SAVE_FIGURE_PATH)
+    plot_three_images_array(test_X, test_Y, predict, 'Inference - RGB, NDVI, Predict', cfg.SAVE_FIGURE_PATH)
     save_result_image(test_X, test_Y, predict, output_compare=True, save_image_path=cfg.SAVE_IMAGE_PATH.joinpath("inference/output"))
