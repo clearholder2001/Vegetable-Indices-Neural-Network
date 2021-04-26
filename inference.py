@@ -17,7 +17,7 @@ import tensorflow as tf
 from tensorflow.keras.metrics import RootMeanSquaredError
 
 from cfgs import cfg
-from models.unet_C2DT_test2 import unet_C2DT_test2 as Model
+from models.unet_new import unet_new as Model
 from utils.dataset import ImageDataSet
 from utils.helper import calculate_statistics
 from utils.image import (plot_three_images_array, plot_two_images_array,

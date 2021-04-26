@@ -1,4 +1,3 @@
-import warnings
 from time import time
 
 from tensorflow.keras.callbacks import Callback

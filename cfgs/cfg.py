@@ -10,23 +10,25 @@ TEST_NDVI_PATH = Path("../Jim/dataset/testing/test_15meter_NDVI_f32.npy")
 OUTPUT_DEFAULT_PATH = Path("outputs/default")
 SAVE_IMAGE_PATH = OUTPUT_DEFAULT_PATH.joinpath("image")
 SAVE_FIGURE_PATH = OUTPUT_DEFAULT_PATH.joinpath("figure")
-RESAMPLE_MULTIPLE_FACTOR = 9
+SAVE_MODEL_PATH = OUTPUT_DEFAULT_PATH.joinpath("model")
+SAVE_WEIGHT_PATH = OUTPUT_DEFAULT_PATH.joinpath("model")
 
 
 # Model
 # ------------------------------------------------
 MODEL_NAME = 'model'
-SAVE_MODEL_PATH = OUTPUT_DEFAULT_PATH.joinpath("model")
-SAVE_WEIGHT_PATH = OUTPUT_DEFAULT_PATH.joinpath("model")
 TRAIN_INPUT_DIM = (352, 480, 3)
+TEST_INPUT_DIM = (352, 480, 3)
 L2_REGULAR = 0.01
+SEED = 1
 
 
 # Preprocessing
 # ------------------------------------------------
+TRAIN_RESAMPLE_FACTOR = 9
+TEST_RESAMPLE_FACTOR = 1
 ENABLE_DATA_AUG = False
 USE_IMAGEDATAGENERATOR = False
-SEED = 1
 
 
 # Train
@@ -35,7 +37,7 @@ EPOCHS = 200
 TRAIN_BATCH_SIZE = 32
 VAL_SPLIT = 0.1
 LEARNING_RATE_ARGS = dict(
-    initial_learning_rate=0.001,
+    initial_learning_rate=0.002,
     decay_steps=1000,
     decay_rate=0.98,
     staircase=False
