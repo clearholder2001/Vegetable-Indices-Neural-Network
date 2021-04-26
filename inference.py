@@ -1,5 +1,6 @@
 import os
 import random as python_random
+import sys
 
 ''' TF_CPP_MIN_LOG_LEVEL
 0 = all messages are logged (default behavior)
@@ -47,6 +48,11 @@ def predict_function(model, test_ds, predict_shape, steps, verbose):
 
 
 if __name__ == "__main__":
+    test_verbose = 0
+
+    if len(sys.argv) > 1 and sys.argv[1] == "--prod":
+        test_verbose = 0
+
     model_path = cfg.SAVE_MODEL_PATH.joinpath("trained_model.h5")
 
     test_X_obj = ImageDataSet('RGB ', cfg.TEST_RGB_PATH, save_image_path=cfg.SAVE_IMAGE_PATH.joinpath("inference/input"))
