@@ -54,6 +54,7 @@ if __name__ == "__main__":
         test_verbose = 0
 
     model_path = cfg.SAVE_MODEL_PATH.joinpath("trained_model.h5")
+    input_dim = cfg.TEST_INPUT_DIM[:2]
 
     test_X_obj = ImageDataSet('RGB ', cfg.TEST_RGB_PATH, save_image_path=cfg.SAVE_IMAGE_PATH.joinpath("inference/input"))
     test_Y_obj = ImageDataSet('NDVI', cfg.TEST_NDVI_PATH, save_image_path=cfg.SAVE_IMAGE_PATH.joinpath("inference/input"))
@@ -61,9 +62,9 @@ if __name__ == "__main__":
     test_Y_obj.load_data(devided_by_255=False, expand_dims=False, save_image=False)
     test_X_obj.crop(save_image=False)
     test_Y_obj.crop(save_image=False)
-    table = test_X_obj.generate_resample_table(multiple_factor=cfg.RESAMPLE_MULTIPLE_FACTOR, seed=cfg.SEED)
-    test_X_obj.resample(table, save_image=False)
-    test_Y_obj.resample(table, save_image=False)
+    table = test_X_obj.generate_resample_table(target_dim=input_dim, multiple_factor=cfg.TEST_RESAMPLE_FACTOR, seed=cfg.SEED)
+    test_X_obj.resample(table, target_dim=input_dim, save_image=False)
+    test_Y_obj.resample(table, target_dim=input_dim, save_image=False)
     test_X = test_X_obj.get_data_resample()
     test_Y = test_Y_obj.get_data_resample()
     print('RGB  array shape: ', test_X.shape)
