@@ -41,7 +41,7 @@ if __name__ == "__main__":
     fit_verbose = 1
     steps_per_execution = 1
 
-    if len(sys.argv) > 1 and sys.argv[1] == "--production":
+    if len(sys.argv) > 1 and sys.argv[1] == "--prod":
         fit_verbose = 2
         steps_per_execution = 10000
 
