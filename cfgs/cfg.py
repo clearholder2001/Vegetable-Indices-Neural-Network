@@ -45,11 +45,11 @@ LEARNING_RATE_ARGS = dict(
 )
 EARLY_STOP_ARGS = dict(
     monitor='loss',
-    min_delta=0.005,
+    min_delta=0.001,
     patience=5,
-    verbose=0,
-    mode='auto',
-    baseline=0.05
+    verbose=1,
+    mode='min',
+    baseline=None
 )
 
 
