@@ -17,6 +17,9 @@ class TimingCallback(Callback):
         self.end = time()
         self.times[epoch] = self.end - self.start
 
+    def on_train_end(self, logs=None):
+        self.times = [t for t in self.times if t != None]
+
 
 class SaveWeightCallback(Callback):
     def __init__(self, save_weight_path):
