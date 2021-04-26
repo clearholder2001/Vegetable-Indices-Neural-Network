@@ -48,15 +48,17 @@ if __name__ == "__main__":
     print_cfg(cfg)
     output_init(cfg)
 
+    input_dim = cfg.TRAIN_INPUT_DIM[:2]
+
     train_X_obj = ImageDataSet('RGB ', data_path=cfg.TRAIN_RGB_PATH, save_image_path=cfg.SAVE_IMAGE_PATH.joinpath("train/input"))
     train_Y_obj = ImageDataSet('NDVI', data_path=cfg.TRAIN_NDVI_PATH, save_image_path=cfg.SAVE_IMAGE_PATH.joinpath("train/input"))
     train_X_obj.load_data(devided_by_255=False, expand_dims=False, save_image=False)
     train_Y_obj.load_data(devided_by_255=False, expand_dims=False, save_image=False)
     train_X_obj.crop(save_image=False)
     train_Y_obj.crop(save_image=False)
-    table = train_X_obj.generate_resample_table(multiple_factor=cfg.RESAMPLE_MULTIPLE_FACTOR, seed=cfg.SEED)
-    train_X_obj.resample(table, save_image=False)
-    train_Y_obj.resample(table, save_image=False)
+    table = train_X_obj.generate_resample_table(target_dim=input_dim, multiple_factor=cfg.TRAIN_RESAMPLE_FACTOR, seed=cfg.SEED)
+    train_X_obj.resample(table, target_dim=input_dim, save_image=False)
+    train_Y_obj.resample(table, target_dim=input_dim, save_image=False)
     train_X = train_X_obj.get_data_resample()
     train_Y = train_Y_obj.get_data_resample()
 

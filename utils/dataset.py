@@ -50,9 +50,9 @@ class ImageDataSet():
         else:
             print('No data: load data first.')
 
-    def resample(self, table, target_size=(352, 480), save_image=False):
+    def resample(self, table, target_dim=(352, 480), save_image=False):
         if self.data_raw is not None:
-            self.data_resample = np.zeros((table.shape[0], target_size[0], target_size[1], self.channel), np.float32)
+            self.data_resample = np.zeros((table.shape[0], target_dim[0], target_dim[1], self.channel), np.float32)
             if save_image:
                 rgb_path, ndvi_path = self.output_init("resample")
             for i in range(table.shape[0]):
@@ -68,15 +68,15 @@ class ImageDataSet():
         else:
             print('No data: load data first.')
 
-    def generate_resample_table(self, target_size=(352, 480), multiple_factor=9, seed=0):
+    def generate_resample_table(self, target_dim=(352, 480), multiple_factor=9):
         array_len = self.num * multiple_factor
-        range_max = (self.height-target_size[0]) * (self.width-target_size[1])
-        random_array = np.random.randint(low=0, high=(range_max + 1), size=array_len)
+        range_max = (self.height-target_dim[0]) * (self.width-target_dim[1])
+        random_array = np.random.randint(low=0, high=range_max, size=array_len)
         index_array = np.repeat(np.arange(self.num, dtype=np.uint32), multiple_factor).reshape(-1, 1)
-        top_array = np.rint(np.mod(random_array, target_size[0])).astype(np.uint32).reshape(-1, 1)
-        down_array = top_array + target_size[0]
-        left_array = np.rint(np.mod(random_array, target_size[1])).astype(np.uint32).reshape(-1, 1)
-        right_array = left_array + target_size[1]
+        top_array = np.rint(np.mod(random_array, target_dim[0])).astype(np.uint32).reshape(-1, 1)
+        down_array = top_array + target_dim[0]
+        left_array = np.rint(np.mod(random_array, target_dim[1])).astype(np.uint32).reshape(-1, 1)
+        right_array = left_array + target_dim[1]
         table = np.concatenate((index_array, top_array, down_array, left_array, right_array), axis=1)
         print('Table is generated.')
         return table
