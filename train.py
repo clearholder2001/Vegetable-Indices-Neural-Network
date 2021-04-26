@@ -14,14 +14,14 @@ os.environ['PYTHONHASHSEED'] = '0'
 
 import numpy as np
 import tensorflow as tf
-from tensorflow.keras.callbacks import TensorBoard
+from tensorflow.keras.callbacks import EarlyStopping, TensorBoard
 from tensorflow.keras.metrics import RootMeanSquaredError
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.optimizers.schedules import ExponentialDecay
 
 from cfgs import cfg
 from models.unet_new import unet_new as Model
-from utils.callback import EarlyStoppingCallback, TimingCallback
+from utils.callback import SaveWeightCallback, TimingCallback
 from utils.dataset import ImageDataSet
 from utils.helper import output_init, plot_train_history, print_cfg
 from utils.image import plot_two_images_array
@@ -39,9 +39,11 @@ tf.config.experimental.set_memory_growth(gpus[0], True)
 
 if __name__ == "__main__":
     fit_verbose = 1
+    steps_per_execution = 1
 
     if len(sys.argv) > 1 and sys.argv[1] == "--production":
         fit_verbose = 2
+        steps_per_execution = 10000
 
     print_cfg(cfg)
     output_init(cfg)
@@ -67,14 +69,15 @@ if __name__ == "__main__":
 
     lr_schedule = ExponentialDecay(**cfg.LEARNING_RATE_ARGS)
 
-    early_stop_callback = EarlyStoppingCallback(monitor='loss', loss=cfg.EARLY_STOP_LOSS, save_weight_path=cfg.SAVE_WEIGHT_PATH)
-    timing_callback = TimingCallback()
+    early_stop_callback = EarlyStopping(**cfg.EARLY_STOP_ARGS)
+    save_weight_callback = SaveWeightCallback(save_weight_path=cfg.SAVE_WEIGHT_PATH)
+    timing_callback = TimingCallback(epochs=cfg.EPOCHS)
     tensorboard_callback = TensorBoard(**cfg.TENSORBOARD_ARGS)
-    callbacks = [early_stop_callback, timing_callback, tensorboard_callback]
+    callbacks = [early_stop_callback, save_weight_callback, timing_callback, tensorboard_callback]
 
     model = Model(model_name=cfg.MODEL_NAME)
     adam = Adam(learning_rate=lr_schedule)
-    model.compile(optimizer=adam, loss='mean_absolute_error', metrics=RootMeanSquaredError())
+    model.compile(optimizer=adam, loss='mean_absolute_error', metrics=RootMeanSquaredError(), steps_per_execution=steps_per_execution)
     model.summary()
 
     train_ds, validation_ds = train_preprocessing(train_X, train_Y, batch_size=batch_size, enable_data_aug=cfg.ENABLE_DATA_AUG, use_imagedatagenerator=cfg.USE_IMAGEDATAGENERATOR, datagen_args=cfg.DATAGEN_ARGS, seed=cfg.SEED, val_split=val_split)
@@ -89,7 +92,7 @@ if __name__ == "__main__":
         validation_data=validation_ds,
         validation_steps=validation_steps,
         callbacks=callbacks,
-        verbose=fit_verbose
+        verbose=fit_verbose,
     )
 
     model.save(cfg.SAVE_MODEL_PATH.joinpath("trained_model.h5"))

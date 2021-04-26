@@ -4,31 +4,35 @@ from time import time
 from tensorflow.keras.callbacks import Callback
 
 
-class EarlyStoppingCallback(Callback):
-    def __init__(self, monitor='val_loss', loss=0.001, save_weight_path=None):
+class TimingCallback(Callback):
+    def __init__(self, epochs):
+        self.epochs = epochs
+
+    def on_train_begin(self, logs=None):
+        self.times = [None] * self.epochs
+
+    def on_epoch_begin(self, epoch, logs=None):
+        self.start = time()
+
+    def on_epoch_end(self, epoch, logs=None):
+        self.end = time()
+        self.times[epoch] = self.end - self.start
+
+
+class SaveWeightCallback(Callback):
+    def __init__(self, save_weight_path):
         super().__init__()
-        self.monitor = monitor
-        self.loss = loss
+        self.save_flag = False
         self.save_weight_path = save_weight_path
 
-    def on_epoch_end(self, epoch, logs={}):
-        current = logs.get(self.monitor)
-        if current is None:
-            warnings.warn("Early stopping requires {0} available!".format(self.monitor), RuntimeWarning)
+    def on_epoch_end(self, epoch, logs=None):
+        self.save_flag = False
+        if epoch < 20:
+            self.save_flag = True
+        elif epoch < 100 and (epoch+1) % 5 == 0:
+            self.save_flag = True
+        elif epoch >= 100 and (epoch+1) % 100 == 0:
+            self.save_flag = True
 
-        if current < self.loss:
-            print("Epoch {0}: early stopping".format(epoch))
-            self.model.stop_training = True
-        # save the weights in every epoch
-        self.model.save_weights(self.save_weight_path.joinpath("weight_epoch_{0}.h5".format(epoch)))
-
-
-class TimingCallback(Callback):
-    def on_train_begin(self, logs={}):
-        self.times = []
-
-    def on_epoch_begin(self, batch, logs={}):
-        self.epoch_time_start = time()
-
-    def on_epoch_end(self, batch, logs={}):
-        self.times.append(time() - self.epoch_time_start)
+        if self.save_flag:
+            self.model.save_weights(self.save_weight_path.joinpath("weight_epoch_{0}.h5".format(epoch)))
