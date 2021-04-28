@@ -60,8 +60,8 @@ def train_preprocessing(train_X, train_Y, batch_size, enable_data_aug, use_image
 
             data_augmentation_layer = [
                 preprocessing.RandomFlip(mode="horizontal_and_vertical", seed=seed),
-                preprocessing.RandomRotation(factor=(cfg.DATAGEN_ARGS["rotation_range"] / 360), fill_mode=cfg.DATAGEN_ARGS["fill_mode"], interpolation="bilinear", seed=seed),
-                preprocessing.RandomZoom(height_factor=cfg.DATAGEN_ARGS["zoom_range"], fill_mode=cfg.DATAGEN_ARGS["fill_mode"], interpolation="bilinear", seed=seed),
+                preprocessing.RandomRotation(factor=(datagen_args["rotation_range"] / 360), fill_mode=datagen_args["fill_mode"], interpolation="bilinear", seed=seed),
+                preprocessing.RandomZoom(height_factor=datagen_args["zoom_range"], fill_mode=datagen_args["fill_mode"], interpolation="bilinear", seed=seed),
             ]
             image_model_map = Sequential(copy.deepcopy(data_augmentation_layer))
             mask_model_map = Sequential(copy.deepcopy(data_augmentation_layer))
