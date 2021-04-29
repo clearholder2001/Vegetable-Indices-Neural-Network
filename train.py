@@ -64,7 +64,7 @@ if __name__ == "__main__":
 
     plot_two_images_array(train_X, train_Y, 'Train - RGB, NDVI', cfg.SAVE_FIGURE_PATH)
 
-    batch_size = cfg.BATCH_SIZE
+    batch_size = cfg.TRAIN_BATCH_SIZE
     val_split = cfg.VAL_SPLIT
     steps_per_epoch = int(np.round(train_X.shape[0] / batch_size * (1 - val_split)))
     validation_steps = int(np.round(train_X.shape[0] / batch_size * val_split))
