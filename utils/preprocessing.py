@@ -7,15 +7,18 @@ from tensorflow.keras.layers.experimental import preprocessing
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
 
-def train_preprocessing(train_X, train_Y, batch_size, enable_data_aug, use_imagedatagenerator, datagen_args, seed, val_split):
+def train_preprocessing(train_X, train_Y, batch_size, cfg):
+    batch_size = cfg.BATCH_SIZE
+    seed = cfg.SEED
+
     train_X, train_Y = shuffle(train_X, train_Y, random_state=seed)
 
-    if enable_data_aug:
-        if use_imagedatagenerator:
-            train_image_datagen = ImageDataGenerator(**datagen_args)
-            train_mask_datagen = ImageDataGenerator(**datagen_args)
-            validation_image_datagen = ImageDataGenerator(validation_split=val_split)
-            validation_mask_datagen = ImageDataGenerator(validation_split=val_split)
+    if cfg.ENABLE_DATA_AUG:
+        if cfg.USE_IMAGEDATAGENERATOR:
+            train_image_datagen = ImageDataGenerator(**cfg.DATAGEN_ARGS)
+            train_mask_datagen = ImageDataGenerator(**cfg.DATAGEN_ARGS)
+            validation_image_datagen = ImageDataGenerator(validation_split=cfg.VAL_SPLIT)
+            validation_mask_datagen = ImageDataGenerator(validation_split=cfg.VAL_SPLIT)
 
             if train_image_datagen.brightness_range != None:
                 train_mask_datagen.brightness_range = None
@@ -40,14 +43,14 @@ def train_preprocessing(train_X, train_Y, batch_size, enable_data_aug, use_image
 
             return train_ds, validation_ds
         else:
-            validation_split_count = int(train_X.shape[0] * (1 - val_split))
+            validation_split_count = int(train_X.shape[0] * (1 - cfg.VAL_SPLIT))
             train_ds = tf.data.Dataset.from_tensor_slices((train_X, train_Y)).take(validation_split_count)
             validation_ds = tf.data.Dataset.from_tensor_slices((train_X, train_Y)).skip(validation_split_count)
 
             data_augmentation_layer = [
                 preprocessing.RandomFlip(mode="horizontal_and_vertical", seed=seed),
-                preprocessing.RandomRotation(factor=(datagen_args["rotation_range"] / 360), fill_mode=datagen_args["fill_mode"], interpolation="bilinear", seed=seed),
-                preprocessing.RandomZoom(height_factor=datagen_args["zoom_range"], fill_mode=datagen_args["fill_mode"], interpolation="bilinear", seed=seed),
+                preprocessing.RandomRotation(factor=(cfg.DATAGEN_ARGS["rotation_range"] / 360), fill_mode=cfg.DATAGEN_ARGS["fill_mode"], interpolation="bilinear", seed=seed),
+                preprocessing.RandomZoom(height_factor=cfg.DATAGEN_ARGS["zoom_range"], fill_mode=cfg.DATAGEN_ARGS["fill_mode"], interpolation="bilinear", seed=seed),
             ]
             image_model_map = Sequential(copy.deepcopy(data_augmentation_layer))
             mask_model_map = Sequential(copy.deepcopy(data_augmentation_layer))
@@ -76,7 +79,7 @@ def train_preprocessing(train_X, train_Y, batch_size, enable_data_aug, use_image
 
             return train_ds, validation_ds
     else:
-        validation_split_count = int(train_X.shape[0] * (1 - val_split))
+        validation_split_count = int(train_X.shape[0] * (1 - cfg.VAL_SPLIT))
         train_ds = tf.data.Dataset.from_tensor_slices((train_X, train_Y)).take(validation_split_count)
         validation_ds = tf.data.Dataset.from_tensor_slices((train_X, train_Y)).skip(validation_split_count)
 
