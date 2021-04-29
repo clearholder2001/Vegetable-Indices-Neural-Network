@@ -37,10 +37,10 @@ USE_IMAGEDATAGENERATOR = False
 # Train
 # ------------------------------------------------
 EPOCHS = 200
-BATCH_SIZE = 8
+BATCH_SIZE = 4
 VAL_SPLIT = 0.1
 LEARNING_RATE_ARGS = dict(
-    initial_learning_rate=0.002,
+    initial_learning_rate=0.001,
     decay_steps=1000,
     decay_rate=0.98,
     staircase=False
@@ -51,7 +51,7 @@ EARLY_STOP_ARGS = dict(
     patience=5,
     verbose=1,
     mode='min',
-    baseline=None
+    baseline=0.01
 )
 
 
