@@ -36,7 +36,7 @@ tf.config.experimental.set_memory_growth(gpus[0], True)
 
 def predict_function(model, test_ds, predict_shape, steps, verbose):
     predict = np.zeros(predict_shape, dtype=np.float32)
-    for idx, (image_batch, None) in enumerate(test_ds.as_numpy_iterator()):
+    for idx, (image_batch, mask_batch) in enumerate(test_ds.as_numpy_iterator()):
         begin = idx * batch_size
         end = begin + image_batch.shape[0]
         predict[begin:end, :, :, :] = model.predict_on_batch(image_batch)
