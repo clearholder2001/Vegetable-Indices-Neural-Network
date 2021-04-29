@@ -54,19 +54,15 @@ if __name__ == "__main__":
         test_verbose = 0
 
     model_path = cfg.SAVE_MODEL_PATH.joinpath("trained_model.h5")
-    input_dim = cfg.TEST_INPUT_DIM[:2]
+    resample_dim = tuple(int(x/cfg.TEST_RESCALE_FACTOR) for x in cfg.TEST_INPUT_DIM[:2])
 
-    test_X_obj = ImageDataSet('RGB ', cfg.TEST_RGB_PATH, save_image_path=cfg.SAVE_IMAGE_PATH.joinpath("inference/input"))
-    test_Y_obj = ImageDataSet('NDVI', cfg.TEST_NDVI_PATH, save_image_path=cfg.SAVE_IMAGE_PATH.joinpath("inference/input"))
-    test_X_obj.load_data(devided_by_255=False, expand_dims=False, save_image=False)
-    test_Y_obj.load_data(devided_by_255=False, expand_dims=False, save_image=False)
-    test_X_obj.crop(save_image=False)
-    test_Y_obj.crop(save_image=False)
-    table = test_X_obj.generate_resample_table(target_dim=input_dim, multiple_factor=cfg.TEST_RESAMPLE_FACTOR, seed=cfg.SEED)
-    test_X_obj.resample(table, target_dim=input_dim, save_image=False)
-    test_Y_obj.resample(table, target_dim=input_dim, save_image=False)
-    test_X = test_X_obj.get_data_resample()
-    test_Y = test_Y_obj.get_data_resample()
+    test_X_obj = ImageDataSet("RGB ", input_path=cfg.TEST_RGB_PATH, save_image_path=cfg.SAVE_IMAGE_PATH.joinpath("inference/input"))
+    test_Y_obj = ImageDataSet("NDVI", input_path=cfg.TEST_NDVI_PATH, save_image_path=cfg.SAVE_IMAGE_PATH.joinpath("inference/input"))
+    test_X_obj = test_X_obj.load_data(devided_by_255=False, expand_dims=False).crop()
+    test_Y_obj = test_Y_obj.load_data(devided_by_255=False, expand_dims=False).crop()
+    table = ImageDataSet.generate_resample_table(test_X_obj.num, cfg.TRAIN_RESAMPLE_FACTOR, (test_X_obj.height, test_X_obj.width), resample_dim)
+    test_X = test_X_obj.resample(table, resample_dim).rescale(cfg.TRAIN_RESCALE_FACTOR).get_image_array()
+    test_Y = test_Y_obj.resample(table, resample_dim).rescale(cfg.TRAIN_RESCALE_FACTOR).get_image_array()
     print('RGB  array shape: ', test_X.shape)
     print('NDVI array shape: ', test_Y.shape)
 
