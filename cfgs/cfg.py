@@ -18,15 +18,17 @@ TENSORBOARD_LOG_PATH = OUTPUT_DEFAULT_PATH.joinpath("TensorBoard")
 # Model
 # ------------------------------------------------
 MODEL_NAME = 'model'
-TRAIN_INPUT_DIM = (352, 480, 3)
-TEST_INPUT_DIM = (352, 480, 3)
+TRAIN_INPUT_DIM = (224, 304, 3)
+TEST_INPUT_DIM = (224, 304, 3)
 L2_REGULAR = 0.01
 SEED = 1
 
 
 # Preprocessing
 # ------------------------------------------------
-TRAIN_RESAMPLE_FACTOR = 9
+TRAIN_RESCALE_FACTOR = 0.25
+TEST_RESCALE_FACTOR = 0.25
+TRAIN_RESAMPLE_FACTOR = 1
 TEST_RESAMPLE_FACTOR = 1
 ENABLE_DATA_AUG = False
 USE_IMAGEDATAGENERATOR = False
@@ -35,7 +37,7 @@ USE_IMAGEDATAGENERATOR = False
 # Train
 # ------------------------------------------------
 EPOCHS = 200
-BATCH_SIZE = 32
+BATCH_SIZE = 8
 VAL_SPLIT = 0.1
 LEARNING_RATE_ARGS = dict(
     initial_learning_rate=0.002,
@@ -45,7 +47,7 @@ LEARNING_RATE_ARGS = dict(
 )
 EARLY_STOP_ARGS = dict(
     monitor='loss',
-    min_delta=0.001,
+    min_delta=0.0001,
     patience=5,
     verbose=1,
     mode='min',

@@ -48,19 +48,17 @@ if __name__ == "__main__":
     print_cfg(cfg)
     output_init(cfg)
 
-    input_dim = cfg.TRAIN_INPUT_DIM[:2]
+    resample_dim = tuple(int(x/cfg.TRAIN_RESCALE_FACTOR) for x in cfg.TRAIN_INPUT_DIM[:2])
 
-    train_X_obj = ImageDataSet('RGB ', data_path=cfg.TRAIN_RGB_PATH, save_image_path=cfg.SAVE_IMAGE_PATH.joinpath("train/input"))
-    train_Y_obj = ImageDataSet('NDVI', data_path=cfg.TRAIN_NDVI_PATH, save_image_path=cfg.SAVE_IMAGE_PATH.joinpath("train/input"))
-    train_X_obj.load_data(devided_by_255=False, expand_dims=False, save_image=False)
-    train_Y_obj.load_data(devided_by_255=False, expand_dims=False, save_image=False)
-    train_X_obj.crop(save_image=False)
-    train_Y_obj.crop(save_image=False)
-    table = train_X_obj.generate_resample_table(target_dim=input_dim, multiple_factor=cfg.TRAIN_RESAMPLE_FACTOR)
-    train_X_obj.resample(table, target_dim=input_dim, save_image=False)
-    train_Y_obj.resample(table, target_dim=input_dim, save_image=False)
-    train_X = train_X_obj.get_data_resample()
-    train_Y = train_Y_obj.get_data_resample()
+    train_X_obj = ImageDataSet("RGB ", input_path=cfg.TRAIN_RGB_PATH, save_image_path=cfg.SAVE_IMAGE_PATH.joinpath("train/input"))
+    train_Y_obj = ImageDataSet("NDVI", input_path=cfg.TRAIN_NDVI_PATH, save_image_path=cfg.SAVE_IMAGE_PATH.joinpath("train/input"))
+    train_X_obj = train_X_obj.load_data(devided_by_255=False, expand_dims=False).crop()
+    train_Y_obj = train_Y_obj.load_data(devided_by_255=False, expand_dims=False).crop()
+    table = ImageDataSet.generate_resample_table(train_X_obj.num, cfg.TRAIN_RESAMPLE_FACTOR, (train_X_obj.height, train_X_obj.width), resample_dim)
+    train_X = train_X_obj.resample(table, resample_dim).rescale(cfg.TRAIN_RESCALE_FACTOR).get_image_array()
+    train_Y = train_Y_obj.resample(table, resample_dim).rescale(cfg.TRAIN_RESCALE_FACTOR).get_image_array()
+    print('RGB  array shape: ', train_X.shape)
+    print('NDVI array shape: ', train_Y.shape)
 
     plot_two_images_array(train_X, train_Y, 'Train - RGB, NDVI', cfg.SAVE_FIGURE_PATH)
 
