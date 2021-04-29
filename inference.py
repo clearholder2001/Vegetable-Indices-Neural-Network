@@ -54,21 +54,24 @@ if __name__ == "__main__":
         test_verbose = 0
 
     model_path = cfg.SAVE_MODEL_PATH.joinpath("trained_model.h5")
-    resample_dim = tuple(int(x/cfg.TEST_RESCALE_FACTOR) for x in cfg.TEST_INPUT_DIM[:2])
 
     test_X_obj = ImageDataSet("RGB ", input_path=cfg.TEST_RGB_PATH, save_image_path=cfg.SAVE_IMAGE_PATH.joinpath("inference/input"))
     test_Y_obj = ImageDataSet("NDVI", input_path=cfg.TEST_NDVI_PATH, save_image_path=cfg.SAVE_IMAGE_PATH.joinpath("inference/input"))
     test_X_obj = test_X_obj.load_data(devided_by_255=False, expand_dims=False).crop()
     test_Y_obj = test_Y_obj.load_data(devided_by_255=False, expand_dims=False).crop()
-    table = ImageDataSet.generate_resample_table(test_X_obj.num, cfg.TEST_RESAMPLE_FACTOR, (test_X_obj.height, test_X_obj.width), resample_dim)
-    test_X = test_X_obj.resample(table, resample_dim).rescale(cfg.TEST_RESCALE_FACTOR).get_image_array()
-    test_Y = test_Y_obj.resample(table, resample_dim).rescale(cfg.TEST_RESCALE_FACTOR).get_image_array()
+    table = ImageDataSet.generate_resample_table(test_X_obj.num, cfg.TEST_RESAMPLE_MULTIPLE_FACTOR, (test_X_obj.height, test_X_obj.width), cfg.TEST_RESAMPLE_DIM)
+    test_X = test_X_obj.resample(table, cfg.TEST_RESAMPLE_DIM)
+    test_Y = test_Y_obj.resample(table, cfg.TEST_RESAMPLE_DIM)
+    test_X = test_X_obj.downscale(cfg.TEST_DOWNSCALE_FACTOR)
+    test_Y = test_Y_obj.downscale(cfg.TEST_DOWNSCALE_FACTOR)
+    test_X = test_X_obj.get_image_array()
+    test_Y = test_Y_obj.get_image_array()
     print('RGB  array shape: ', test_X.shape)
     print('NDVI array shape: ', test_Y.shape)
 
     plot_two_images_array(test_X, test_Y, 'Inference - RGB, NDVI', cfg.SAVE_FIGURE_PATH)
 
-    model = Model(model_name=cfg.MODEL_NAME, input_dim=cfg.TEST_INPUT_DIM)
+    model = Model(model_name=cfg.MODEL_NAME, input_dim=test_X.shape[1:])
     model.compile(loss='mean_absolute_error', metrics=RootMeanSquaredError())
     model.load_weights(model_path)
     model.summary()

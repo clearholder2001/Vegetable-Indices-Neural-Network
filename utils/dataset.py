@@ -48,16 +48,16 @@ class ImageDataSet():
         else:
             print("No data: load data first.")
 
-    def rescale(self, factor, save_image=False):
+    def downscale(self, factor, save_image=False):
         if self.__image_array is not None:
             factor = (1, factor, factor, 1)
-            self.__image_array = transform.rescale(self.__image_array, factor, preserve_range=True, anti_aliasing=True)
+            self.__image_array = transform.downscale_local_mean(self.__image_array, factor)
             self.num, self.height, self.width, self.channel = self.__image_array.shape
 
             if save_image:
-                self.__save_image("rescale")
+                self.__save_image("downscale")
 
-            print(f"Data {self.name} shape after rescale: {self.__image_array.shape}")
+            print(f"Data {self.name} shape after downscale: {self.__image_array.shape}")
             return self
         else:
             print("No data: load data first.")
