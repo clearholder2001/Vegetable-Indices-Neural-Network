@@ -48,15 +48,17 @@ if __name__ == "__main__":
     print_cfg(cfg)
     output_init(cfg)
 
-    resample_dim = tuple(int(x/cfg.TRAIN_RESCALE_FACTOR) for x in cfg.TRAIN_INPUT_DIM[:2])
-
     train_X_obj = ImageDataSet("RGB ", input_path=cfg.TRAIN_RGB_PATH, save_image_path=cfg.SAVE_IMAGE_PATH.joinpath("train/input"))
     train_Y_obj = ImageDataSet("NDVI", input_path=cfg.TRAIN_NDVI_PATH, save_image_path=cfg.SAVE_IMAGE_PATH.joinpath("train/input"))
     train_X_obj = train_X_obj.load_data(devided_by_255=False, expand_dims=False).crop()
     train_Y_obj = train_Y_obj.load_data(devided_by_255=False, expand_dims=False).crop()
-    table = ImageDataSet.generate_resample_table(train_X_obj.num, cfg.TRAIN_RESAMPLE_FACTOR, (train_X_obj.height, train_X_obj.width), resample_dim)
-    train_X = train_X_obj.resample(table, resample_dim).rescale(cfg.TRAIN_RESCALE_FACTOR).get_image_array()
-    train_Y = train_Y_obj.resample(table, resample_dim).rescale(cfg.TRAIN_RESCALE_FACTOR).get_image_array()
+    table = ImageDataSet.generate_resample_table(train_X_obj.num, cfg.TRAIN_RESAMPLE_MULTIPLE_FACTOR, (train_X_obj.height, train_X_obj.width), cfg.TRAIN_RESAMPLE_DIM)
+    train_X = train_X_obj.resample(table, cfg.TRAIN_RESAMPLE_DIM)
+    train_Y = train_Y_obj.resample(table, cfg.TRAIN_RESAMPLE_DIM)
+    train_X = train_X_obj.downscale(cfg.TRAIN_DOWNSCALE_FACTOR)
+    train_Y = train_Y_obj.downscale(cfg.TRAIN_DOWNSCALE_FACTOR)
+    train_X = train_X_obj.get_image_array()
+    train_Y = train_Y_obj.get_image_array()
     print('RGB  array shape: ', train_X.shape)
     print('NDVI array shape: ', train_Y.shape)
 
@@ -75,7 +77,7 @@ if __name__ == "__main__":
     tensorboard_callback = TensorBoard(**cfg.TENSORBOARD_ARGS)
     callbacks = [early_stop_callback, save_weight_callback, timing_callback, tensorboard_callback]
 
-    model = Model(model_name=cfg.MODEL_NAME, input_dim=cfg.TRAIN_INPUT_DIM)
+    model = Model(model_name=cfg.MODEL_NAME, input_dim=train_X.shape[1:])
     adam = Adam(learning_rate=lr_schedule)
     model.compile(optimizer=adam, loss='mean_absolute_error', metrics=RootMeanSquaredError(), steps_per_execution=steps_per_execution)
     model.summary()
