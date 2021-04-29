@@ -59,8 +59,8 @@ if __name__ == "__main__":
     train_Y = train_Y_obj.downscale(cfg.TRAIN_DOWNSCALE_FACTOR)
     train_X = train_X_obj.get_image_array()
     train_Y = train_Y_obj.get_image_array()
-    print('RGB  array shape: ', train_X.shape)
-    print('NDVI array shape: ', train_Y.shape)
+    print(f"RGB  array shape: {train_X.shape}")
+    print(f"NDVI array shape: {train_Y.shape}")
 
     plot_two_images_array(train_X, train_Y, 'Train - RGB, NDVI', cfg.SAVE_FIGURE_PATH)
 
@@ -100,4 +100,4 @@ if __name__ == "__main__":
     model.save(cfg.SAVE_MODEL_PATH.joinpath("trained_model.h5"))
     plot_train_history(train_history, 'loss', 'val_loss', save_figure_path=cfg.SAVE_FIGURE_PATH)
 
-    print("Average epoch time: {0:.2f}s".format(np.mean(timing_callback.times)))
+    print(f"Average epoch time: {np.mean(timing_callback.times):.2f}s")

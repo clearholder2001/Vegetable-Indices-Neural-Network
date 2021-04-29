@@ -20,7 +20,7 @@ def list_file(path):
     # remove filename ending with "_f32"
     for filename in file_list:
         if str(filename.stem).endswith("_f32"):
-            print("Exclude file: {0}".format(filename))
+            print(f"Exclude file: {filename}")
             file_list.remove(filename)
 
     return file_list
@@ -28,11 +28,11 @@ def list_file(path):
 
 def do_task(filename):
     array_raw = np.load(filename, mmap_mode='r', allow_pickle=True)
-    print("Load file: {0}, shape={1}, dtype= {2}, max={3}, min={4}".format(filename, array_raw.shape, array_raw.dtype, np.max(array_raw), np.min(array_raw)))
+    print(f"Load file: {filename}, shape={array_raw.shape}, dtype= {array_raw.dtype}, max={np.max(array_raw)}, min={np.min(array_raw)}")
 
     if filename.match("*/single/*"):
         array_raw = np.expand_dims(array_raw, axis=0)
-        print("Change shape: {0}".format(array_raw.shape))
+        print(f"Change shape: {array_raw.shape}")
 
     if str(filename.stem).endswith("_RGB"):
         array_after = array_raw.astype('float32', copy=True) / 255.
@@ -42,7 +42,7 @@ def do_task(filename):
 
     save_filename = filename.parent.joinpath(filename.stem + "_f32.npy")
     np.save(save_filename, array_after, allow_pickle=True)
-    print("Save file: {0}, shape={1}, dtype= {2}, max={3}, min={4}".format(save_filename, array_after.shape, array_after.dtype, np.max(array_after), np.min(array_after)))
+    print(f"Save file: {save_filename}, shape={array_after.shape}, dtype= {array_after.dtype}, max={np.max(array_after)}, min={np.min(array_after)}")
 
 
 if __name__ == "__main__":

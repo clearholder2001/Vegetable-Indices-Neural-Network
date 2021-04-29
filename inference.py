@@ -41,9 +41,9 @@ def predict_function(model, test_ds, predict_shape, steps, verbose):
         end = begin + image_batch.shape[0]
         predict[begin:end, :, :, :] = model.predict_on_batch(image_batch)
         if verbose and (idx+1) != steps:
-            print("Predicting...{0}/{1}".format(idx+1, steps), end='\r')
+            print(f"Predicting...{idx+1}/{steps}", end='\r')
         elif (idx+1) == steps:
-            print("Predicting...{0}/{1}".format(idx+1, steps))
+            print(f"Predicting...{idx+1}/{steps}")
     return predict
 
 
@@ -66,8 +66,8 @@ if __name__ == "__main__":
     test_Y = test_Y_obj.downscale(cfg.TEST_DOWNSCALE_FACTOR)
     test_X = test_X_obj.get_image_array()
     test_Y = test_Y_obj.get_image_array()
-    print('RGB  array shape: ', test_X.shape)
-    print('NDVI array shape: ', test_Y.shape)
+    print(f"RGB  array shape: {test_X.shape}")
+    print(f"NDVI array shape: {test_Y.shape}")
 
     plot_two_images_array(test_X, test_Y, 'Inference - RGB, NDVI', cfg.SAVE_FIGURE_PATH)
 
