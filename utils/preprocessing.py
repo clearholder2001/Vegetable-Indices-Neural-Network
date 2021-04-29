@@ -1,23 +1,10 @@
 import copy
 
 import tensorflow as tf
-from cfgs import cfg
 from sklearn.utils import shuffle
 from tensorflow.keras import Sequential
 from tensorflow.keras.layers.experimental import preprocessing
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
-
-
-def output_init():
-    train_image_path = cfg.SAVE_IMAGE_PATH.joinpath('data_aug/train/rgb')
-    train_mask_path = cfg.SAVE_IMAGE_PATH.joinpath('data_aug/train/ndvi')
-    validation_image_path = cfg.SAVE_IMAGE_PATH.joinpath('data_aug/val/rgb')
-    validation_mask_path = cfg.SAVE_IMAGE_PATH.joinpath('data_aug/val/ndvi')
-    train_image_path.mkdir(parents=True, exist_ok=True)
-    train_mask_path.mkdir(parents=True, exist_ok=True)
-    validation_image_path.mkdir(parents=True, exist_ok=True)
-    validation_mask_path.mkdir(parents=True, exist_ok=True)
-    return train_image_path, train_mask_path, validation_image_path, validation_mask_path
 
 
 def train_preprocessing(train_X, train_Y, batch_size, enable_data_aug, use_imagedatagenerator, datagen_args, seed, val_split):
@@ -36,7 +23,6 @@ def train_preprocessing(train_X, train_Y, batch_size, enable_data_aug, use_image
             if train_image_datagen.channel_shift_range != 0.0:
                 train_mask_datagen.channel_shift_range = 0.0
 
-            # train_image_path, train_mask_path, validation_image_path, validation_mask_path = output_init()
             train_image_generator = train_image_datagen.flow(train_X, batch_size=batch_size, shuffle=True, seed=seed, subset='training')
             train_mask_generator = train_mask_datagen.flow(train_Y, batch_size=batch_size, shuffle=True, seed=seed, subset='training')
             validation_image_generator = validation_image_datagen.flow(train_X, batch_size=batch_size, shuffle=True, seed=seed, subset='validation')
