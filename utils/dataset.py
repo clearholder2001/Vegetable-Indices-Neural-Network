@@ -126,5 +126,5 @@ class ImageDataSet():
         right_array = left_array + target_dim[1]
 
         table = np.concatenate((index_array, top_array, down_array, left_array, right_array), axis=1)
-        print('Table is generated.')
+        print("Table is generated.")
         return table
