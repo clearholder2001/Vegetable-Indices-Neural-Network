@@ -8,7 +8,6 @@ from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
 
 def train_preprocessing(train_X, train_Y, batch_size, cfg):
-    batch_size = cfg.BATCH_SIZE
     seed = cfg.SEED
 
     train_X, train_Y = shuffle(train_X, train_Y, random_state=seed)

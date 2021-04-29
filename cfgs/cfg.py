@@ -34,10 +34,11 @@ ENABLE_DATA_AUG = False
 USE_IMAGEDATAGENERATOR = False
 
 
-# Train
+# Train and Test
 # ------------------------------------------------
 EPOCHS = 200
-BATCH_SIZE = 16
+TRAIN_BATCH_SIZE = 16
+TEST_BATCH_SIZE = 16
 VAL_SPLIT = 0.1
 LEARNING_RATE_ARGS = dict(
     initial_learning_rate=0.001,
