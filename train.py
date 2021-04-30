@@ -20,7 +20,7 @@ from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.optimizers.schedules import ExponentialDecay
 
 from cfgs import cfg
-from models.unet_new import unet_new as Model
+from models.unet_default import unet_default as Model
 from utils.callback import SaveWeightCallback, TimingCallback
 from utils.dataset import ImageDataSet
 from utils.helper import output_init, plot_train_history, print_cfg
