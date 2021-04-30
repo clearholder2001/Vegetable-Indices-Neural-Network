@@ -5,10 +5,11 @@ import numpy as np
 
 def plot_two_images_array(images1, images2, title, save_figure_path, idx=None):
     assert images1.shape[0] == images2.shape[0], "Image num inconsistent: images1, images2"
+    image_num = images1.shape[0]
     if idx == None:
-        idx_list = np.random.randint(low=0, high=images1.shape[0], size=8)
+        idx_list = np.random.randint(low=0, high=image_num, size=8)
     else:
-        idx_list = range(8)
+        idx_list = range(8) if image_num >= 8 else np.resize(range(image_num), 8)
     fig, axs = plt.subplots(4, 4)
     fig.set_size_inches(8, 6)
     plt.setp(axs, xticks=[], yticks=[])
@@ -25,10 +26,11 @@ def plot_two_images_array(images1, images2, title, save_figure_path, idx=None):
 
 def plot_three_images_array(images1, images2, images3, title, save_figure_path, idx=None):
     assert images1.shape[0] == images2.shape[0], "Image num inconsistent: images1, images2"
+    image_num = images1.shape[0]
     if idx == None:
-        idx_list = np.random.randint(low=0, high=images1.shape[0], size=4)
+        idx_list = np.random.randint(low=0, high=image_num, size=4)
     else:
-        idx_list = range(4)
+        idx_list = range(4) if image_num >= 4 else np.resize(range(image_num), 4)
     fig, axs = plt.subplots(4, 3)
     fig.set_size_inches(12, 13)
     plt.setp(axs, xticks=[], yticks=[])
@@ -58,9 +60,13 @@ def dataset_plot_single(dataset, iteration, save_prefix, save_image_path):
 def dataset_plot_batch(dataset, iteration, save_prefix, save_image_path):
     ds_iterator = iter(dataset)
     for i in range(iteration):
-        images, masks = next(ds_iterator)
-        images, masks = images.numpy(), masks.numpy()
-        plot_two_images_array(images, masks, "{0}_{1}".format(save_prefix, i), save_image_path, idx=0)
+        try:
+            images, masks = next(ds_iterator)
+            images, masks = images.numpy(), masks.numpy()
+            plot_two_images_array(images, masks, "{0}_{1}".format(save_prefix, i), save_image_path, idx=0)
+        except StopIteration:
+            print("Dataset exhausted.")
+            break
 
 
 def save_result_image(test_X, test_Y, predict, output_compare=True, save_image_path=None):
