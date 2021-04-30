@@ -83,6 +83,22 @@ class ImageDataSet():
         else:
             print("No data: load data first.")
 
+    def norm_standard(self):
+        if self.__image_array is not None:
+            self.__image_array = (self.__image_array + 1) * 0.5
+            print(f"Data {self.name} depth after norm_standard: max={np.max(self.__image_array)}, min={np.min(self.__image_array)}")
+            return self
+        else:
+            print("No data: load data first.")
+
+    def norm_ndvi(self):
+        if self.__image_array is not None:
+            self.__image_array = (self.__image_array * 2) - 1
+            print(f"Data {self.name} depth after norm_ndvi: max={np.max(self.__image_array)}, min={np.min(self.__image_array)}")
+            return self
+        else:
+            print("No data: load data first.")
+
     def get_image_array(self):
         if self.__image_array is not None:
             return self.__image_array

@@ -82,6 +82,7 @@ if __name__ == "__main__":
     model.compile(optimizer=adam, loss='mean_absolute_error', metrics=RootMeanSquaredError(), steps_per_execution=steps_per_execution)
     model.summary()
 
+    train_Y = train_Y_obj.norm_standard().get_image_array()
     train_ds, validation_ds = train_preprocessing(train_X, train_Y, batch_size=batch_size, cfg=cfg)
 
     # dataset_plot_batch(train_ds, 10, "train", cfg.SAVE_FIGURE_PATH)
