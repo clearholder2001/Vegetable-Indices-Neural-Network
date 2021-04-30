@@ -24,7 +24,7 @@ from models.unet_new import unet_new as Model
 from utils.callback import SaveWeightCallback, TimingCallback
 from utils.dataset import ImageDataSet
 from utils.helper import output_init, plot_train_history, print_cfg
-from utils.image import plot_two_images_array
+from utils.image import dataset_plot_batch, plot_two_images_array
 from utils.preprocessing import train_preprocessing
 
 np.random.seed(cfg.SEED)
@@ -53,12 +53,8 @@ if __name__ == "__main__":
     train_X_obj = train_X_obj.load_data(devided_by_255=False, expand_dims=False).crop(cfg.TRAIN_CROP_DELTA)
     train_Y_obj = train_Y_obj.load_data(devided_by_255=False, expand_dims=False).crop(cfg.TRAIN_CROP_DELTA)
     table = ImageDataSet.generate_resample_table(train_X_obj.num, cfg.TRAIN_RESAMPLE_MULTIPLE_FACTOR, (train_X_obj.height, train_X_obj.width), cfg.TRAIN_RESAMPLE_DIM)
-    train_X = train_X_obj.resample(table, cfg.TRAIN_RESAMPLE_DIM)
-    train_Y = train_Y_obj.resample(table, cfg.TRAIN_RESAMPLE_DIM)
-    train_X = train_X_obj.downscale(cfg.TRAIN_DOWNSCALE_FACTOR)
-    train_Y = train_Y_obj.downscale(cfg.TRAIN_DOWNSCALE_FACTOR)
-    train_X = train_X_obj.get_image_array()
-    train_Y = train_Y_obj.get_image_array()
+    train_X = train_X_obj.resample(table, cfg.TRAIN_RESAMPLE_DIM).downscale(cfg.TRAIN_DOWNSCALE_FACTOR).get_image_array()
+    train_Y = train_Y_obj.resample(table, cfg.TRAIN_RESAMPLE_DIM).downscale(cfg.TRAIN_DOWNSCALE_FACTOR).get_image_array()
     print(f"RGB  array shape: {train_X.shape}")
     print(f"NDVI array shape: {train_Y.shape}")
 

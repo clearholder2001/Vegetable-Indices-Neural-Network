@@ -70,7 +70,7 @@ def dataset_plot_batch(dataset, iteration, save_prefix, save_image_path):
 
 
 def save_result_image(test_X, test_Y, predict, output_compare=True, save_image_path=None):
-    assert test_X.shape[0] == test_Y.shape[0] == predict.shape[0], 'Length inconsistent: test_X, test_Y, preditc'
+    assert test_X.shape[0] == test_Y.shape[0] == predict.shape[0], "Length inconsistent: test_X, test_Y, preditc"
 
     rgb_path = save_image_path.joinpath("rgb")
     ndvi_path = save_image_path.joinpath("ndvi")
