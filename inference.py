@@ -20,8 +20,8 @@ from cfgs import cfg
 from models.unet_new import unet_new as Model
 from utils.dataset import ImageDataSet
 from utils.helper import calculate_statistics
-from utils.image import (plot_three_images_array, plot_two_images_array,
-                         save_result_image)
+from utils.image import (dataset_plot_batch, plot_three_images_array,
+                         plot_two_images_array, save_result_image)
 from utils.preprocessing import test_precessing
 
 np.random.seed(cfg.SEED)
@@ -61,12 +61,8 @@ if __name__ == "__main__":
     test_X_obj = test_X_obj.load_data(devided_by_255=False, expand_dims=False).crop(cfg.TEST_CROP_DELTA)
     test_Y_obj = test_Y_obj.load_data(devided_by_255=False, expand_dims=False).crop(cfg.TEST_CROP_DELTA)
     table = ImageDataSet.generate_resample_table(test_X_obj.num, cfg.TEST_RESAMPLE_MULTIPLE_FACTOR, (test_X_obj.height, test_X_obj.width), cfg.TEST_RESAMPLE_DIM)
-    test_X = test_X_obj.resample(table, cfg.TEST_RESAMPLE_DIM)
-    test_Y = test_Y_obj.resample(table, cfg.TEST_RESAMPLE_DIM)
-    test_X = test_X_obj.downscale(cfg.TEST_DOWNSCALE_FACTOR)
-    test_Y = test_Y_obj.downscale(cfg.TEST_DOWNSCALE_FACTOR)
-    test_X = test_X_obj.get_image_array()
-    test_Y = test_Y_obj.get_image_array()
+    test_X = test_X_obj.resample(table, cfg.TEST_RESAMPLE_DIM).downscale(cfg.TEST_DOWNSCALE_FACTOR).get_image_array()
+    test_Y = test_Y_obj.resample(table, cfg.TEST_RESAMPLE_DIM).downscale(cfg.TEST_DOWNSCALE_FACTOR).get_image_array()
     print(f"RGB  array shape: {test_X.shape}")
     print(f"NDVI array shape: {test_Y.shape}")
 
@@ -81,6 +77,8 @@ if __name__ == "__main__":
     steps = int(np.ceil(test_X.shape[0] / batch_size))
     test_Y = test_Y_obj.norm_standard().get_image_array()
     test_ds = test_precessing(test_X, test_Y, batch_size)
+
+    # dataset_plot_batch(test_ds, 10, "test", cfg.SAVE_FIGURE_PATH)
 
     predict = predict_function(model, test_ds, test_Y.shape, steps, test_verbose)
     loss = model.evaluate(test_ds, verbose=test_verbose)
