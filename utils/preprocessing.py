@@ -25,20 +25,25 @@ def train_preprocessing(train_X, train_Y, batch_size, cfg):
             if train_image_datagen.channel_shift_range != 0.0:
                 train_mask_datagen.channel_shift_range = 0.0
 
-            train_image_generator = train_image_datagen.flow(train_X, batch_size=batch_size, shuffle=True, seed=seed, subset='training')
-            train_mask_generator = train_mask_datagen.flow(train_Y, batch_size=batch_size, shuffle=True, seed=seed, subset='training')
-            validation_image_generator = validation_image_datagen.flow(train_X, batch_size=batch_size, shuffle=True, seed=seed, subset='validation')
-            validation_mask_generator = validation_mask_datagen.flow(train_Y, batch_size=batch_size, shuffle=True, seed=seed, subset='validation')
+            train_image_generator = train_image_datagen.flow(train_X, batch_size=1, shuffle=True, seed=seed, subset='training')
+            train_mask_generator = train_mask_datagen.flow(train_Y, batch_size=1, shuffle=True, seed=seed, subset='training')
+            validation_image_generator = validation_image_datagen.flow(train_X, batch_size=1, shuffle=True, seed=seed, subset='validation')
+            validation_mask_generator = validation_mask_datagen.flow(train_Y, batch_size=1, shuffle=True, seed=seed, subset='validation')
 
             train_generator = zip(train_image_generator, train_mask_generator)
             validation_generator = zip(validation_image_generator, validation_mask_generator)
 
-            output_signature = (tf.TensorSpec(shape=[None] + list(train_X.shape[1:]), dtype=tf.float32), tf.TensorSpec(shape=[None] + list(train_Y.shape[1:]), dtype=tf.float32))
-            train_ds = tf.data.Dataset.from_generator(lambda: train_generator, output_signature=output_signature)
-            validation_ds = tf.data.Dataset.from_generator(lambda: validation_generator, output_signature=output_signature)
+            def data_gen(generator):
+                for image, mask in generator:
+                    image, mask = image[0, :, :, :], mask[0, :, :, :]
+                    yield image, mask
 
-            train_ds = train_ds.prefetch(tf.data.AUTOTUNE)
-            validation_ds = validation_ds.prefetch(tf.data.AUTOTUNE)
+            output_signature = (tf.TensorSpec(shape=train_X.shape[1:], dtype=tf.float32), tf.TensorSpec(shape=train_Y.shape[1:], dtype=tf.float32))
+            train_ds = tf.data.Dataset.from_generator(lambda: data_gen(train_generator), output_signature=output_signature)
+            validation_ds = tf.data.Dataset.from_generator(lambda: data_gen(validation_generator), output_signature=output_signature)
+
+            train_ds = train_ds.batch(batch_size).prefetch(tf.data.AUTOTUNE)
+            validation_ds = validation_ds.batch(batch_size).prefetch(tf.data.AUTOTUNE)
 
             return train_ds, validation_ds
         else:
