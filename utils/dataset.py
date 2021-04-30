@@ -35,9 +35,10 @@ class ImageDataSet():
         print(f"Data {self.name} shape: {self.__image_array.shape}")
         return self
 
-    def crop(self, top_width=0, down_width=54, left_width=35, right_width=20, save_image=False):
+    def crop(self, delta=(0, 54, 35, 20), save_image=False):
         if self.__image_array is not None:
-            self.__image_array = self.__image_array[:, top_width:(self.height - down_width), left_width:(self.width - right_width), :]
+            top_delta, down_delta, left_delta, right_delta = delta
+            self.__image_array = self.__image_array[:, top_delta:(self.height - down_delta), left_delta:(self.width - right_delta), :]
             self.num, self.height, self.width, self.channel = self.__image_array.shape
 
             if save_image:

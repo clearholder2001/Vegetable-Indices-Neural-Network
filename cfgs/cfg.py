@@ -24,6 +24,8 @@ SEED = 1
 
 # Preprocessing
 # ------------------------------------------------
+TRAIN_CROP_DELTA = (0, 54, 35, 20)
+TEST_CROP_DELTA = (0, 54, 35, 20)
 TRAIN_RESAMPLE_DIM = (896, 1216)
 TEST_RESAMPLE_DIM = (896, 1216)
 TRAIN_RESAMPLE_MULTIPLE_FACTOR = 1
