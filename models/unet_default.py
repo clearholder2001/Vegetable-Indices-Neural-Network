@@ -26,7 +26,7 @@ def Conv2DTrans_block(input, element_num, filters, kernel_size, strides, padding
     return layer
 
 
-def unet_new(model_name, input_dim):
+def unet_default(model_name, input_dim):
     Input_img = Input(input_dim)
 
     # Setup

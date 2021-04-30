@@ -7,7 +7,7 @@ from tensorflow.keras.models import Model
 from cfgs import cfg
 
 
-def unet(model_name, input_dim):
+def unet_basic(model_name, input_dim):
     Input_img = Input(shape=input_dim)
 
     # Setup
