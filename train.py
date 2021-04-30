@@ -50,8 +50,8 @@ if __name__ == "__main__":
 
     train_X_obj = ImageDataSet("RGB ", input_path=cfg.TRAIN_RGB_PATH, save_image_path=cfg.SAVE_IMAGE_PATH.joinpath("train/input"))
     train_Y_obj = ImageDataSet("NDVI", input_path=cfg.TRAIN_NDVI_PATH, save_image_path=cfg.SAVE_IMAGE_PATH.joinpath("train/input"))
-    train_X_obj = train_X_obj.load_data(devided_by_255=False, expand_dims=False).crop()
-    train_Y_obj = train_Y_obj.load_data(devided_by_255=False, expand_dims=False).crop()
+    train_X_obj = train_X_obj.load_data(devided_by_255=False, expand_dims=False).crop(cfg.TRAIN_CROP_DELTA)
+    train_Y_obj = train_Y_obj.load_data(devided_by_255=False, expand_dims=False).crop(cfg.TRAIN_CROP_DELTA)
     table = ImageDataSet.generate_resample_table(train_X_obj.num, cfg.TRAIN_RESAMPLE_MULTIPLE_FACTOR, (train_X_obj.height, train_X_obj.width), cfg.TRAIN_RESAMPLE_DIM)
     train_X = train_X_obj.resample(table, cfg.TRAIN_RESAMPLE_DIM)
     train_Y = train_Y_obj.resample(table, cfg.TRAIN_RESAMPLE_DIM)

@@ -57,8 +57,8 @@ if __name__ == "__main__":
 
     test_X_obj = ImageDataSet("RGB ", input_path=cfg.TEST_RGB_PATH, save_image_path=cfg.SAVE_IMAGE_PATH.joinpath("inference/input"))
     test_Y_obj = ImageDataSet("NDVI", input_path=cfg.TEST_NDVI_PATH, save_image_path=cfg.SAVE_IMAGE_PATH.joinpath("inference/input"))
-    test_X_obj = test_X_obj.load_data(devided_by_255=False, expand_dims=False).crop()
-    test_Y_obj = test_Y_obj.load_data(devided_by_255=False, expand_dims=False).crop()
+    test_X_obj = test_X_obj.load_data(devided_by_255=False, expand_dims=False).crop(cfg.TEST_CROP_DELTA)
+    test_Y_obj = test_Y_obj.load_data(devided_by_255=False, expand_dims=False).crop(cfg.TEST_CROP_DELTA)
     table = ImageDataSet.generate_resample_table(test_X_obj.num, cfg.TEST_RESAMPLE_MULTIPLE_FACTOR, (test_X_obj.height, test_X_obj.width), cfg.TEST_RESAMPLE_DIM)
     test_X = test_X_obj.resample(table, cfg.TEST_RESAMPLE_DIM)
     test_Y = test_Y_obj.resample(table, cfg.TEST_RESAMPLE_DIM)
