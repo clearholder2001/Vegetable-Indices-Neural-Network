@@ -44,6 +44,7 @@ def predict_function(model, test_ds, predict_shape, steps, verbose):
             print(f"Predicting...{idx+1}/{steps}", end='\r')
         elif (idx+1) == steps:
             print(f"Predicting...{idx+1}/{steps}")
+    predict = (predict * 2) - 1
     return predict
 
 
@@ -78,10 +79,12 @@ if __name__ == "__main__":
 
     batch_size = cfg.TEST_BATCH_SIZE
     steps = int(np.ceil(test_X.shape[0] / batch_size))
+    test_Y = test_Y_obj.norm_standard().get_image_array()
     test_ds = test_precessing(test_X, test_Y, batch_size)
 
     predict = predict_function(model, test_ds, test_Y.shape, steps, test_verbose)
     loss = model.evaluate(test_ds, verbose=test_verbose)
+    test_Y = test_Y_obj.norm_ndvi().get_image_array()
     calculate_statistics(test_Y, predict)
 
     np.save(cfg.OUTPUT_DEFAULT_PATH.joinpath("predict.npy"), predict, allow_pickle=True)
