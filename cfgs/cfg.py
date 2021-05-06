@@ -27,29 +27,29 @@ SEED = 1
 TRAIN_CROP_DELTA = (0, 54, 35, 20)
 TEST_CROP_DELTA = (0, 54, 35, 20)
 TRAIN_RESAMPLE_DIM = (224, 304)
-TEST_RESAMPLE_DIM = (224, 304)
+TEST_RESAMPLE_DIM = (896, 1216)
 TRAIN_RESAMPLE_MULTIPLE_FACTOR = 16
-TEST_RESAMPLE_MULTIPLE_FACTOR = 16
+TEST_RESAMPLE_MULTIPLE_FACTOR = 1
 TRAIN_DOWNSCALE_FACTOR = 1
 TEST_DOWNSCALE_FACTOR = 1
 ENABLE_DATA_AUG = False
 USE_IMAGEDATAGENERATOR = False
 
 
-# Train and Test
+# Train and Inference
 # ------------------------------------------------
 EPOCHS = 1000
 TRAIN_BATCH_SIZE = 16
-TEST_BATCH_SIZE = 16
+TEST_BATCH_SIZE = 2
 VAL_SPLIT = 0.1
 LEARNING_RATE_ARGS = dict(
     initial_learning_rate=0.001,
-    decay_steps=100,
+    decay_steps=1000,
     decay_rate=0.98,
     staircase=False
 )
 EARLY_STOP_ARGS = dict(
-    monitor='loss',
+    monitor='val_loss',
     min_delta=0.0005,
     patience=20,
     verbose=1,
