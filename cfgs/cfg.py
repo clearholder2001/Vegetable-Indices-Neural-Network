@@ -18,6 +18,7 @@ TENSORBOARD_LOG_PATH = OUTPUT_DEFAULT_PATH.joinpath("TensorBoard")
 # Model
 # ------------------------------------------------
 MODEL_NAME = 'model'
+MODEL_LOSS = 'mean_absolute_error'
 L2_REGULAR = 0.01
 SEED = 1
 
