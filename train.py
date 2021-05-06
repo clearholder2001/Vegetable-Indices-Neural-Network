@@ -75,7 +75,7 @@ if __name__ == "__main__":
 
     model = Model(model_name=cfg.MODEL_NAME, input_dim=train_X.shape[1:])
     adam = Adam(learning_rate=lr_schedule)
-    model.compile(optimizer=adam, loss='mean_absolute_error', metrics=RootMeanSquaredError(), steps_per_execution=steps_per_execution)
+    model.compile(optimizer=adam, loss=cfg.MODEL_LOSS, metrics=RootMeanSquaredError(), steps_per_execution=steps_per_execution)
     model.summary()
 
     train_Y = train_Y_obj.norm_standard().get_image_array()
