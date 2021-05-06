@@ -33,7 +33,7 @@ class SaveWeightCallback(Callback):
             self.save_flag = True
         elif epoch < 100 and (epoch+1) % 5 == 0:
             self.save_flag = True
-        elif epoch >= 100 and (epoch+1) % 100 == 0:
+        elif epoch >= 100 and (epoch+1) % 10 == 0:
             self.save_flag = True
 
         if self.save_flag:
