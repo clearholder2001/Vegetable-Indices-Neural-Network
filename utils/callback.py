@@ -29,11 +29,11 @@ class SaveWeightCallback(Callback):
 
     def on_epoch_end(self, epoch, logs=None):
         self.save_flag = False
-        if epoch < 20:
+        if epoch < 50:
             self.save_flag = True
-        elif epoch < 100 and (epoch+1) % 5 == 0:
+        elif epoch < 100 and (epoch+1) % 2 == 0:
             self.save_flag = True
-        elif epoch >= 100 and (epoch+1) % 10 == 0:
+        elif epoch >= 100 and (epoch+1) % 5 == 0:
             self.save_flag = True
 
         if self.save_flag:
