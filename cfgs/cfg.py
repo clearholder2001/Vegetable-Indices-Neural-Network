@@ -18,7 +18,7 @@ TENSORBOARD_LOG_PATH = OUTPUT_DEFAULT_PATH.joinpath("TensorBoard")
 # Model
 # ------------------------------------------------
 MODEL_NAME = 'model'
-MODEL_LOSS = 'mean_absolute_error'
+MODEL_LOSS = 'mean_squared_error'
 L2_REGULAR = 0.01
 SEED = 1
 
@@ -27,9 +27,9 @@ SEED = 1
 # ------------------------------------------------
 TRAIN_CROP_DELTA = (0, 54, 35, 20)
 TEST_CROP_DELTA = (0, 54, 35, 20)
-TRAIN_RESAMPLE_DIM = (224, 304)
+TRAIN_RESAMPLE_DIM = (224, 224)
 TEST_RESAMPLE_DIM = (896, 1216)
-TRAIN_RESAMPLE_MULTIPLE_FACTOR = 16
+TRAIN_RESAMPLE_MULTIPLE_FACTOR = 24
 TEST_RESAMPLE_MULTIPLE_FACTOR = 1
 TRAIN_DOWNSCALE_FACTOR = 1
 TEST_DOWNSCALE_FACTOR = 1
@@ -40,19 +40,19 @@ USE_IMAGEDATAGENERATOR = False
 # Train and Inference
 # ------------------------------------------------
 EPOCHS = 1000
-TRAIN_BATCH_SIZE = 16
-TEST_BATCH_SIZE = 2
+TRAIN_BATCH_SIZE = 32
+TEST_BATCH_SIZE = 4
 VAL_SPLIT = 0.1
 LEARNING_RATE_ARGS = dict(
     initial_learning_rate=0.001,
-    decay_steps=1000,
-    decay_rate=0.98,
+    decay_steps=1476,
+    decay_rate=0.90,
     staircase=False
 )
 EARLY_STOP_ARGS = dict(
     monitor='val_loss',
-    min_delta=0.0005,
-    patience=20,
+    min_delta=1.0e-5,
+    patience=50,
     verbose=1,
     mode='min',
     baseline=0.2
@@ -64,7 +64,7 @@ EARLY_STOP_ARGS = dict(
 DATAGEN_ARGS = dict(
     horizontal_flip=True,
     vertical_flip=True,
-    rotation_range=20,
+    rotation_range=45,
     # width_shift_range=0.1,
     # height_shift_range=0.1,
     brightness_range=(0.9, 1.1),
