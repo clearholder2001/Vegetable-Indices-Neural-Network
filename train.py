@@ -14,6 +14,7 @@ os.environ['PYTHONHASHSEED'] = '0'
 
 import numpy as np
 import tensorflow as tf
+from tensorflow.keras import mixed_precision
 from tensorflow.keras.callbacks import EarlyStopping, TensorBoard
 from tensorflow.keras.metrics import RootMeanSquaredError
 from tensorflow.keras.optimizers import Adam
@@ -35,6 +36,7 @@ os.system('nvcc -V')
 gpus = tf.config.list_physical_devices('GPU')
 tf.config.set_visible_devices(gpus[0], 'GPU')
 tf.config.experimental.set_memory_growth(gpus[0], True)
+mixed_precision.set_global_policy('mixed_float16')
 
 
 if __name__ == "__main__":
