@@ -46,12 +46,12 @@ VAL_SPLIT = 0.1
 LEARNING_RATE_ARGS = dict(
     initial_learning_rate=0.001,
     decay_steps=1476,
-    decay_rate=0.90,
+    decay_rate=0.94,
     staircase=False
 )
 EARLY_STOP_ARGS = dict(
     monitor='val_loss',
-    min_delta=1.0e-5,
+    min_delta=1.0e-4,
     patience=50,
     verbose=1,
     mode='min',
